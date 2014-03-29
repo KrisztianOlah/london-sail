@@ -1,0 +1,30 @@
+Name: harbour-london-sail
+Summary: London Sail is commuter application for London.
+Version: 0.1.0
+Release: 1
+Group: Qt/Qt
+URL: http://example.org/
+License: MIT Licence
+Sources:
+- '%{name}-%{version}.tar.bz2'
+Description: |
+  London Sail is aimed at Londoners to help them with their daily commute.
+Configure: none
+Builder: qtc5
+PkgConfigBR:
+- sailfishapp >= 0.0.10
+- Qt5Core
+- Qt5Qml
+- Qt5Quick
+Requires:
+- sailfishsilica-qt5 >= 0.10.9
+Files:
+- /usr/share/icons/hicolor/86x86/apps
+- /usr/share/applications
+- /usr/share/harbour-london-sail
+- /usr/bin
+- '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
+- '%{_datadir}/applications/%{name}.desktop'
+- '%{_datadir}/%{name}/qml'
+- '%{_bindir}'
+PkgBR: []

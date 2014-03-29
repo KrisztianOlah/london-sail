@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=London Sail
+Icon=harbour-london-sail
+Exec=harbour-london-sail
+
