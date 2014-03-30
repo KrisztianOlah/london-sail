@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import Sailfish.Silica.theme 1.0
 
 //This is the main menu, it is presented first as the application opens
 Page {

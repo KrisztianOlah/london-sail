@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import Sailfish.Silica.theme 1.0
 
 //this component is a little circle with an 'i' in the middle which is to be displayed when
 //LineInfoWidget is expandable to a detailed view, sort of a visual aid for user

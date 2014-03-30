@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import Sailfish.Silica.theme 1.0
 
 
 //This is a Widget meant to represent a tube line and
@@ -117,7 +116,6 @@ Rectangle {
         id: mousearea
         anchors.fill: parent
         onClicked: {
-            console.log(self.details)
             if (self.state == "normal" && details != "") {
                 for (var i = 0; i !== self.parent.children.length; ++i) {
                     if (self.parent.children[i].objectName === "infoWidget") self.parent.children[i].setNormalState()
