@@ -47,19 +47,18 @@ class ServiceStatusLogic : public QObject
     Q_OBJECT
 public:
     explicit ServiceStatusLogic(QObject *parent = 0);
-
+    typedef QMap<QString,QPair<QString,QString> > Container;
 signals:
     void dataChanged();
     void finished();
     void parsed();
     void stateChanged();
 private:
-    QMap<QString,QPair<QString,QString> >* container;
+    QScopedPointer<Container> container;
     bool downloading;
-    QNetworkAccessManager* networkMngr;
-    QNetworkReply* reply;
+    QNetworkAccessManager* networkMngr;//handle for global obj
+    QNetworkReply* reply;//handled by this class
     QUrl url;
-    QXmlSimpleReader* xmlReader;
 private:
     QByteArray getData();
     void parse(const QByteArray&);

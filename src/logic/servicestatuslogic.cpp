@@ -38,28 +38,28 @@ THE SOFTWARE.
 //BUG When the internet connection fails after the first call to ServiceStatusLogic::refresh()
 //all further calls to ServiceStatusLogic::refresh() will cause ServiceStatusLogic::downloaded()
 //not to be called and Gui will show BusyIndicator without actually doing anything
-
+//TODO function try block
 ServiceStatusLogic::ServiceStatusLogic(QObject *parent) :
     QObject(parent),
-    container(new QMap<QString,QPair<QString,QString> >() ),
+    container(new Container()),
     downloading(false),
     networkMngr(static_cast<QNetworkAccessManager*>(parent)),
     url("http://cloud.tfl.gov.uk/TrackerNet/LineStatus") // /IncidentsOnly //add this later to improve network usage
 {
     //Giving some sensible initial values for container
-    container->insert("Bakerloo",{"",""});
-    container->insert("Central",{"",""});
-    container->insert("Circle",{"",""});
-    container->insert("DLR",{"",""});
-    container->insert("District",{"",""});
-    container->insert("Hammersmith and City",{"",""});
-    container->insert("Jubilee",{"",""});
-    container->insert("Metropolitan",{"",""});
-    container->insert("Northern",{"",""});
-    container->insert("Overground",{"",""});
-    container->insert("Piccadilly",{"",""});
-    container->insert("Victoria",{"",""});
-    container->insert("Waterloo and City",{"",""});
+    container.data()->insert("Bakerloo",{"",""});
+    container.data()->insert("Central",{"",""});
+    container.data()->insert("Circle",{"",""});
+    container.data()->insert("DLR",{"",""});
+    container.data()->insert("District",{"",""});
+    container.data()->insert("Hammersmith and City",{"",""});
+    container.data()->insert("Jubilee",{"",""});
+    container.data()->insert("Metropolitan",{"",""});
+    container.data()->insert("Northern",{"",""});
+    container.data()->insert("Overground",{"",""});
+    container.data()->insert("Piccadilly",{"",""});
+    container.data()->insert("Victoria",{"",""});
+    container.data()->insert("Waterloo and City",{"",""});
 
 
 }
@@ -68,16 +68,15 @@ ServiceStatusLogic::ServiceStatusLogic(QObject *parent) :
 //if for some reason parsing failes the container will have its default state, see in constructor.
 //TODO Error message for user if things go wrong
 void ServiceStatusLogic::parse(const QByteArray& data) {
-    //FIX delete xmlReader and source
-    xmlReader = new QXmlSimpleReader();
-    QXmlInputSource* source = new QXmlInputSource();
-    source->setData(data);
-    ServiceStatusXmlHandler* handler = new ServiceStatusXmlHandler(container);
-    xmlReader->setContentHandler(handler);
-    xmlReader->setErrorHandler(handler);
+    QXmlSimpleReader xmlReader;
+    QScopedPointer<QXmlInputSource> source(new QXmlInputSource());
+    source.data()->setData(data);
+    QScopedPointer<ServiceStatusXmlHandler> handler(new ServiceStatusXmlHandler(container.data()));
+    xmlReader.setContentHandler(handler.data());
+    xmlReader.setErrorHandler(handler.data());
 
     bool ok = false;
-    ok = xmlReader->parse(source);
+    ok = xmlReader.parse(source.data());
     if (!ok) {
         qDebug() << ">>> Parsing failed <<<";
     }
@@ -101,13 +100,13 @@ void ServiceStatusLogic::downloaded() {
 
 //GUI will ask for this data when "stateChanged()" is emitted by *this
 QString ServiceStatusLogic::getInfo(const QString& str) {
-    QString ret = (*container)[str].first;
+    QString ret = (*container.data())[str].first;
     return ret;
 }
 
 //GUI will ask for this data when "stateChanged()" is emitted by *this
 QString ServiceStatusLogic::getDetails(const QString& str) {
-    QString ret = (*container)[str].second;
+    QString ret = (*container.data())[str].second;
     return ret;
 }
 
@@ -118,8 +117,8 @@ bool ServiceStatusLogic::isDownloading() { return downloading; }
 void ServiceStatusLogic::refresh() {
     downloading = true;
     emit stateChanged();
-    //FIX if nullptr
-    reply = networkMngr->get(QNetworkRequest(url));
-
+    if (networkMngr) {
+        reply = networkMngr->get(QNetworkRequest(url));
+    }
     connect(reply, SIGNAL(finished()), this, SLOT(downloaded()) );
 }

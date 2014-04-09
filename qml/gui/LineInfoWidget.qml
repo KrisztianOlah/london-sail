@@ -65,6 +65,8 @@ Rectangle {
         leftMargin: 50
         rightMargin: 50
     }
+    //BUG this bit causes a bug where user refreshes "Status Updates" and it overwrites
+    //"This Weekend" as well!
     Connections {
         target: serviceStatusData
         onDataChanged: {
