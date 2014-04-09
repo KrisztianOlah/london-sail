@@ -68,6 +68,7 @@ ServiceStatusLogic::ServiceStatusLogic(QObject *parent) :
 //if for some reason parsing failes the container will have its default state, see in constructor.
 //TODO Error message for user if things go wrong
 void ServiceStatusLogic::parse(const QByteArray& data) {
+    //FIX delete xmlReader and source
     xmlReader = new QXmlSimpleReader();
     QXmlInputSource* source = new QXmlInputSource();
     source->setData(data);
@@ -79,15 +80,13 @@ void ServiceStatusLogic::parse(const QByteArray& data) {
     ok = xmlReader->parse(source);
     if (!ok) {
         qDebug() << ">>> Parsing failed <<<";
-        downloading = false;
-        emit stateChanged();
     }
     else {
         qDebug() << ">>> Parsed Successfuly <<<";
-        downloading = false;
         emit dataChanged();
-        emit stateChanged();
     }
+    downloading = false;
+    emit stateChanged();
 }
 
 //private slots:
@@ -119,6 +118,7 @@ bool ServiceStatusLogic::isDownloading() { return downloading; }
 void ServiceStatusLogic::refresh() {
     downloading = true;
     emit stateChanged();
+    //FIX if nullptr
     reply = networkMngr->get(QNetworkRequest(url));
 
     connect(reply, SIGNAL(finished()), this, SLOT(downloaded()) );

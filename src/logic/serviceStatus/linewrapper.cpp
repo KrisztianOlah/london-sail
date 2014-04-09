@@ -22,27 +22,46 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import QtQuick 2.0
-import Sailfish.Silica 1.0
 
-//This page just shows a tube map
-Page {
-    id: page
-    allowedOrientations: Orientation.All
+#include "linewrapper.h"
+#include <QDebug>
+#include <QString>
 
-    SilicaFlickable {
-        id: flick
-        anchors.fill: parent
-        contentHeight: tubemap.height
-        contentWidth: tubemap.width
-        Image {
-            id: tubemap
-            source: "qrc:///tubemap.png"
-            sourceSize.width: 2054
-            sourceSize.height: 1362
-        }
-        ScrollDecorator {
-            flickable: flick
-        }
+//FIX function try block
+LineWrapper::LineWrapper() : data(new QString[size]),
+                             pRefCount(new int(1))
+{
+}
+
+LineWrapper::LineWrapper(const LineWrapper& other) : pRefCount(other.pRefCount) {
+    data = other.data;
+    pRefCount = other.pRefCount;
+    ++(*pRefCount);
+}
+//only delete data and refcount pointer when it's the last object pointing there
+LineWrapper::~LineWrapper() {
+    if (!--(*pRefCount)) {
+        delete pRefCount;
+        delete [] data;
     }
 }
+
+//public:
+LineWrapper& LineWrapper::operator=(const LineWrapper& rhs) {
+    if (&rhs != this) {
+        //decrement OLD refcount, if last obj delete its data
+        if (!--(*pRefCount)) {
+            delete pRefCount;
+            delete [] data;
+        }
+        data = rhs.data;
+        pRefCount = rhs.pRefCount;
+        ++(*pRefCount);//increment NEW refCount
+    }
+    return *this;
+}
+
+
+QString& LineWrapper::operator[](int index) { return data[index]; }
+
+const QString& LineWrapper::operator[](int index) const { return const_cast<QString&>(this->operator[](index)); }

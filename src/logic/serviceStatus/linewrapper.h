@@ -22,27 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import QtQuick 2.0
-import Sailfish.Silica 1.0
+#ifndef LINEWRAPPER_H
+#define LINEWRAPPER_H
 
-//This page just shows a tube map
-Page {
-    id: page
-    allowedOrientations: Orientation.All
+#include <QString>
 
-    SilicaFlickable {
-        id: flick
-        anchors.fill: parent
-        contentHeight: tubemap.height
-        contentWidth: tubemap.width
-        Image {
-            id: tubemap
-            source: "qrc:///tubemap.png"
-            sourceSize.width: 2054
-            sourceSize.height: 1362
-        }
-        ScrollDecorator {
-            flickable: flick
-        }
-    }
-}
+//This class is to store a Line object conviniently where Line's properties are accessed with linewrapper[enum]
+//LineWrapper is a RAII class that is responsible take care of deleting its data when reference count goes down to 0
+class LineWrapper
+{
+public:
+    LineWrapper();
+    LineWrapper(const LineWrapper&);
+    ~LineWrapper();
+    enum { Name, Status, Message, Colour, Background };
+private:
+    QString* data;
+    int* pRefCount;
+    static const int size = 5;
+public:
+    LineWrapper& operator=(const LineWrapper&);
+    QString& operator[](int index);
+    const QString& operator[](int index) const;
+};
+
+#endif // LINEWRAPPER_H

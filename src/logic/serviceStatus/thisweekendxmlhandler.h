@@ -22,27 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import QtQuick 2.0
-import Sailfish.Silica 1.0
+#ifndef THISWEEKENDXMLHANDLER_H
+#define THISWEEKENDXMLHANDLER_H
 
-//This page just shows a tube map
-Page {
-    id: page
-    allowedOrientations: Orientation.All
+#include <QXmlDefaultHandler>
+#include "linewrapper.h"
 
-    SilicaFlickable {
-        id: flick
-        anchors.fill: parent
-        contentHeight: tubemap.height
-        contentWidth: tubemap.width
-        Image {
-            id: tubemap
-            source: "qrc:///tubemap.png"
-            sourceSize.width: 2054
-            sourceSize.height: 1362
-        }
-        ScrollDecorator {
-            flickable: flick
-        }
-    }
-}
+class ThisWeekendLineModel;
+
+//This class is to parse "Weekend disruption" XML data recieved from TFL and add to its model
+class ThisWeekendXmlHandler : public QXmlDefaultHandler
+{
+public:
+    typedef LineWrapper Line;
+    ThisWeekendXmlHandler(ThisWeekendLineModel* = 0);
+private:
+    Line aLine;
+    QString currentText;
+    bool inLine;
+    bool inMessage;
+    bool inStatus;
+    ThisWeekendLineModel* model;
+public:
+    virtual bool characters(const QString &str);
+    virtual bool endElement(const QString &namespaceURI,const QString &localName,const QString &qName);
+    virtual bool startElement(const QString& namespaceURI,const QString& localName,
+                              const QString& qName,const QXmlAttributes& atts);
+};
+
+#endif // THISWEEKENDXMLHANDLER_H

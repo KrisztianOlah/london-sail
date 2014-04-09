@@ -62,7 +62,8 @@ THE SOFTWARE.
 #include <QQuickView>
 #include <sailfishapp.h>
 #include "logic/servicestatuslogic.h"
-
+#include "logic/thisweekendlogic.h"
+#include "logic/serviceStatus/thisweekendlinemodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -86,6 +87,10 @@ int main(int argc, char *argv[])
     //networkMngr will be responsible for deletion
     ServiceStatusLogic* serviceLogic = new ServiceStatusLogic(networkMngr.data());
     view->rootContext()->setContextProperty("serviceStatusData", serviceLogic);
+
+    qmlRegisterType<ThisWeekendLineModel>("LondonSailUtities",1,0,"WeekendModel");
+    ThisWeekendLogic* weekendLogic = new ThisWeekendLogic(networkMngr.data());
+    view->rootContext()->setContextProperty("thisWeekendData", weekendLogic);
 
     view->show();
 

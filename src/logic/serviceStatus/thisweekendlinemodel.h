@@ -22,27 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import QtQuick 2.0
-import Sailfish.Silica 1.0
+#ifndef THISWEEKENDLINEMODEL_H
+#define THISWEEKENDLINEMODEL_H
 
-//This page just shows a tube map
-Page {
-    id: page
-    allowedOrientations: Orientation.All
+#include <QAbstractListModel>
+#include <QHash>
+#include "linewrapper.h"
 
-    SilicaFlickable {
-        id: flick
-        anchors.fill: parent
-        contentHeight: tubemap.height
-        contentWidth: tubemap.width
-        Image {
-            id: tubemap
-            source: "qrc:///tubemap.png"
-            sourceSize.width: 2054
-            sourceSize.height: 1362
-        }
-        ScrollDecorator {
-            flickable: flick
-        }
-    }
-}
+// A model to exchange "Weekend Disruption" information with GUI
+class ThisWeekendLineModel : public QAbstractListModel
+{
+    Q_OBJECT
+    typedef LineWrapper Line;
+public:
+    explicit ThisWeekendLineModel(QObject *parent = 0);
+    enum LineRoles { NameRole = Qt::UserRole + 1,StatusRole,MessageRole,ColourRole,BackgroundRole };
+private:
+    QList<Line> lines;
+public:
+    void addLine(const Line&);
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+    virtual QHash<int,QByteArray> roleNames() const;
+    void reset();
+    virtual int rowCount(const QModelIndex& parent = QModelIndex() ) const;
+};
+
+#endif // THISWEEKENDLINEMODEL_H

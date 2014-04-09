@@ -30,14 +30,15 @@ import Sailfish.Silica 1.0
 //its related service status information
 Rectangle {
     id: self
-    property alias labelText: label.text
-    property alias text: info.text
+    objectName: "infoWidget"
+    property alias name: label.text
+    property alias statusText: statusLabel.text
 
-    property alias labelColor: label.color
-    property alias textColor: info.color
+    property alias iconColor: icon.iconColor
 
-    property color defaultTextColor: "#FFFFFF"
-    property int idealHeight: 40 + 20 + (30 * info.lineCount)
+    property color textColor: "#FFFFFF"
+    property int idealHeight: 40 + 20 + statusLabel.paintedHeight
+    property int detailedHeight: idealHeight + detailLabel.paintedHeight
     property int visibility: 0
     property string status: ""
     property string details: ""
@@ -47,10 +48,13 @@ Rectangle {
     signal itemReached
 
     function setNormalState() {
-        info.text = status
         self.state = "normal"
+        icon.state = self.details === "" ? "invisible" : "visible"
     }
 
+    function setDetailedState() {
+        self.state = "detailed"
+    }
 
     height: idealHeight
     radius: 10
@@ -64,17 +68,18 @@ Rectangle {
     Connections {
         target: serviceStatusData
         onDataChanged: {
-            self.status = serviceStatusData.getInfo(labelText)
-            self.details = serviceStatusData.getDetails(labelText)
-            self.state = "normal"
-            infoIcon.state = self.details === "" ? "invisible" : "visible"
+            self.status = serviceStatusData.getInfo(name)
+            self.details = serviceStatusData.getDetails(name)
+            setNormalState()
         }
     }
+
     InfoIcon {
-        id: infoIcon
+        id: icon
         size: 30
         color: parent.color
-        labelColor: parent.labelColor
+        iconColor: parent.textColor
+        state: self.details === "" ? "invisible" : "visible"
         anchors {
             right: parent.right
             rightMargin: 10
@@ -82,18 +87,19 @@ Rectangle {
             topMargin: 10
         }
     }
+
     Label {
         id: label
-        color: defaultTextColor
+        color: textColor
         font.family: Theme.fontFamily
         anchors {
             horizontalCenter: parent.horizontalCenter
         }
     }
+
     Label {
-        id: info
-        color: defaultTextColor
-        font.family: Theme.fontFamily
+        id: statusLabel
+        color: textColor
         font.pixelSize: Theme.fontSizeExtraSmall
         text: status
         width: parent.width
@@ -107,9 +113,25 @@ Rectangle {
             top: label.bottom
         }
     }
+    Label {
+        id: detailLabel
+        color: textColor
+        font.pixelSize: Theme.fontSizeExtraSmall
+        text: details
+        opacity: 0
+        wrapMode: Text.WordWrap
+        anchors {
+            left: parent.left
+            leftMargin: 10
+            right: parent.right
+            rightMargin: 10
+            topMargin: 5
+            top: statusLabel.bottom
+        }
+    }
 
-    onTextChanged: {
-        self.state = (self.text == "") ? "invisible" : "normal"
+    onStatusTextChanged: {
+        self.state = (self.text === "") ? "invisible" : "normal"
     }
 
     MouseArea {
@@ -117,11 +139,11 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             if (self.state == "normal" && details != "") {
+                //reset the size/state of siblings
                 for (var i = 0; i !== self.parent.children.length; ++i) {
                     if (self.parent.children[i].objectName === "infoWidget") self.parent.children[i].setNormalState()
                 }
-                info.text = status + "\n\n" + details
-                self.state = "detailed"
+                setDetailedState()
             }
             else setNormalState()
         }
@@ -137,7 +159,7 @@ Rectangle {
                 opacity: 0
             }
             PropertyChanges {
-                target: info
+                target: statusLabel
                 opacity: 0
             }
             PropertyChanges {
@@ -155,8 +177,12 @@ Rectangle {
                 opacity: 100
             }
             PropertyChanges {
-                target: info
+                target: statusLabel
                 opacity: 100
+            }
+            PropertyChanges {
+                target: detailLabel
+                opacity: 0
             }
             PropertyChanges {
                 target: self
@@ -169,6 +195,14 @@ Rectangle {
         //This one is there to indicate when widget is in detailed view.
         State {
             name: "detailed"
+            PropertyChanges {
+                target: self
+                height: detailedHeight
+            }
+            PropertyChanges {
+                target: detailLabel
+                opacity: 100
+            }
 
         }
     ]

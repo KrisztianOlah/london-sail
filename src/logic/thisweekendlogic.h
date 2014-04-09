@@ -22,54 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
-#ifndef SERVICESTATUSLOGIC_H
-#define SERVICESTATUSLOGIC_H
+#ifndef THISWEEKENDLOGIC_H
+#define THISWEEKENDLOGIC_H
 
 #include <QByteArray>
-#include <QMap>
 #include <QObject>
-#include <QPair>
 #include <QUrl>
-#include <QVariant>
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QString;
-class QXmlSimpleReader;
+class ThisWeekendLineModel;
 
-//ServiceStatusLogic is responsible for fetching, parsing the data required to display Service Status information
-//it is also responsible of notifying ServiceStatusPage.qml when the data is ready to be displayed
-
-// !!! parent MUST be a NetworkAccessManager or a nullptr !!!
-class ServiceStatusLogic : public QObject
+// !!! parent must be a NetworkAccessManager or nullptr(default)
+//This class is the logic behind "This Weekend/Weekend Disruption" feature
+class ThisWeekendLogic : public QObject
 {
     Q_OBJECT
 public:
-    explicit ServiceStatusLogic(QObject *parent = 0);
-
-signals:
-    void dataChanged();
-    void finished();
-    void parsed();
-    void stateChanged();
+    explicit ThisWeekendLogic(QObject *parent = 0);
 private:
-    QMap<QString,QPair<QString,QString> >* container;
     bool downloading;
-    QNetworkAccessManager* networkMngr;
-    QNetworkReply* reply;
+    ThisWeekendLineModel* model;//Qt memory management
+    QNetworkAccessManager* networkMngr;//just a handle for global QNetworkAccessManager
+    QNetworkReply* reply;//handled in class
     QUrl url;
-    QXmlSimpleReader* xmlReader;
 private:
-    QByteArray getData();
-    void parse(const QByteArray&);
+    void parseData(const QByteArray&);
+signals:
+    void dataParsed();
+    //to indicate change in downloading/parsing state
+    void stateChanged();
 private slots:
     void downloaded();
 public slots:
-    QString getInfo(const QString&);
-    QString getDetails(const QString&);
+    ThisWeekendLineModel* getModel();
     bool isDownloading();
     void refresh();
 };
 
-#endif // SERVICESTATUSLOGIC_H
+#endif // THISWEEKENDLOGIC_H

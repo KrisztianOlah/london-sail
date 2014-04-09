@@ -26,13 +26,19 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 import "../gui"
-
 //This page displays the status of all tube/dlr/overground lines and displays if there are any disruptions
+
 Page {
     property int marginCorrection: 250
 
     id: page
     allowedOrientations: Orientation.All
+    onStatusChanged: {
+        if (status === PageStatus.Active) {
+            pageStack.pushAttached(Qt.resolvedUrl("ThisWeekPage.qml"))
+        }
+
+    }
 
     BusyIndicator {
         id: busyIndicator
@@ -51,7 +57,6 @@ Page {
     SilicaFlickable {
         id: flick
         anchors.fill: parent
-
         PullDownMenu {
             MenuItem {
                 text: "Refresh"
@@ -69,7 +74,7 @@ Page {
                        jubilee.height + metropolitan.height + northern.height + overground.height + piccadilly.height +
                        victoria.height + waterloo.height + marginCorrection + Theme.paddingLarge
 
-        ScrollDecorator { flickable: flick }
+        VerticalScrollDecorator { flickable: flick }
 
 
         Column {
@@ -91,87 +96,71 @@ Page {
             //TODO move the colours to a different module to be called from to improve readability just like Theme.highlightColor
             LineInfoWidget {
                 id: bakerloo
-                objectName: "infoWidget"
                 color: "#AE6118"
-                labelText: "Bakerloo"
+                name: "Bakerloo"
             }
             LineInfoWidget {
                 id: central
-                objectName: "infoWidget"
                 color: "#E41F1F"
-                labelText: "Central"
+                name: "Central"
             }
             LineInfoWidget {
                 id: circle
-                objectName: "infoWidget"
                 color: "#F8D42D"
-                labelText: "Circle"
+                name: "Circle"
                 textColor: "#113B92"
-                labelColor: "#113B92"
             }
             LineInfoWidget {
                 id: district
-                objectName: "infoWidget"
                 color: "#007229"
-                labelText: "District"
+                name: "District"
             }
             LineInfoWidget {
                 id: dlr
-                objectName: "infoWidget"
                 color: "#00BBB4"
-                labelText: "DLR"
+                name: "DLR"
             }
             LineInfoWidget {
                 id: hammersmith
-                objectName: "infoWidget"
                 color: "#E899A8"
-                labelText: "Hammersmith and City"
+                name: "Hammersmith and City"
                 textColor: "#113B92"
-                labelColor: "#113B92"
             }
             LineInfoWidget {
                 id: jubilee
-                objectName: "infoWidget"
                 color: "#686E72"
-                labelText: "Jubilee"
+                name: "Jubilee"
             }
             LineInfoWidget {
                 id: metropolitan
-                objectName: "infoWidget"
                 color: "#893267"
-                labelText: "Metropolitan"
+                name: "Metropolitan"
             }
             LineInfoWidget {
                 id: northern
-                objectName: "infoWidget"
                 color: "#000000"
-                labelText: "Northern"
+                name: "Northern"
             }
             LineInfoWidget {
                 id: overground
-                objectName: "infoWidget"
                 color: "#F86C00"
-                labelText: "Overground"
+                name: "Overground"
             }
             LineInfoWidget {
                 id: piccadilly
-                objectName: "infoWidget"
                 color: "#0450A1"
-                labelText: "Piccadilly"
+                name: "Piccadilly"
             }
             LineInfoWidget {
                 id: victoria
-                objectName: "infoWidget"
                 color: "#009FE0"
-                labelText: "Victoria"
+                name: "Victoria"
             }
             LineInfoWidget {
                 id: waterloo
-                objectName: "infoWidget"
                 color: "#70C3CE"
-                labelText: "Waterloo and City"
+                name: "Waterloo and City"
                 textColor: "#113B92"
-                labelColor: "#113B92"
                 //need to scroll to bottom when widget is in a detailed view
                 //otherwise user has to do it which would be annoying
                 onItemReached: flick.scrollToBottom()

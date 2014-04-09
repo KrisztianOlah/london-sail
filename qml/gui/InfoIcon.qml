@@ -30,19 +30,19 @@ import Sailfish.Silica 1.0
 
 Rectangle {
     id: circle
-    property color labelColor: "#FFFFFF"
+    property color iconColor: "#FFFFFF"
     property int size: 20
 
     width: size
     height: size
     radius: size/2
     border.width: 1
-    border.color: labelColor
+    border.color: iconColor
     state: "invisible"
     Label {
         id: label
         text: "i"
-        color: labelColor
+        color: iconColor
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors.centerIn: parent
     }
