@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <QVariant>
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
-#include "servicestatusxmlhandler.h"
+#include "serviceStatus/servicestatusxmlhandler.h"
 
 
 //BUG When the internet connection fails after the first call to ServiceStatusLogic::refresh()

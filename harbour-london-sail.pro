@@ -16,11 +16,11 @@ QT += network xml
 
 SOURCES += src/harbour-london-sail.cpp \
     src/logic/servicestatuslogic.cpp \
-    src/logic/servicestatusxmlhandler.cpp \
     src/logic/thisweekendlogic.cpp \
     src/logic/serviceStatus/thisweekendxmlhandler.cpp \
     src/logic/serviceStatus/thisweekendlinemodel.cpp \
-    src/logic/serviceStatus/linewrapper.cpp
+    src/logic/serviceStatus/linewrapper.cpp \
+    src/logic/serviceStatus/servicestatusxmlhandler.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -39,11 +39,11 @@ OTHER_FILES += qml/harbour-london-sail.qml \
 
 HEADERS += \
     src/logic/servicestatuslogic.h \
-    src/logic/servicestatusxmlhandler.h \
     src/logic/thisweekendlogic.h \
     src/logic/serviceStatus/thisweekendxmlhandler.h \
     src/logic/serviceStatus/thisweekendlinemodel.h \
-    src/logic/serviceStatus/linewrapper.h
+    src/logic/serviceStatus/linewrapper.h \
+    src/logic/serviceStatus/servicestatusxmlhandler.h
 
 RESOURCES += \
     images.qrc
