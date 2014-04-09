@@ -42,6 +42,9 @@ Rectangle {
     property int visibility: 0
     property string status: ""
     property string details: ""
+    //use this as a temporary Solution for bug where user refreshes "Status Updates"
+    //and it overwrites "This Weekend" as well!
+    property bool isServiceStatus: false
     //to signal when the last item is reached and clicked
     //when this signal is emitted SilicaFlickable should scroll to the
     //bottom as contentHeight would have changed
@@ -70,9 +73,13 @@ Rectangle {
     Connections {
         target: serviceStatusData
         onDataChanged: {
-            self.status = serviceStatusData.getInfo(name)
-            self.details = serviceStatusData.getDetails(name)
-            setNormalState()
+            //the if statement is a temporary fix for the aformentioned bug, in a long term it should be fixed
+            //by using mvc like ThisWeekPage when this connections can be removed altogether
+            if (isServiceStatus) {
+                self.status = serviceStatusData.getInfo(name)
+                self.details = serviceStatusData.getDetails(name)
+                setNormalState()
+            }
         }
     }
 

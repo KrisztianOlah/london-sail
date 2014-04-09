@@ -98,69 +98,82 @@ Page {
                 id: bakerloo
                 color: "#AE6118"
                 name: "Bakerloo"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: central
                 color: "#E41F1F"
                 name: "Central"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: circle
                 color: "#F8D42D"
                 name: "Circle"
                 textColor: "#113B92"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: district
                 color: "#007229"
                 name: "District"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: dlr
                 color: "#00BBB4"
                 name: "DLR"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: hammersmith
                 color: "#E899A8"
                 name: "Hammersmith and City"
                 textColor: "#113B92"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: jubilee
                 color: "#686E72"
                 name: "Jubilee"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: metropolitan
                 color: "#893267"
                 name: "Metropolitan"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: northern
                 color: "#000000"
                 name: "Northern"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: overground
                 color: "#F86C00"
                 name: "Overground"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: piccadilly
                 color: "#0450A1"
                 name: "Piccadilly"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: victoria
                 color: "#009FE0"
                 name: "Victoria"
+                isServiceStatus: true
             }
             LineInfoWidget {
                 id: waterloo
                 color: "#70C3CE"
                 name: "Waterloo and City"
                 textColor: "#113B92"
+                isServiceStatus: true
                 //need to scroll to bottom when widget is in a detailed view
                 //otherwise user has to do it which would be annoying
                 onItemReached: flick.scrollToBottom()
