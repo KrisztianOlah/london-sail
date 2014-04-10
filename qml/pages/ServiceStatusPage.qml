@@ -37,7 +37,7 @@ Page {
         if (status === PageStatus.Active) {
             pageStack.pushAttached(Qt.resolvedUrl("ThisWeekPage.qml"))
         }
-
+        else if (status === PageStatus.Inactive) { flick.scrollToTop() }
     }
 
     BusyIndicator {

@@ -21,14 +21,18 @@ Page {
 
     SilicaListView {
         id: view
-        anchors {
-            fill: parent
-            bottomMargin: Theme.paddinLarge
-        }
+        anchors.fill: parent
+
         header: PageHeader {
             id: header
             title: "This Weekend"
         }
+
+        footer: Rectangle {
+            height: Theme.paddingLarge
+            opacity: 0
+        }
+
         PullDownMenu {
             MenuItem {
                 text: "Refresh"

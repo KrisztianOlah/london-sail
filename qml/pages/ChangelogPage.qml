@@ -44,6 +44,12 @@ Page {
             Label {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
+                text: "0.2.0 - This Weekend feature."
+            }
+
+            Label {
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
                 text: "0.1.0 - Initial release."
             }
         }
