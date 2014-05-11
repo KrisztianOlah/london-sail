@@ -59,6 +59,18 @@ Page {
             }
             BackgroundItem {
                 Label {
+                    text: "Traffic Disruptions"
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.paddingLarge
+                        verticalCenter: parent.verticalCenter
+                    }
+                }
+                onClicked: pageStack.push(Qt.resolvedUrl("TrafficPage.qml"))
+            }
+
+            BackgroundItem {
+                Label {
                     text: "Tube Map"
                     anchors {
                         left: parent.left

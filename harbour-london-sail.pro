@@ -20,7 +20,15 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/serviceStatus/thisweekendxmlhandler.cpp \
     src/logic/serviceStatus/thisweekendlinemodel.cpp \
     src/logic/serviceStatus/linewrapper.cpp \
-    src/logic/serviceStatus/servicestatusxmlhandler.cpp
+    src/logic/serviceStatus/servicestatusxmlhandler.cpp \
+    src/logic/trafficlogic.cpp \
+    src/logic/traffic/trafficxmlhandler.cpp \
+    src/logic/traffic/street.cpp \
+    src/logic/traffic/disruption.cpp \
+    src/logic/traffic/trafficcontainer.cpp \
+    src/logic/traffic/disruptionmodel.cpp \
+    src/logic/traffic/streetmodel.cpp \
+    src/logic/traffic/disruptionproxymodel.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -35,7 +43,14 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/pages/TubeMapPage.qml \
     qml/pages/ChangelogPage.qml \
     qml/pages/LicensePage.qml \
-    qml/pages/ThisWeekPage.qml
+    qml/pages/ThisWeekPage.qml \
+    qml/pages/TrafficPage.qml \
+    qml/gui/RoadDisruptionWidget.qml \
+    qml/pages/TrafficDetailsPage.qml \
+    qml/gui/RoadDetailsWidget.qml \
+    qml/gui/StreetWidget.qml \
+    qml/gui/SearchHeader.qml \
+    qml/gui/RefreshWidget.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \
@@ -43,7 +58,16 @@ HEADERS += \
     src/logic/serviceStatus/thisweekendxmlhandler.h \
     src/logic/serviceStatus/thisweekendlinemodel.h \
     src/logic/serviceStatus/linewrapper.h \
-    src/logic/serviceStatus/servicestatusxmlhandler.h
+    src/logic/serviceStatus/servicestatusxmlhandler.h \
+    src/logic/trafficlogic.h \
+    src/logic/traffic/trafficxmlhandler.h \
+    src/logic/traffic/street.h \
+    src/logic/traffic/disruption.h \
+    src/utilities/utility.h \
+    src/logic/traffic/trafficcontainer.h \
+    src/logic/traffic/disruptionmodel.h \
+    src/logic/traffic/streetmodel.h \
+    src/logic/traffic/disruptionproxymodel.h
 
 RESOURCES += \
     images.qrc

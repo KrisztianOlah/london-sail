@@ -44,6 +44,13 @@ Page {
             Label {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
+                text: "0.3.0 - Road Disruptions Feature.
+Fixed bug: Service Status/This Weekend now correctly displays special characters(&, ', etc)"
+            }
+
+            Label {
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
                 text: "0.2.0 - This Weekend feature."
             }
 

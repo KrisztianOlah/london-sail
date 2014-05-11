@@ -42,6 +42,7 @@ Page {
             sourceSize.height: 1362
         }
         ScrollDecorator {
+            id: scroll
             flickable: flick
         }
     }

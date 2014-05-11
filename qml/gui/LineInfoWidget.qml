@@ -129,6 +129,7 @@ Rectangle {
         text: details
         opacity: 0
         wrapMode: Text.WordWrap
+        textFormat: Text.RichText
         anchors {
             left: parent.left
             leftMargin: 10
