@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define LINEWRAPPER_H
 
 #include <QString>
+#include <QHash>
 
 //This class is to store a Line object conviniently where Line's properties are accessed with linewrapper[enum]
 //LineWrapper is a RAII class that is responsible take care of deleting its data when reference count goes down to 0
@@ -37,9 +38,15 @@ public:
     ~LineWrapper();
     enum { Name, Status, Message, Colour, Background };
 private:
+    static QHash<QString,QString> bgColorHash;
+    static QHash<QString,QString> txtColorHash;
     QString* data;
     int* pRefCount;
     static const int size = 5;
+public:
+    QString getBgColor(const QString& line);
+    QString getTxtColor(const QString& line);
+    void setColors();
 public:
     LineWrapper& operator=(const LineWrapper&);
     QString& operator[](int index);

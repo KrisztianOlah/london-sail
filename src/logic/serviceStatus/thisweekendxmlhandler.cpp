@@ -45,25 +45,19 @@ bool ThisWeekendXmlHandler::characters(const QString &str) {
 bool ThisWeekendXmlHandler::endElement(const QString& /*namespaceURI*/,const QString& /*localName*/,const QString &qName) {
     if (qName == "Line") {
         inLine = false;
-        if (model) { model->addLine(aLine);}
+        if (model) {
+            aLine.setColors();
+            model->addLine(aLine);
+        }
     }
     else if (qName == "Message") { inMessage = false; }
     else if (qName == "Status") { inStatus = false; }
 
 
     else if (qName == "Name" && inLine) {
-        aLine[Line::Name] = (currentText == "H'smith & City") ? "Hammersmith & City" : currentText;
-    }
-    else if (qName == "Colour" && inLine && !inStatus) {
-        QString colour;
-        QString number = (currentText == "FFF") ? "FFFFFF" : currentText;
-        colour = QString("#") + number;
-        aLine[Line::Colour] = colour;
-    }
-    else if (qName == "BgColour" && inLine && !inStatus) {
-        QString background("#");
-        background += currentText;
-        aLine[Line::Background] = background;
+        if (currentText == "H'smith & City") { currentText = "Hammersmith and City"; }
+        else if (currentText == "Waterloo & City") { currentText = "Waterloo and City"; }
+        aLine[Line::Name] = currentText;
     }
     else if (qName == "Text" && inLine) {
         if (inMessage && inStatus) {
@@ -87,7 +81,7 @@ bool ThisWeekendXmlHandler::startElement(const QString& /*namespaceURI*/,const Q
     else if (qName == "Status") { inStatus = true; }
     else if (qName == "Message") { inMessage = true; }
 
-    else if (qName == "Name" || qName == "Text" || qName == "Colour" || qName == "BgColour") {
+    else if (qName == "Name" || qName == "Text") {
         currentText = "";
     }
     return true;

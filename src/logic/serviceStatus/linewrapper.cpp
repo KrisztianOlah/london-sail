@@ -27,6 +27,39 @@ THE SOFTWARE.
 #include <QDebug>
 #include <QString>
 
+namespace {
+QHash<QString,QString> makeBgColorHash() {
+    QHash<QString,QString> hash;
+    hash["Bakerloo"] = "#AE6118";
+    hash["Central"] = "#E41F1F";
+    hash["Circle"] = "#F8D42D";
+    hash["District"] = "#007229";
+    hash["DLR"] = "#00BBB4";
+    hash["Hammersmith and City"] = "#E899A8";
+    hash["Jubilee"] = "#686E72";
+    hash["Metropolitan"] = "#893267";
+    hash["Northern"] = "#000000";
+    hash["Overground"] = "#F86C00";
+    hash["Piccadilly"] = "#0450A1";
+    hash["Victoria"] = "#009FE0";
+    hash["Waterloo and City"] = "#70C3CE";
+    return hash;
+}
+
+QHash<QString,QString> makeTxtColorHash() {
+    QHash<QString,QString> hash;
+    hash["Circle"] = "#113B92";
+    hash["Hammersmith and City"] = "#113B92";
+    hash["Waterloo and City"] = "#113B92";
+    return hash;
+}
+}//end unamed namespace
+
+QHash<QString,QString> LineWrapper::bgColorHash = makeBgColorHash();
+
+QHash<QString,QString> LineWrapper::txtColorHash = makeTxtColorHash();
+
+
 //FIX function try block
 LineWrapper::LineWrapper() : data(new QString[size]),
                              pRefCount(new int(1))
@@ -47,6 +80,19 @@ LineWrapper::~LineWrapper() {
 }
 
 //public:
+QString LineWrapper::getBgColor(const QString& line) { return bgColorHash.value(line); }
+
+QString LineWrapper::getTxtColor(const QString& line) {
+    QString retVal = txtColorHash.value(line);
+    return (retVal == "") ? "#FFFFFF" : retVal;
+}
+
+void LineWrapper::setColors() {
+    data[Background] = getBgColor(data[Name]);
+    data[Colour] = getTxtColor(data[Name]);
+}
+
+
 LineWrapper& LineWrapper::operator=(const LineWrapper& rhs) {
     if (&rhs != this) {
         //decrement OLD refcount, if last obj delete its data
