@@ -29,11 +29,12 @@ import Sailfish.Silica 1.0
 Page {
     id: page
     allowedOrientations: Orientation.All
+
     SilicaFlickable {
         id: flick
         anchors.fill: parent
         contentHeight: column.height + Theme.paddingLarge
-        ScrollDecorator { flickable: flick }
+        VerticalScrollDecorator { flickable: flick }
         Column {
             id: column
             width: page.width
@@ -42,23 +43,44 @@ Page {
                 title: "Changelog"
             }
             Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
-                text: "0.3.0 - Road Disruptions Feature.
-Fixed bug: Service Status/This Weekend now correctly displays special characters(&, ', etc)
-Fixed bug: Service Status/This Weekend colours match as intended"
+                textFormat: Text.RichText
+                text: "<b>0.3.0 - Road Disruptions Feature.</b><br>
+*Fixed bug: Service Status/This Weekend now correctly displays special characters(&, ', etc)<br>
+*Fixed bug: Service Status and This Weekend colours match as intended"
             }
 
             Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 text: "0.2.0 - This Weekend feature."
+                font.bold: true
             }
 
             Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 text: "0.1.0 - Initial release."
+                font.bold: true
             }
         }
     }

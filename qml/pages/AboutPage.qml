@@ -34,7 +34,7 @@ Page {
         anchors.fill: parent
         contentHeight: column.height + Theme.paddingLarge
 
-        ScrollDecorator { flickable: flick }
+        VerticalScrollDecorator { flickable: flick }
 
         Column {
             id: column
@@ -140,11 +140,11 @@ Page {
                 text: "Many thanks to my friend and mentor Anatoly Kozlov."
             }
             //Disabled until there is any change to show
-//            Button {
-//                text: "Changelog"
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                onClicked: pageStack.push(Qt.resolvedUrl("ChangelogPage.qml"))
-//            }
+            Button {
+                text: "Changelog"
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: pageStack.push(Qt.resolvedUrl("ChangelogPage.qml"))
+            }
         }
     }
 }
