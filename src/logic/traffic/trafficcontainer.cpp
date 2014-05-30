@@ -55,14 +55,14 @@ StreetModel* TrafficContainer::getStreetModel(int id) {
 int TrafficContainer::size() { return disruptions.size(); }
 
 void TrafficContainer::swap(TrafficContainer& other) {
-
     disruptionModel->beginReset();
     disruptions.clear();
     disruptionModel->endReset();
 
     disruptionModel->beginInsert(other.size()-1);//row numbers start with 0
     disruptions.swap(other.disruptions);
-
     disruptionModel->endInsert();
+
+    //don't need to reset model as it will not become invalid until new model is requested
     streets.swap(other.streets);
 }

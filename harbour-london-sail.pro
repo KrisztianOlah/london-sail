@@ -22,13 +22,13 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/serviceStatus/linewrapper.cpp \
     src/logic/serviceStatus/servicestatusxmlhandler.cpp \
     src/logic/trafficlogic.cpp \
-    src/logic/traffic/trafficxmlhandler.cpp \
     src/logic/traffic/street.cpp \
     src/logic/traffic/disruption.cpp \
     src/logic/traffic/trafficcontainer.cpp \
     src/logic/traffic/disruptionmodel.cpp \
     src/logic/traffic/streetmodel.cpp \
-    src/logic/traffic/disruptionproxymodel.cpp
+    src/logic/traffic/disruptionproxymodel.cpp \
+    src/logic/traffic/trafficxmlreader.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -60,14 +60,14 @@ HEADERS += \
     src/logic/serviceStatus/linewrapper.h \
     src/logic/serviceStatus/servicestatusxmlhandler.h \
     src/logic/trafficlogic.h \
-    src/logic/traffic/trafficxmlhandler.h \
     src/logic/traffic/street.h \
     src/logic/traffic/disruption.h \
     src/utilities/utility.h \
     src/logic/traffic/trafficcontainer.h \
     src/logic/traffic/disruptionmodel.h \
     src/logic/traffic/streetmodel.h \
-    src/logic/traffic/disruptionproxymodel.h
+    src/logic/traffic/disruptionproxymodel.h \
+    src/logic/traffic/trafficxmlreader.h
 
 RESOURCES += \
     images.qrc

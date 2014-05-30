@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QXmlSimpleReader>
+#include "traffic/trafficxmlreader.h"
+
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -21,15 +24,20 @@ private:
     bool downloading;
     QNetworkAccessManager* networkMngr;
     bool parsing;
+    TrafficContainer* workContainer;
+    TrafficXmlReader* reader;
     QNetworkReply* reply;
     QUrl url;
+
 private:
-    void parseData(const QByteArray&);
 signals:
+    void dataReady(QByteArray);
     void downloadProgress(qint64 value);
     void stateChanged();
 private slots:
-    void downloaded();
+    void onAllDataRecieved();
+    void onDataRecieved();
+    void onParsingFinished();
     void progressSlot(qint64,qint64);
 public slots:
     DisruptionProxyModel* getDisruptionModel();

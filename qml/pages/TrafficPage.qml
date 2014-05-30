@@ -23,13 +23,18 @@ Page {
             target: trafficData
             onStateChanged: {
                 if (trafficData.isDownloading() || trafficData.isParsing()) {
+                    pulley.busy = true
+                    refreshButton.enabled = false
                     if (!view.count) { busyIndicator.running = true }
                     else {
                         refreshWidget.active = true
+                        refreshWidget.title = !trafficData.isDownloading() ? "Parsing" : "Downloading"
                     }
 
                 }
                 else {
+                    pulley.busy = false
+                    refreshButton.enabled = true
                     busyIndicator.running = false
                     refreshWidget.active = false
                     progressLabel.text = ""
@@ -51,9 +56,8 @@ Page {
                 }
             }
             onStateChanged: {
-                //BUG this doesn't get displayed due to the high CPU use of xml parser
-                if (trafficData.isParsing()) { progressLabel.text = "Parsing data, please wait." }
-                else progressLabel = ""
+                if (trafficData.isParsing() && !trafficData.isDownloading() && !view.count) { progressLabel.text = "Please wait whilst parsing data." }
+                else if (!trafficData.isParsing() && !trafficData.isDownloading()) { progressLabel = "" }
             }
         }
     }
@@ -72,13 +76,17 @@ Page {
             width: 1
         }
         PullDownMenu {
+            id: pulley
             MenuItem {
+                id: refreshButton
                 text: "Refresh"
                 onClicked: trafficData.refresh()
             }
         }
         PushUpMenu {
+            enabled: view.count
             visible: view.count
+
             MenuItem {
                 text: "Go to top"
                 onClicked: view.scrollToTop()
@@ -115,6 +123,6 @@ Page {
     }
     onOrientationChanged: {
         //BUG: its seems to be reverted for some reason
-        refreshWidget.state = isPortrait ? "landscape" : "portrait"
+        refreshWidget.isPortrait = !isPortrait
     }
 }

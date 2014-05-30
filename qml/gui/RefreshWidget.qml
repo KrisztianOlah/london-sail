@@ -4,9 +4,10 @@ import Sailfish.Silica 1.0
 Rectangle {
     id: self
     property bool active: false
+    property bool isPortrait: parent.isPortrait
     property alias title: label.text
 
-    y: parent.isPortrait ? (Screen.height - height) : (Screen.width - height)
+    y: isPortrait ? (Screen.height - height) : (Screen.width - height)
 
     anchors {
         left: parent.left
@@ -35,16 +36,43 @@ Rectangle {
 
     Label {
         id: label
-        text: "Refreshing"
-        color: Theme.highlightColor
+        text: "Downloading"
+        color: Theme.secondaryColor
         opacity: 0
         anchors.centerIn: parent
     }
     onActiveChanged: {
         state = active ? "active" : "inactive"
     }
+    onIsPortraitChanged: {
+        state = isPortrait ? "portrait" : "landscape"
+    }
 
     states: [
+        State {
+            name: "portrait"
+            PropertyChanges {
+                target: self
+                opacity: active ? 100 : 0
+                y: Screen.height - height
+            }
+            PropertyChanges {
+                target: label
+                opacity: active ? 100 : 0
+            }
+        },
+        State {
+            name: "landscape"
+            PropertyChanges {
+                target: self
+                opacity: active ? 100 : 0
+                y: Screen.width - height
+            }
+            PropertyChanges {
+                target: label
+                opacity: active ? 100 : 0
+            }
+        },
         State {
             name: "active"
             PropertyChanges {
@@ -67,18 +95,30 @@ Rectangle {
                 opacity: 0
             }
         },
+
         State {
-            name: "portrait"
+            name: "downloading"
             PropertyChanges {
                 target: self
-                y: Screen.height - height
+                opacity: 100
+            }
+            PropertyChanges {
+                target: label
+                opacity: 100
+                text: "Downloading"
             }
         },
         State {
-            name: "landscape"
+            name: "parsing"
             PropertyChanges {
                 target: self
-                y: Screen.width - height
+                opacity: 100
+                y: isPortrait ? (Screen.height - height) : (Screen.width - height)
+            }
+            PropertyChanges {
+                target: label
+                opacity: 100
+                text: "Parsing"
             }
         }
 
