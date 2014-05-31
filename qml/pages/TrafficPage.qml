@@ -66,10 +66,11 @@ Page {
         id: view
         anchors.fill: parent
         header: SearchHeader {
+            id: sh
             title: "Traffic Disruptions"
             state: ""
             onFilterChanged: { disruptionModel.filter(text) }
-       }
+        }
 
         footer: Item {
             height: Theme.paddingLarge
@@ -125,4 +126,6 @@ Page {
         //BUG: its seems to be reverted for some reason
         refreshWidget.isPortrait = !isPortrait
     }
+    //in case user closes page with a filter set
+    Component.onDestruction: { disruptionModel.filter("") }
 }
