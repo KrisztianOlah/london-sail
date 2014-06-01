@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include <QList>
 #include "street.h"
 
+//This class is to communicate our collection of streets which is
+//associted with a Disruption object to the GUI
 class StreetModel : public QAbstractListModel
 {
     Q_OBJECT

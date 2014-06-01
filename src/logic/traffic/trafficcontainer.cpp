@@ -38,6 +38,7 @@ TrafficContainer::TrafficContainer(QObject *parent) :
 }
 
 //private:
+//returns a QList of Street objects which are associated with a given Disruption (id).
 QList<Street>* TrafficContainer::getStreetsList(int id) {
     QList<Street>* list = new QList<Street>();
     QHash<int,Street>::const_iterator iter = streets.find(id);
@@ -60,10 +61,13 @@ void TrafficContainer::addStreet(int id, const Street& street) {
     }
 }
 
+//returns a list of all Disruption objects
 QList<Disruption> TrafficContainer::getDisruptionList() { return disruptions;}
 
+//returns a filtered model of Disruption objects
 DisruptionProxyModel* TrafficContainer::getDisruptionModel() { return proxyModel; }
 
+//returns StreetModel according to given id that represents/belongs to a Disruption object
 StreetModel* TrafficContainer::getStreetModel(int id) {
     QList<Street>* list = getStreetsList(id);
     //delete old data from memory
@@ -71,13 +75,16 @@ StreetModel* TrafficContainer::getStreetModel(int id) {
         delete streetModel;
         streetModel = 0;
     }
-    streetModel = new StreetModel(list, this);
+    streetModel = new StreetModel(list, this);//will be deleted when new model is requested, see above
     return streetModel;
 }
 
 
+//returns the amount of Distruption objects
 int TrafficContainer::size() { return disruptions.size(); }
 
+//swaps the data in the two containers, it is used so that user has always data to be displayed
+//after the initial download/parse
 void TrafficContainer::swap(TrafficContainer& other) {
     disruptionModel->beginReset();
     disruptions.clear();

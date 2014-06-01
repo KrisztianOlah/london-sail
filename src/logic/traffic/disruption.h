@@ -27,12 +27,12 @@ THE SOFTWARE.
 
 #include <QString>
 
+//This struct represents a Disruption object,
+//it contains all the data that GUI needs to display
+// plus some more data that can be used later
 struct Disruption
 {
     Disruption();
-
-//    enum Status { Active, ActiveLT, Scheduled, Recurring,  Cleared };
-//    enum Interest { Low, Medium, High };
 
     int id;
     QString category;

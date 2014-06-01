@@ -36,6 +36,8 @@ class DisruptionModel;
 class DisruptionProxyModel;
 class StreetModel;
 
+//This class is to hold a collection of Disruption objects and
+// collections of Street objects that are associated with each Disruption object
 class TrafficContainer : public QObject
 {
     Q_OBJECT

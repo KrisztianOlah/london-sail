@@ -37,16 +37,13 @@ TrafficXmlReader::TrafficXmlReader(QObject* c) : container(static_cast<TrafficCo
     reader.setNamespaceProcessing(false);
 }
 
-void TrafficXmlReader::setContainer(TrafficContainer* newContainer) {
-    delete container;
-    container = newContainer;
-}
-
-void TrafficXmlReader::setDevice(QIODevice* device) { reader.setDevice(device); }
-
 //public slots:
+//appends to QXmlStreamreader's data
 void TrafficXmlReader::addData(const QByteArray& data) { reader.addData(data); }
 
+//Function to parse data available, it will emit partFinished() if data is not yet
+//complete, once it is complete finished() signal will be emitted
+//TODO error handling
 void TrafficXmlReader::parse() {
     if (!container) return;
     while (!reader.atEnd()) {
@@ -110,9 +107,6 @@ void TrafficXmlReader::parse() {
             currentDisruption.coordinates = reader.readElementText();
         }
 
-
-
-
         //Streets
         else if (inDisruption && reader.qualifiedName() == "Street") {
             if (reader.isStartElement()) {
@@ -150,6 +144,7 @@ void TrafficXmlReader::parse() {
     }
 }
 
+//a slot to be connected when running in a different thread due to how QThread works
 void TrafficXmlReader::parseAvailableData(const QByteArray& data) {
     addData(data);
     parse();

@@ -27,6 +27,8 @@ THE SOFTWARE.
 
 #include <QSortFilterProxyModel>
 
+//This class is reqired to filter results in the model so that user is not
+//overwhelmed by 500 ish items
 class DisruptionProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT

@@ -29,6 +29,8 @@ THE SOFTWARE.
 
 class TrafficContainer;
 
+//This is a model to communicate the collection of disruptions with
+// views in the GUI
 class DisruptionModel : public QAbstractListModel
 {
     Q_OBJECT

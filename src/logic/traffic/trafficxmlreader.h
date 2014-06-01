@@ -27,12 +27,14 @@ THE SOFTWARE.
 
 #include <QObject>
 #include <QXmlStreamReader>
-#include <QSharedPointer>
+
 #include "disruption.h"
 #include "street.h"
 #include "trafficcontainer.h"
 
-
+//This class is responsible of parsing our XML feed
+// and storing the objects extracted in a container to which
+// a handle is provided
 class TrafficXmlReader : public QObject
 {
     Q_OBJECT
@@ -47,9 +49,6 @@ private:
     bool inPoint;
     bool inStreet;
     QXmlStreamReader reader;
-public:
-    void setContainer(TrafficContainer*);
-    void setDevice(QIODevice*);
 signals:
     void finished();
     void partFinished();

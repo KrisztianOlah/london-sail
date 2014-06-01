@@ -39,35 +39,38 @@ TrafficLogic::TrafficLogic(QObject *parent) :
     downloading(false),
     networkMngr(static_cast<QNetworkAccessManager*>(parent)),
     parsing(false),
-    workContainer(0),
     reader(0),
     reply(0),
-    url("http://data.tfl.gov.uk/tfl/syndication/feeds/tims_feed.xml?app_id=663a8a04&app_key=a1f29a8c881ffd777431a7cecf6c2d3b")
+    url("http://data.tfl.gov.uk/tfl/syndication/feeds/tims_feed.xml?app_id=663a8a04&app_key=a1f29a8c881ffd777431a7cecf6c2d3b"),
+    workContainer(0)
 {
 }
 
 //private:
 
 //private slots:
+//slot that is called when download is finished and no more data to be downloaded
 void TrafficLogic::onAllDataRecieved() {
     downloading = false;
     emit stateChanged();
     reply->deleteLater();
 }
 
+// slot that is called whenever data is ready to be parsed
 void TrafficLogic::onDataRecieved() {
     parsing = true;
     emit stateChanged();
     emit dataReady(reply->readAll());
 }
 
+//slot to be called upon finishing parsing
 void TrafficLogic::onParsingFinished() {
     parsing = false;
     emit stateChanged();
+    //just sanity check neither should be nullptr
     if (container && workContainer) {
-        container->swap(*workContainer);
-        delete workContainer;
-        workContainer = 0;
+        container->swap(*(workContainer.data()));
+        workContainer.reset();
     }
     else {
         if (!container) qDebug() << "container is nullptr";
@@ -81,19 +84,22 @@ void TrafficLogic::progressSlot(qint64 bytesRecieved, qint64 /*bytesTotal*/) {
 }
 
 //public slots:
+//returns filtered model of Disruption objs
 DisruptionProxyModel* TrafficLogic::getDisruptionModel() { return container->getDisruptionModel(); }
 
+//returns a pointer to Streetmodel object that is associated with Disruption (id) given
 StreetModel* TrafficLogic::getStreetModel(int id) { return container->getStreetModel(id); }
 
 bool TrafficLogic::isDownloading() { return downloading; }
 
 bool TrafficLogic::isParsing() { return parsing; }
 
+//to be called by GUI to request new data, not to be used until parsing is finished
 void TrafficLogic::refresh() {
     if (networkMngr && !parsing) {
-        workContainer = new TrafficContainer(this);
-        reader = new TrafficXmlReader(workContainer);
-        QThread* parserThread = new QThread(/*reader*/);
+        workContainer.reset(new TrafficContainer(this));
+        reader = new TrafficXmlReader(workContainer.data());
+        QThread* parserThread = new QThread();
         reader->moveToThread(parserThread);
 
         connect(reader, SIGNAL(finished()), this, SLOT(onParsingFinished()) );

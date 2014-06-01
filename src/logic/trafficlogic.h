@@ -27,16 +27,18 @@ THE SOFTWARE.
 
 #include <QObject>
 #include <QUrl>
-#include <QXmlSimpleReader>
-#include "traffic/trafficxmlreader.h"
 
+#include "traffic/trafficcontainer.h"
 
+class DisruptionProxyModel;
 class QNetworkAccessManager;
 class QNetworkReply;
-class TrafficContainer;
-class DisruptionProxyModel;
 class StreetModel;
+class TrafficXmlReader;
 
+
+//This class is responsible in coordinating the efforts required to
+//aquire, store and prepare data for GUI.
 // !!! Parent MUST be a QNetworkAccessManager or a nullptr !!!
 class TrafficLogic : public QObject
 {
@@ -48,10 +50,10 @@ private:
     bool downloading;
     QNetworkAccessManager* networkMngr;
     bool parsing;
-    TrafficContainer* workContainer;
     TrafficXmlReader* reader;
     QNetworkReply* reply;
     QUrl url;
+    QScopedPointer<TrafficContainer> workContainer;
 
 private:
 signals:

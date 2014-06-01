@@ -31,6 +31,7 @@ DisruptionProxyModel::DisruptionProxyModel(QObject *parent) :
 {
 }
 
+//rules what to filter
 bool DisruptionProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const {
     QModelIndex index = sourceModel()->index(source_row,0,source_parent);
     QString status = sourceModel()->data(index,DisruptionModel::StatusRole).toString();
@@ -39,6 +40,7 @@ bool DisruptionProxyModel::filterAcceptsRow(int source_row, const QModelIndex& s
 }
 
 //public slots:
+//user defined filter
 void DisruptionProxyModel::filter(const QString& str) {
     setFilterRegExp(QRegExp(str,Qt::CaseInsensitive,QRegExp::FixedString) );
 }

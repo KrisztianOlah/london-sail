@@ -32,10 +32,13 @@ DisruptionModel::DisruptionModel(QObject* c) : container(static_cast<TrafficCont
 {
 }
 
+//informs model that we're about to add new items to our underlying container
 void DisruptionModel::beginInsert(int rows) { beginInsertRows(QModelIndex(),0,rows);}
 
+//informs model that whatever is in the model is to be invalid
 void DisruptionModel::beginReset() { beginResetModel();}
 
+//gets data out from the model according to role
 QVariant DisruptionModel::data(const QModelIndex& index, int role) const {
     if (container) {
         QList<Disruption> list(container->getDisruptionList());
@@ -70,6 +73,7 @@ void DisruptionModel::endInsert() { endInsertRows(); }
 
 void DisruptionModel::endReset() { endResetModel();}
 
+//roles
 QHash<int,QByteArray> DisruptionModel::roleNames() const {
     QHash<int,QByteArray> roles;
     roles[IDRole] = "idData";
@@ -85,7 +89,6 @@ QHash<int,QByteArray> DisruptionModel::roleNames() const {
 
     return roles;
 }
-
 
 int DisruptionModel::rowCount(const QModelIndex& /*parent*/) const {
     if (container) { return container->size(); }
