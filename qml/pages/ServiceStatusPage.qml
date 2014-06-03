@@ -66,6 +66,10 @@ Page {
             state: "visible"
             onClicked: { view.positionViewAtIndex(index, ListView.Contain) }
         }
+        ViewPlaceholder {
+            enabled: (!busyIndicator.running && !view.count)
+            text: "Pull down to refresh."
+        }
         Component.onCompleted: serviceStatusData.refresh()
         onCountChanged: {
             if (footerItem) { footerItem.state = count ? "visible" : "invisible" }
