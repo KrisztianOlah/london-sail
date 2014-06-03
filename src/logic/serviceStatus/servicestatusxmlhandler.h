@@ -26,24 +26,23 @@ THE SOFTWARE.
 #define SERVICESTATUSXMLHANDLER_H
 
 
-#include <QMap>
-#include <QPair>
-#include <QString>
 #include <QXmlDefaultHandler>
+#include "linewrapper.h"
+
+class ThisWeekendLineModel;
 
 //ServiceStatusXmlHandler is responsible of parsing the the fetched Service Status data and putting
 //them in a container provided by the caller.
-
 class ServiceStatusXmlHandler : public QXmlDefaultHandler
 {
 public:
-    ServiceStatusXmlHandler(QMap<QString,QPair<QString,QString> >* c);
+    typedef LineWrapper Line;
+    ServiceStatusXmlHandler(ThisWeekendLineModel*);
 public:
     bool startElement(const QString& namespaceURI,const QString& localName,const QString& qName,const QXmlAttributes& atts);
 private:
-    QMap<QString,QPair<QString,QString> >* container;
-    QString details;
-    QString lineName;
+    Line aLine;
+    ThisWeekendLineModel* model;
 
 };
 

@@ -29,17 +29,14 @@ import "../gui"
 //This page displays the status of all tube/dlr/overground lines and displays if there are any disruptions
 
 Page {
-    property int marginCorrection: 250
-
     id: page
     allowedOrientations: Orientation.All
     onStatusChanged: {
         if (status === PageStatus.Active) {
             pageStack.pushAttached(Qt.resolvedUrl("ThisWeekPage.qml"))
         }
-        else if (status === PageStatus.Inactive) { flick.scrollToTop() }
+        else if (status === PageStatus.Inactive) { view.scrollToTop() }
     }
-
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
@@ -55,132 +52,39 @@ Page {
         }
     }
 
-    SilicaFlickable {
-        id: flick
+    SilicaListView {
+        id: view
         anchors.fill: parent
+        spacing: 10
+        model: serviceStatusData.getModel()
+        delegate: LineInfoWidget {
+            name: nameData
+            statusText: statusData
+            details: messageData
+            color: backgroundData
+            textColor: colorData
+            state: "visible"
+            onClicked: { view.positionViewAtIndex(index, ListView.Contain) }
+        }
+        Component.onCompleted: serviceStatusData.refresh()
+        onCountChanged: {
+            if (footerItem) { footerItem.state = count ? "visible" : "invisible" }
+        }
+
+        header: PageHeader {
+            title: "Service Status"
+        }
+        footer: TflNotice {}
+
         PullDownMenu {
             id: pulley
             MenuItem {
                 text: "Refresh"
                 onClicked: {
-                    //removes all widgets until there is fresh data to display
-                    for (var i = 0; i !== column.children.length; ++i) {
-                        if (column.children[i].objectName === "infoWidget") {} column.children[i].state = "invisible"
-                    }
                     serviceStatusData.refresh()
                 }
             }
         }
-
-        contentHeight: bakerloo.height + central.height + circle.height + district.height + dlr.height + hammersmith.height +
-                       jubilee.height + metropolitan.height + northern.height + overground.height + piccadilly.height +
-                       victoria.height + waterloo.height + marginCorrection + Theme.paddingLarge
-
-        VerticalScrollDecorator { flickable: flick }
-
-
-        Column {
-            id: column
-            width: page.width
-            spacing: 10
-            ViewPlaceholder {
-                enabled: (!(bakerloo.visibility + central.visibility + circle.visibility + district.visibility + dlr.visibility + hammersmith.visibility +
-                         jubilee.visibility + metropolitan.visibility + northern.visibility + overground.visibility + piccadilly.visibility +
-                         victoria.visibility + waterloo.visibility) && !busyIndicator.running)
-                text: "Pull down to refresh."
-            }
-            Component.onCompleted: serviceStatusData.refresh()
-
-
-            PageHeader {
-                title: "Service Status"
-            }
-            //TODO move the colours to a different module to be called from to improve readability just like Theme.highlightColor
-            LineInfoWidget {
-                id: bakerloo
-                color: "#AE6118"
-                name: "Bakerloo"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: central
-                color: "#E41F1F"
-                name: "Central"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: circle
-                color: "#F8D42D"
-                name: "Circle"
-                textColor: "#113B92"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: district
-                color: "#007229"
-                name: "District"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: dlr
-                color: "#00BBB4"
-                name: "DLR"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: hammersmith
-                color: "#E899A8"
-                name: "Hammersmith and City"
-                textColor: "#113B92"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: jubilee
-                color: "#686E72"
-                name: "Jubilee"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: metropolitan
-                color: "#893267"
-                name: "Metropolitan"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: northern
-                color: "#000000"
-                name: "Northern"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: overground
-                color: "#F86C00"
-                name: "Overground"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: piccadilly
-                color: "#0450A1"
-                name: "Piccadilly"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: victoria
-                color: "#009FE0"
-                name: "Victoria"
-                isServiceStatus: true
-            }
-            LineInfoWidget {
-                id: waterloo
-                color: "#70C3CE"
-                name: "Waterloo and City"
-                textColor: "#113B92"
-                isServiceStatus: true
-                //need to scroll to bottom when widget is in a detailed view
-                //otherwise user has to do it which would be annoying
-                onClicked: flick.scrollToBottom()
-            }
-//            TflNotice {}
-        }
+        VerticalScrollDecorator { flickable: view }
     }
 }

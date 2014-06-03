@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 #include "servicestatuslogic.h"
 #include <QDebug>
-#include <QMap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -33,6 +32,7 @@ THE SOFTWARE.
 #include <QXmlInputSource>
 #include <QXmlSimpleReader>
 #include "serviceStatus/servicestatusxmlhandler.h"
+#include "serviceStatus/thisweekendlinemodel.h"
 
 
 //BUG When the internet connection fails after the first call to ServiceStatusLogic::refresh()
@@ -41,27 +41,11 @@ THE SOFTWARE.
 //TODO function try block
 ServiceStatusLogic::ServiceStatusLogic(QObject *parent) :
     QObject(parent),
-    container(new Container()),
     downloading(false),
+    model(new ServiceStatusModel(this)),
     networkMngr(static_cast<QNetworkAccessManager*>(parent)),
     url("http://cloud.tfl.gov.uk/TrackerNet/LineStatus") // /IncidentsOnly //add this later to improve network usage
 {
-    //Giving some sensible initial values for container
-    container.data()->insert("Bakerloo",{"",""});
-    container.data()->insert("Central",{"",""});
-    container.data()->insert("Circle",{"",""});
-    container.data()->insert("DLR",{"",""});
-    container.data()->insert("District",{"",""});
-    container.data()->insert("Hammersmith and City",{"",""});
-    container.data()->insert("Jubilee",{"",""});
-    container.data()->insert("Metropolitan",{"",""});
-    container.data()->insert("Northern",{"",""});
-    container.data()->insert("Overground",{"",""});
-    container.data()->insert("Piccadilly",{"",""});
-    container.data()->insert("Victoria",{"",""});
-    container.data()->insert("Waterloo and City",{"",""});
-
-
 }
 
 // This function is supposed to parse the given QByteArray and return a QMap where key is the line and value is its status,
@@ -71,7 +55,7 @@ void ServiceStatusLogic::parse(const QByteArray& data) {
     QXmlSimpleReader xmlReader;
     QScopedPointer<QXmlInputSource> source(new QXmlInputSource());
     source.data()->setData(data);
-    QScopedPointer<ServiceStatusXmlHandler> handler(new ServiceStatusXmlHandler(container.data()));
+    QScopedPointer<ServiceStatusXmlHandler> handler(new ServiceStatusXmlHandler(model));
     xmlReader.setContentHandler(handler.data());
     xmlReader.setErrorHandler(handler.data());
 
@@ -97,18 +81,7 @@ void ServiceStatusLogic::downloaded() {
 }
 
 //public slots:
-
-//GUI will ask for this data when "stateChanged()" is emitted by *this
-QString ServiceStatusLogic::getInfo(const QString& str) {
-    QString ret = (*container.data())[str].first;
-    return ret;
-}
-
-//GUI will ask for this data when "stateChanged()" is emitted by *this
-QString ServiceStatusLogic::getDetails(const QString& str) {
-    QString ret = (*container.data())[str].second;
-    return ret;
-}
+ThisWeekendLineModel* ServiceStatusLogic::getModel() { return model; }
 
 //gives GUI an indication if download is in progress
 bool ServiceStatusLogic::isDownloading() { return downloading; }
@@ -118,6 +91,7 @@ void ServiceStatusLogic::refresh() {
     downloading = true;
     emit stateChanged();
     if (networkMngr) {
+        if (model) { model->reset(); }
         reply = networkMngr->get(QNetworkRequest(url));
     }
     connect(reply, SIGNAL(finished()), this, SLOT(downloaded()) );

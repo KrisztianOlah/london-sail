@@ -84,7 +84,7 @@ Page {
             text: "Pull down to refresh."
         }
         onCountChanged: {
-            footerItem.state = count ? "visible" : "invisible"
+            if (footerItem) { footerItem.state = count ? "visible" : "invisible" }
         }
     }
 }

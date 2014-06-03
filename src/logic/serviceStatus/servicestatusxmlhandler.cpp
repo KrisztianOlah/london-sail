@@ -27,24 +27,27 @@ THE SOFTWARE.
 #include <QPair>
 #include <QString>
 #include <QXmlAttributes>
+#include "thisweekendlinemodel.h"
 
-ServiceStatusXmlHandler::ServiceStatusXmlHandler(QMap<QString,QPair<QString,QString> >* c) : container(c)
+ServiceStatusXmlHandler::ServiceStatusXmlHandler(ThisWeekendLineModel* m) : model(m)
 {
 }
 
 bool ServiceStatusXmlHandler::startElement(const QString& /*namespaceURI*/,const QString& /*localName*/,
                                            const QString& qName,const QXmlAttributes &atts) {
     if (qName == "LineStatus") {
-        details = atts.value("StatusDetails");
+        aLine[Line::Message] = atts.value("StatusDetails");
         return true;
     }
     if (qName == "Line") {
-        lineName = atts.value("Name");//it will always give the correct the name for each line
+        aLine[Line::Name] = atts.value("Name");//it will always give the correct the name for each line
         return true;
     }
     if (qName == "Status") {
-       QString description = atts.value("Description");
-       container->insert(lineName,{description,details});
+       aLine[Line::Status] = atts.value("Description");
+       aLine.setColors();
+       if (model) { model->addLine(aLine); }
+       aLine = Line();
        return true;
     }
     return true;
