@@ -88,7 +88,54 @@ Item {
                 opacity: 100
                 readOnly: false
             }
+        },
+        State {
+            name: "Traffic Disruptions"
+            PropertyChanges {
+                target: self
+                title: "Traffic Disruptions"
+            }
+            PropertyChanges {
+                target: searchField
+                opacity: 100
+                readOnly: false
+            }
+        },
+        State {
+            name: "Scheduled"
+            PropertyChanges {
+                target: self
+                title: "Scheduled"
+            }
+            PropertyChanges {
+                target: searchField
+                opacity: 100
+                readOnly: false
+            }
+        },
+        State {
+            name: "Recurring Works"
+            PropertyChanges {
+                target: self
+                title: "Recurring Works"
+            }
+            PropertyChanges {
+                target: searchField
+                opacity: 100
+                readOnly: false
+            }
+        },
+        State {
+            name: "Recently Cleared"
+            PropertyChanges {
+                target: self
+                title: "Recently Cleared"
+            }
+            PropertyChanges {
+                target: searchField
+                opacity: 100
+                readOnly: false
+            }
         }
-
     ]
 }

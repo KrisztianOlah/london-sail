@@ -19,7 +19,7 @@ Item {
     }
     Label {
         id: label
-        text: "Data provided by Tfl."
+        text: "Data provided by TfL."
         font.pixelSize: Theme.fontSizeTiny
         opacity: 0
         anchors {

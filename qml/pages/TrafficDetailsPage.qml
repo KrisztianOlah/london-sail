@@ -93,10 +93,8 @@ Page {
                     direction: directionsData
                 }
             }
-            Item {
-                id: bottomExtraSpace
-                height: Theme.paddingLarge
-                width: 1
+            TflNotice {
+                state: "visible"
             }
         }
         states: [
@@ -114,10 +112,6 @@ Page {
                 target: middleExtraSpace
                 width: 1
             }
-            PropertyChanges {
-                target: bottomExtraSpace
-                width: 1
-            }
         },
         State {
                 name: "invisibleStreets"
@@ -132,10 +126,6 @@ Page {
                 }
                 PropertyChanges {
                     target: middleExtraSpace
-                    width: 0
-                }
-                PropertyChanges {
-                    target: bottomExtraSpace
                     width: 0
                 }
             }

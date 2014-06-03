@@ -27,7 +27,8 @@ THE SOFTWARE.
 #include "disruptionmodel.h"
 
 DisruptionProxyModel::DisruptionProxyModel(QObject *parent) :
-    QSortFilterProxyModel(parent)
+    QSortFilterProxyModel(parent),
+    statusFilter("Traffic Disruptions")
 {
 }
 
@@ -36,14 +37,23 @@ bool DisruptionProxyModel::filterAcceptsRow(int source_row, const QModelIndex& s
     QModelIndex index = sourceModel()->index(source_row,0,source_parent);
     QString status = sourceModel()->data(index,DisruptionModel::StatusRole).toString();
     QString location = sourceModel()->data(index,DisruptionModel::LocationRole).toString();
-    return ((status == "Active Long Term" || status == "Active") && location.contains(filterRegExp()));
+    if (statusFilter == "Traffic Disruptions") {
+        return ((status == "Active Long Term" || status == "Active") && location.contains(filterRegExp()));
+    }
+    else return ((status == statusFilter) && location.contains(filterRegExp()));
+
 }
 
 //public slots:
 //user defined filter
 void DisruptionProxyModel::filter(const QString& str) {
+    currentFilter = str;
     setFilterRegExp(QRegExp(str,Qt::CaseInsensitive,QRegExp::FixedString) );
 }
-//"Scheduled"
-//"Recurring Works"
-//"Recently Cleared"
+
+bool DisruptionProxyModel::isFilterEmptyString() {return currentFilter == "";}
+
+void DisruptionProxyModel::setStatusFilter(const QString& str) {
+    statusFilter = str;
+    invalidateFilter();
+}

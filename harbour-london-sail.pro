@@ -63,7 +63,6 @@ HEADERS += \
     src/logic/trafficlogic.h \
     src/logic/traffic/street.h \
     src/logic/traffic/disruption.h \
-    src/utilities/utility.h \
     src/logic/traffic/trafficcontainer.h \
     src/logic/traffic/disruptionmodel.h \
     src/logic/traffic/streetmodel.h \

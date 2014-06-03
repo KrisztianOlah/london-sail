@@ -30,7 +30,8 @@ Rectangle {
     property alias comment: commentLabel.text
     property alias currentUpdate: currentUpdateLabel.text
     id: self
-    height: locationLabel.paintedHeight + commentLabel.paintedHeight + currentUpdateLabel.paintedHeight + 2*Theme.paddingMedium
+    height: locationLabel.paintedHeight + commentLabel.paintedHeight + currentUpdateLabel.paintedHeight + updateTag.paintedHeight
+            + 3*Theme.paddingMedium
     radius: 10
     anchors {
         left: parent.left
@@ -70,13 +71,28 @@ Rectangle {
         }
     }
     Label {
+        id: updateTag
+        font.italic: true
+        font.pixelSize: Theme.fontSizeExtraSmall
+        text: currentUpdateLabel.text !== "" ? "Latest updates:" : ""
+        anchors {
+            top: commentLabel.bottom
+            topMargin: Theme.paddingMedium
+            left: parent.left
+            leftMargin: Theme.paddingLarge
+            right: parent.right
+            rightMargin: Theme.paddingLarge
+        }
+    }
+
+    Label {
         id: currentUpdateLabel
         text: ""
         font.pixelSize: Theme.fontSizeSmall
         wrapMode: Text.WordWrap
         textFormat: Text.RichText
         anchors {
-            top: commentLabel.bottom
+            top: updateTag.bottom
             left: parent.left
             leftMargin: Theme.paddingLarge
             right: parent.right
@@ -108,6 +124,10 @@ Rectangle {
             }
             PropertyChanges {
                 target: currentUpdateLabel
+                color: "#113B92"
+            }
+            PropertyChanges {
+                target: updateTag
                 color: "#113B92"
             }
         },
