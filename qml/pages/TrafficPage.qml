@@ -30,6 +30,8 @@ import "../gui"
 
 
 Page {
+    property int fewItems: 6
+
     id: page
     allowedOrientations: Orientation.All
 
@@ -90,16 +92,12 @@ Page {
         id: view
         anchors.fill: parent
         header: SearchHeader {
-            id: sh
             title: "Traffic Disruptions"
             state: ""
             onFilterChanged: { disruptionModel.filter(text) }
         }
 
-        footer: Item {
-            height: Theme.paddingLarge
-            width: 1
-        }
+        footer: TflNotice { /*state: "invisible"*/ }
         PullDownMenu {
             id: pulley
             MenuItem {
@@ -109,8 +107,9 @@ Page {
             }
         }
         PushUpMenu {
-            enabled: view.count
-            visible: view.count
+            id: pushy
+            enabled: view.count > fewItems
+            visible: view.count > fewItems
 
             MenuItem {
                 text: "Go to top"
@@ -130,9 +129,15 @@ Page {
 
         }
         onCountChanged: {
-            if (view.headerItem && view.headerItem.state === "") {
-                view.headerItem.state = (view.count) ? "searchable" : ""
+            if (headerItem && headerItem.state === "") {
+                headerItem.state = count ? "searchable" : ""
             }
+            if (footerItem) {
+                footerItem.state = count ? "visible" : "invisible"
+            }
+            // push up menu seems to be pointless when only a handful of items to display
+            pushy.enabled = view.count > fewItems
+            pushy.visible =  view.count > fewItems
         }
 
         VerticalScrollDecorator { flickable: view }

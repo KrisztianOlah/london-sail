@@ -41,6 +41,7 @@ Rectangle {
     height: 100
     color: Theme.secondaryHighlightColor
     opacity: 0
+    state: "inactive"
 
     Item {
         height: parent.height

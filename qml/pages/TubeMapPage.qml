@@ -41,9 +41,14 @@ Page {
             sourceSize.width: 2054
             sourceSize.height: 1362
         }
-        ScrollDecorator {
-            id: scroll
+
+        HorizontalScrollDecorator {
             flickable: flick
+            color: Theme.highlightBackgroundColor
+        }
+        VerticalScrollDecorator {
+            flickable: flick
+            color: Theme.highlightBackgroundColor
         }
     }
 }

@@ -50,7 +50,8 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/gui/RoadDetailsWidget.qml \
     qml/gui/StreetWidget.qml \
     qml/gui/SearchHeader.qml \
-    qml/gui/RefreshWidget.qml
+    qml/gui/RefreshWidget.qml \
+    qml/gui/TflNotice.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \

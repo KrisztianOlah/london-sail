@@ -48,7 +48,7 @@ Rectangle {
     //to signal when the last item is reached and clicked
     //when this signal is emitted SilicaFlickable should scroll to the
     //bottom as contentHeight would have changed
-    signal itemReached
+    signal clicked
 
     function setNormalState() {
         self.state = "normal"
@@ -158,7 +158,7 @@ Rectangle {
             else setNormalState()
         }
     }
-    Component.onCompleted: mousearea.clicked.connect(itemReached)
+    Component.onCompleted: mousearea.clicked.connect(clicked)
 
     states: [
         //It is only initial state, after first refresh, or unless whilst being refreshed it shouldn't be active

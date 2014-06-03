@@ -93,7 +93,7 @@ Page {
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
-                text: "Data kindly provided by <html><a href='http://www.tfl.gov.uk/'>TFL</a></html>.
+                text: "Data kindly provided by <html><a href='http://www.tfl.gov.uk/'>TfL</a></html>.
                        The London Underground map is the property of Transport For London."
                 linkColor: Theme.primaryColor
                 onLinkActivated: Qt.openUrlExternally(link)

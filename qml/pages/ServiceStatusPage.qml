@@ -50,6 +50,7 @@ Page {
             target: serviceStatusData
             onStateChanged: {
                 busyIndicator.running = serviceStatusData.isDownloading()
+                pulley.busy = serviceStatusData.isDownloading()
             }
         }
     }
@@ -58,6 +59,7 @@ Page {
         id: flick
         anchors.fill: parent
         PullDownMenu {
+            id: pulley
             MenuItem {
                 text: "Refresh"
                 onClicked: {
@@ -176,8 +178,9 @@ Page {
                 isServiceStatus: true
                 //need to scroll to bottom when widget is in a detailed view
                 //otherwise user has to do it which would be annoying
-                onItemReached: flick.scrollToBottom()
+                onClicked: flick.scrollToBottom()
             }
+//            TflNotice {}
         }
     }
 }

@@ -39,7 +39,10 @@ Page {
 
         Connections {
             target: thisWeekendData
-            onStateChanged: { busyIndicator.running = thisWeekendData.isDownloading() }
+            onStateChanged: {
+                busyIndicator.running = thisWeekendData.isDownloading()
+                pulley.busy = thisWeekendData.isDownloading()
+            }
         }
     }
 
@@ -52,12 +55,10 @@ Page {
             title: "This Weekend"
         }
 
-        footer: Rectangle {
-            height: Theme.paddingLarge
-            opacity: 0
-        }
+        footer: TflNotice {}
 
         PullDownMenu {
+            id: pulley
             MenuItem {
                 text: "Refresh"
                 onClicked: thisWeekendData.refresh()
@@ -76,10 +77,14 @@ Page {
             color: backgroundData
             textColor: colorData
             state: "visible"
+            onClicked: { view.positionViewAtIndex(index, ListView.Contain) }
         }
         ViewPlaceholder {
             enabled: (!busyIndicator.running && !view.count)
             text: "Pull down to refresh."
+        }
+        onCountChanged: {
+            footerItem.state = count ? "visible" : "invisible"
         }
     }
 }
