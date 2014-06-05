@@ -94,7 +94,7 @@ Page {
                     rightMargin: Theme.paddingLarge
                 }
                 text: "Data kindly provided by <html><a href='http://www.tfl.gov.uk/'>TfL</a></html>.
-                       The London Underground map is the property of Transport For London."
+                       The London Underground map is the property of Transport for London."
                 linkColor: Theme.primaryColor
                 onLinkActivated: Qt.openUrlExternally(link)
             }

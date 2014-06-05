@@ -52,6 +52,21 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.3.1 - Road Disruptions filters.</b><br>
+*Added filters to Road Disruption page.<br>
+*Fixed bug: Road Disruptions page now correctly displays all labels. No more empty labels.<br>
+*Minor GUI improvements."
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.3.0 - Road Disruptions Feature.</b><br>
 *Fixed bug: Service Status/This Weekend now correctly displays special characters(&, ', etc)<br>
 *Fixed bug: Service Status and This Weekend colours match as intended"
