@@ -39,7 +39,7 @@ TrafficXmlReader::TrafficXmlReader(QObject* c) : container(static_cast<TrafficCo
 
 //public slots:
 //appends to QXmlStreamreader's data
-void TrafficXmlReader::addData(const QByteArray& data) { reader.addData(data); }
+void TrafficXmlReader::addData(const QByteArray& data) { reader.addData(data);  qDebug() << "+++++++";/*qDebug() << data; */}
 
 //Function to parse data available, it will emit partFinished() if data is not yet
 //complete, once it is complete finished() signal will be emitted
@@ -82,11 +82,14 @@ void TrafficXmlReader::parse() {
         //it is to make WordWrap possible in gui
         else if (inDisruption && reader.qualifiedName() == "location") {
             QString location = reader.readElementText();
+            if (location == "") qDebug() << "!!!!!!!!!!!";
             int i;
             while ((i = location.indexOf(QRegExp(",[^\\s-]"))) != -1 ) {
                 location = location.insert(++i, " ");
             }
             currentDisruption.location = location;
+//            if (location == "") qDebug() << "***this >>>>" << copy; //qDebug() << "!!!!!!!!!!!";
+//            else qDebug() << location;
         }
         else if (inDisruption && reader.qualifiedName() == "comments") {
             currentDisruption.comments = reader.readElementText();

@@ -52,15 +52,19 @@ TrafficLogic::TrafficLogic(QObject *parent) :
 //slot that is called when download is finished and no more data to be downloaded
 void TrafficLogic::onAllDataRecieved() {
     downloading = false;
+    parsing = true;
     emit stateChanged();
+    emit dataReady(reply->readAll());
     reply->deleteLater();
 }
 
 // slot that is called whenever data is ready to be parsed
 void TrafficLogic::onDataRecieved() {
-    parsing = true;
-    emit stateChanged();
-    emit dataReady(reply->readAll());
+    //moved to TrafficLogic::onAllDataRecieved() until I figure out how to fix bug when
+    //certain strings(location) found by parser are empty
+//    parsing = true;
+//    emit stateChanged();
+//    emit dataReady(reply->readAll());
 }
 
 //slot to be called upon finishing parsing
