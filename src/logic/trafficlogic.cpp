@@ -52,9 +52,10 @@ TrafficLogic::TrafficLogic(QObject *parent) :
 //slot that is called when download is finished and no more data to be downloaded
 void TrafficLogic::onAllDataRecieved() {
     downloading = false;
-    parsing = true;
+    QByteArray data = reply->readAll();
+    if (!data.isEmpty()) { parsing = true; }
     emit stateChanged();
-    emit dataReady(reply->readAll());
+    emit dataReady(data);
     reply->deleteLater();
 }
 
