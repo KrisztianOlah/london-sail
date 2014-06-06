@@ -81,18 +81,18 @@ int main(int argc, char *argv[])
     //on the heap so that it can be the parent of serviceLogic
     QScopedPointer<QNetworkAccessManager> networkMngr(new QNetworkAccessManager());
 
-    qmlRegisterType<ServiceStatusProxyModel>("LondonSailUtilities",1,0, "ServiceStatusModel");
+    qmlRegisterType<ServiceStatusProxyModel>("harbour.london.sail.utilities",1,0, "ServiceStatusModel");
     ServiceStatusLogic* serviceLogic = new ServiceStatusLogic(networkMngr.data());
     view->rootContext()->setContextProperty("serviceStatusData", serviceLogic);
 
-    qmlRegisterType<ThisWeekendLineModel>("LondonSailUtilities",1,0,"WeekendModel");
+    qmlRegisterType<ThisWeekendLineModel>("harbour.london.sail.utilities",1,0,"WeekendModel");
     ThisWeekendLogic* weekendLogic = new ThisWeekendLogic(networkMngr.data());
     view->rootContext()->setContextProperty("thisWeekendData", weekendLogic);
 
 
 
-    qmlRegisterType<DisruptionProxyModel>("LondonSailUtilities",1,0,"DisruptionModel");
-    qmlRegisterType<StreetModel>("LondonSailUtilities",1,0,"StreetModel");
+    qmlRegisterType<DisruptionProxyModel>("harbour.london.sail.utilities",1,0,"DisruptionModel");
+    qmlRegisterType<StreetModel>("harbour.london.sail.utilities",1,0,"StreetModel");
     TrafficLogic* trafficLogic = new TrafficLogic(networkMngr.data());
     view->rootContext()->setContextProperty("trafficData", trafficLogic);
 
