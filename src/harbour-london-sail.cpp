@@ -59,11 +59,13 @@ THE SOFTWARE.
 #include <QtQuick>
 #include <sailfishapp.h>
 #include "logic/servicestatuslogic.h"
+#include "logic/serviceStatus/servicestatusproxymodel.h"
 #include "logic/serviceStatus/thisweekendlinemodel.h"
 #include "logic/traffic/disruptionproxymodel.h"
 #include "logic/traffic/streetmodel.h"
 #include "logic/thisweekendlogic.h"
 #include "logic/trafficlogic.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -79,13 +81,15 @@ int main(int argc, char *argv[])
     //on the heap so that it can be the parent of serviceLogic
     QScopedPointer<QNetworkAccessManager> networkMngr(new QNetworkAccessManager());
 
-    //networkMngr will be responsible for deletion
+    qmlRegisterType<ServiceStatusProxyModel>("LondonSailUtilities",1,0, "ServiceStatusModel");
     ServiceStatusLogic* serviceLogic = new ServiceStatusLogic(networkMngr.data());
     view->rootContext()->setContextProperty("serviceStatusData", serviceLogic);
 
-    qmlRegisterType<ThisWeekendLineModel>("LondonSailUtities",1,0,"WeekendModel");
+    qmlRegisterType<ThisWeekendLineModel>("LondonSailUtilities",1,0,"WeekendModel");
     ThisWeekendLogic* weekendLogic = new ThisWeekendLogic(networkMngr.data());
     view->rootContext()->setContextProperty("thisWeekendData", weekendLogic);
+
+
 
     qmlRegisterType<DisruptionProxyModel>("LondonSailUtilities",1,0,"DisruptionModel");
     qmlRegisterType<StreetModel>("LondonSailUtilities",1,0,"StreetModel");

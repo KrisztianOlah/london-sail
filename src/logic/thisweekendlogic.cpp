@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <QNetworkReply>
 #include <QXmlSimpleReader>
 
+#include "serviceStatus/servicestatusproxymodel.h"
 #include "serviceStatus/thisweekendxmlhandler.h"
 #include "serviceStatus/thisweekendlinemodel.h"
 
@@ -36,8 +37,11 @@ ThisWeekendLogic::ThisWeekendLogic(QObject *parent) :
     downloading(false),
     model(new ThisWeekendLineModel(this)),
     networkMngr(static_cast<QNetworkAccessManager*>(parent)),
+    proxyModel(new ServiceStatusProxyModel(this)),
     url("http://www.tfl.gov.uk/tfl/businessandpartners/syndication/feed.aspx?email=fasza2mobile@gmail.com&feedId=7")
 {
+    proxyModel->setSourceModel(model);
+    proxyModel->sort(0);
 }
 
 //private:
@@ -72,7 +76,7 @@ void ThisWeekendLogic::downloaded() {
 
 //public slots:
 //returns a model handle to GUI
-ThisWeekendLineModel* ThisWeekendLogic::getModel() { return model; }
+ServiceStatusProxyModel* ThisWeekendLogic::getModel() { return proxyModel; }
 
 //to indicate if download is in progress
 bool ThisWeekendLogic::isDownloading() { return downloading; }

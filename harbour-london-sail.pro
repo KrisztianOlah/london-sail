@@ -28,7 +28,8 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/traffic/disruptionmodel.cpp \
     src/logic/traffic/streetmodel.cpp \
     src/logic/traffic/disruptionproxymodel.cpp \
-    src/logic/traffic/trafficxmlreader.cpp
+    src/logic/traffic/trafficxmlreader.cpp \
+    src/logic/serviceStatus/servicestatusproxymodel.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -67,7 +68,8 @@ HEADERS += \
     src/logic/traffic/disruptionmodel.h \
     src/logic/traffic/streetmodel.h \
     src/logic/traffic/disruptionproxymodel.h \
-    src/logic/traffic/trafficxmlreader.h
+    src/logic/traffic/trafficxmlreader.h \
+    src/logic/serviceStatus/servicestatusproxymodel.h
 
 RESOURCES += \
     images.qrc

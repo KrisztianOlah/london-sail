@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include <QXmlSimpleReader>
 #include "serviceStatus/servicestatusxmlhandler.h"
 #include "serviceStatus/thisweekendlinemodel.h"
+#include "serviceStatus/servicestatusproxymodel.h"
 
 
 //BUG When the internet connection fails after the first call to ServiceStatusLogic::refresh()
@@ -44,8 +45,11 @@ ServiceStatusLogic::ServiceStatusLogic(QObject *parent) :
     downloading(false),
     model(new ServiceStatusModel(this)),
     networkMngr(static_cast<QNetworkAccessManager*>(parent)),
+    proxyModel(new ServiceStatusProxyModel(this)),
     url("http://cloud.tfl.gov.uk/TrackerNet/LineStatus") // /IncidentsOnly //add this later to improve network usage
 {
+    proxyModel->setSourceModel(model);
+    proxyModel->sort(0);
 }
 
 // This function is supposed to parse the given QByteArray and return a QMap where key is the line and value is its status,
@@ -81,7 +85,7 @@ void ServiceStatusLogic::downloaded() {
 }
 
 //public slots:
-ThisWeekendLineModel* ServiceStatusLogic::getModel() { return model; }
+ServiceStatusProxyModel* ServiceStatusLogic::getModel() { return proxyModel; }
 
 //gives GUI an indication if download is in progress
 bool ServiceStatusLogic::isDownloading() { return downloading; }

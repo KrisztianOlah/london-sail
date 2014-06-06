@@ -45,6 +45,7 @@ public:
     virtual QHash<int,QByteArray> roleNames() const;
     void reset();
     virtual int rowCount(const QModelIndex& parent = QModelIndex() ) const;
+//    virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 };
 
 #endif // THISWEEKENDLINEMODEL_H

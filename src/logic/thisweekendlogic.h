@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 class QNetworkAccessManager;
 class QNetworkReply;
+class ServiceStatusProxyModel;
 class ThisWeekendLineModel;
 
 // !!! parent must be a NetworkAccessManager or nullptr(default)
@@ -44,6 +45,7 @@ private:
     bool downloading;
     ThisWeekendLineModel* model;//Qt memory management
     QNetworkAccessManager* networkMngr;//just a handle for global QNetworkAccessManager
+    ServiceStatusProxyModel* proxyModel;
     QNetworkReply* reply;//handled in class
     QUrl url;
 private:
@@ -55,7 +57,7 @@ signals:
 private slots:
     void downloaded();
 public slots:
-    ThisWeekendLineModel* getModel();
+    ServiceStatusProxyModel* getModel();
     bool isDownloading();
     void refresh();
 };

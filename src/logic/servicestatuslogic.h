@@ -27,7 +27,6 @@ THE SOFTWARE.
 #define SERVICESTATUSLOGIC_H
 
 #include <QByteArray>
-//#include <QMap>
 #include <QObject>
 #include <QPair>
 #include <QUrl>
@@ -38,6 +37,7 @@ class QNetworkReply;
 class QString;
 class QXmlSimpleReader;
 class ThisWeekendLineModel;
+class ServiceStatusProxyModel;
 
 //ServiceStatusLogic is responsible for fetching, parsing the data required to display Service Status information
 //it is also responsible of notifying ServiceStatusPage.qml when the data is ready to be displayed
@@ -58,6 +58,7 @@ private:
     bool downloading;
     ServiceStatusModel* model;
     QNetworkAccessManager* networkMngr;//handle for global obj
+    ServiceStatusProxyModel* proxyModel;
     QNetworkReply* reply;//handled by this class
     QUrl url;
 private:
@@ -66,7 +67,7 @@ private:
 private slots:
     void downloaded();
 public slots:
-    ThisWeekendLineModel* getModel();
+    ServiceStatusProxyModel* getModel();
     bool isDownloading();
     void refresh();
 };
