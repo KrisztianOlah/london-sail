@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 #include "servicestatusxmlhandler.h"
+#include <QDebug>
 #include <QMap>
 #include <QPair>
 #include <QString>
@@ -46,6 +47,10 @@ bool ServiceStatusXmlHandler::startElement(const QString& /*namespaceURI*/,const
     if (qName == "Status") {
        aLine[Line::Status] = atts.value("Description");
        aLine.setColors();
+       qDebug() << aLine[Line::Name];
+       qDebug() << aLine[Line::Status];
+       qDebug() << aLine[Line::Message];
+       qDebug() << "****************";
        if (model) { model->addLine(aLine); }
        aLine = Line();
        return true;
