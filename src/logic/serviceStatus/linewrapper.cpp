@@ -80,6 +80,14 @@ LineWrapper::~LineWrapper() {
 }
 
 //public:
+void LineWrapper::debug() {
+    qDebug() << "##################";
+    qDebug() << data[Name];
+    qDebug() << data[Status];
+    qDebug() << data[Message];
+    qDebug() << "##################";
+}
+
 QString LineWrapper::getBgColor(const QString& line) { return bgColorHash.value(line); }
 
 QString LineWrapper::getTxtColor(const QString& line) {

@@ -46,8 +46,13 @@ bool ServiceStatusXmlHandler::startElement(const QString& /*namespaceURI*/,const
     if (qName == "Status") {
        aLine[Line::Status] = atts.value("Description");
        aLine.setColors();
-       if (model) { model->addLine(aLine); }
-       aLine = Line();
+       //sometimes there are more then one Status tags with attribute Description associated with the same Line (Line::Name)
+       //we only save the last one which is the only one that follows the Line tag
+       if (model && !aLine[Line::Name].isEmpty() ) {
+           model->addLine(aLine);
+           aLine = Line();
+       }
+
        return true;
     }
     return true;
