@@ -31,6 +31,7 @@ import "../gui"
 
 Page {
     property int fewItems: 6
+    property bool hasQuickScroll: view.quickScroll !== undefined
 
     id: page
     allowedOrientations: Orientation.All
@@ -96,7 +97,6 @@ Page {
                     progressLabel = ""
                     //have to clear filter because SearchField in header gets cleared causing a bug
                     disruptionModel.filter("")
-                    //setModel(currentModel)
                 }
 
             }
@@ -105,7 +105,6 @@ Page {
     function setModel(str) {
         currentModel = str
         view.headerItem.state = str
-//        Qt.conslole.log("Setting " + str + " as header.")
         disruptionModel.setStatusFilter(str)
     }
 
@@ -154,8 +153,8 @@ Page {
         }
         PushUpMenu {
             id: pushy
-            enabled: view.count > fewItems
-            visible: view.count > fewItems
+            enabled: !hasQuickScroll && view.count > fewItems
+            visible: !hasQuickScroll && view.count > fewItems
 
             MenuItem {
                 text: "Go to top"
@@ -174,8 +173,6 @@ Page {
             disruptionID: idData
 
         }
-//        if "" and count and refresh OK
-//        if "dfghjk" !count and refresh OK, but headerItem.cleared() filter is still set
         onCountChanged: {
             if (headerItem && headerItem.state === "") {
                 headerItem.state = count || !disruptionModel.isFilterEmptyString() ? "searchable" : ""
@@ -184,8 +181,8 @@ Page {
                 footerItem.state = count ? "visible" : "invisible"
             }
             // push up menu seems to be pointless when only a handful of items to display
-            pushy.enabled = view.count > fewItems
-            pushy.visible =  view.count > fewItems
+            pushy.enabled = !hasQuickScroll && view.count > fewItems
+            pushy.visible = !hasQuickScroll && view.count > fewItems
         }
 
         VerticalScrollDecorator { flickable: view }
