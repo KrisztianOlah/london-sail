@@ -66,7 +66,7 @@ LineWrapper::LineWrapper() : data(new QString[size]),
 {
 }
 
-LineWrapper::LineWrapper(const LineWrapper& other) : pRefCount(other.pRefCount) {
+LineWrapper::LineWrapper(const LineWrapper& other) /*: pRefCount(other.pRefCount)*/ {
     data = other.data;
     pRefCount = other.pRefCount;
     ++(*pRefCount);

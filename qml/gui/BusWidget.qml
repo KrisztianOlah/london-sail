@@ -5,7 +5,7 @@ import Sailfish.Silica 1.0
 BackgroundItem {
     property alias busNumber: numberLabel.text
     property alias destination: destinationLabel.text
-    property alias eta: etaLabel.text
+    property int eta: 9999
 
     anchors {
         left: parent.left
@@ -28,7 +28,7 @@ BackgroundItem {
     }
     Label {
         id: etaLabel
-        text: ""
+        text: (eta < 3) ? "due" : eta + "min"
         anchors {
             right: parent.right
             verticalCenter: parent.verticalCenter

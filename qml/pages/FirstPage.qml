@@ -54,7 +54,7 @@ Page {
                         verticalCenter: parent.verticalCenter
                     }
                 }
-                onClicked: pageStack.push(Qt.resolvedUrl("DeparturePage.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("BusStopPage.qml"))//("DeparturePage.qml"))
             }
             BackgroundItem {
                 Label {

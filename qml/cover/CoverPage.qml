@@ -43,7 +43,7 @@ CoverBackground {
     Label {
         id: label
         anchors {
-            top: icon.bottom
+            top: icon.horizontalCenter
             topMargin: Theme.paddingLarge
             horizontalCenter: parent.horizontalCenter
         }

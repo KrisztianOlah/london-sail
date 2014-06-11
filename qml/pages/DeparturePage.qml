@@ -20,6 +20,8 @@ Page {
     SilicaListView {
         id: view
         anchors.fill: parent
+
+        Component.onCompleted: arrivalsData.getBusStopByCode("74612")
         //replace by SearchHeader
         header: PageHeader {
             title: "Departures"

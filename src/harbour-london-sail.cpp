@@ -58,6 +58,10 @@ THE SOFTWARE.
 #include <QQuickView>
 #include <QtQuick>
 #include <sailfishapp.h>
+#include "logic/arrivals/arrivalsproxymodel.h"
+//#include "logic/arrivals/arrivalsmodel.h"
+#include "logic/arrivals/stop.h"
+#include "logic/arrivalslogic.h"
 #include "logic/servicestatuslogic.h"
 #include "logic/serviceStatus/servicestatusproxymodel.h"
 #include "logic/serviceStatus/thisweekendlinemodel.h"
@@ -65,6 +69,7 @@ THE SOFTWARE.
 #include "logic/traffic/streetmodel.h"
 #include "logic/thisweekendlogic.h"
 #include "logic/trafficlogic.h"
+
 
 
 int main(int argc, char *argv[])
@@ -89,12 +94,15 @@ int main(int argc, char *argv[])
     ThisWeekendLogic* weekendLogic = new ThisWeekendLogic(networkMngr.data());
     view->rootContext()->setContextProperty("thisWeekendData", weekendLogic);
 
-
-
     qmlRegisterType<DisruptionProxyModel>("harbour.london.sail.utilities",1,0,"DisruptionModel");
     qmlRegisterType<StreetModel>("harbour.london.sail.utilities",1,0,"StreetModel");
     TrafficLogic* trafficLogic = new TrafficLogic(networkMngr.data());
     view->rootContext()->setContextProperty("trafficData", trafficLogic);
+
+    qmlRegisterType<ArrivalsProxyModel>("harbour.london.sail.utilities",1,0,"ArrivalsModel");
+    qmlRegisterType<Stop>("harbour.london.sail.utilities",1,0,"Stop");
+    ArrivalsLogic* arrivalsLogic = new ArrivalsLogic(networkMngr.data());
+    view->rootContext()->setContextProperty("arrivalsData", arrivalsLogic);
 
     view->show();
 
