@@ -56,6 +56,7 @@ QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
 
 //private slots:
 void ArrivalsLogic::fetchArrivalsData() {
+    qDebug() << "updated";
     switch (currentStop->getType()) {
     case Stop::None:
         return;
@@ -137,4 +138,7 @@ void ArrivalsLogic::startArrivalsUpdate() {
     arrivalsTimer->start(30000);
 }
 
-void ArrivalsLogic::stopArrivalsUpdate() {}
+void ArrivalsLogic::stopArrivalsUpdate() {
+    qDebug() << "updating stopped.";
+    arrivalsTimer->stop();
+}

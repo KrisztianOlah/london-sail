@@ -28,7 +28,7 @@ BackgroundItem {
     }
     Label {
         id: etaLabel
-        text: (eta < 3) ? "due" : eta + "min"
+        text: (eta < 2) ? "due" : eta + "min"
         anchors {
             right: parent.right
             verticalCenter: parent.verticalCenter

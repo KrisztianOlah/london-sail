@@ -34,6 +34,7 @@ import "pages"
 
 ApplicationWindow
 {
+    id: win
     initialPage: Component { /*BusStopPage {} }  { DeparturePage {} }*/FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 }

@@ -32,23 +32,32 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 CoverBackground {
+    id: bg
+    property bool active: status === Cover.Active
+    anchors.fill: parent
     Image {
-        id: icon
-        source: "/usr/share/icons/hicolor/86x86/apps/harbour-london-sail.png"
+        id: background
+        source: "qrc:///coverBackground.png"
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.verticalCenter
+            centerIn: parent
         }
     }
-    Label {
-        id: label
-        anchors {
-            top: icon.horizontalCenter
-            topMargin: Theme.paddingLarge
-            horizontalCenter: parent.horizontalCenter
-        }
-        text: "London Sail"
+    ArrivalsCover {
+        id: arrivalsCover
+        active: active && pageStack.currentPage.objectName === "busStopPage"
     }
+//    onActiveChanged: {
+//        if (Qt.application.active) {
+//            console.log("active")
+//        }
+//        else console.log("inactive")
+//    }
+
+}
+
+
+//CoverBackground {
+
 
 //    CoverActionList {
 //        id: coverAction
@@ -61,6 +70,6 @@ CoverBackground {
 //            iconSource: "image://theme/icon-cover-pause"
 //        }
 //    }
-}
+//}
 
 

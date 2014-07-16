@@ -8,16 +8,17 @@ import "../gui"
 
 Page {
     id: page
+    objectName: "busStopPage"
     SilicaListView {
         id: view
-
         property Stop currentStop: arrivalsData.getCurrentStop()
         property string busStopName: ""
         property string stopIndicator: ""
         property string direction: ""
         property string distance: ""
-        property string stopID: "52727"//"74612"
+        property string stopID: "74612"//"52727"
         property bool loadingHeader: true
+
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
 
         Connections {
