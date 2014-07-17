@@ -4,12 +4,22 @@ import harbour.london.sail.utilities 1.0
 import "../gui"
 //TODO
 //Add ScrollDecorator
+//Tfl Footer
+//Display loadig sign
+//check if there is no data...
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
 Page {
     id: page
     objectName: "busStopPage"
+    BusyIndicator {
+        id: busyIndicator
+        running: view.loadingData
+        size: BusyIndicatorSize.Large
+        anchors.centerIn: parent
+    }
+
     SilicaListView {
         id: view
         property Stop currentStop: arrivalsData.getCurrentStop()
@@ -18,7 +28,7 @@ Page {
         property string direction: ""
         property string distance: ""
         property string stopID: "74612"//"52727"
-        property bool loadingHeader: true
+        property bool isLoading: true
 
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
 
@@ -45,7 +55,9 @@ Page {
             direction: view.direction
             distance: view.distance
             isBusStop: true
+            state: "invisible"
         }
+        footer: TflNotice {}
 
         delegate: BusWidget {
             busNumber: lineData
@@ -53,17 +65,20 @@ Page {
             eta: etaData
 //            "idData";//vehicle id
         }
+        VerticalScrollDecorator {
+            flickable: view
+        }
+        onCountChanged: {
+            isLoading = !count
+            busyIndicator.running = isLoading
+            if (footerItem) { footerItem.state = count ? "visible" : "invisible" }
+        }
         Component.onCompleted: {
             arrivalsData.getBusStopByCode(view.stopID)
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()
             arrivalsData.clearArrivalsData()
-        }
-
-        onLoadingHeaderChanged: {
-
-            if (!loadingHeader) {}
         }
     }
 }

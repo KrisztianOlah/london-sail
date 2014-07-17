@@ -47,10 +47,12 @@ void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
 
 QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
     QList<QJsonDocument> document;
-    while (!reply->atEnd()) {
-        document << QJsonDocument::fromJson(reply->readLine());
+    if (reply) {
+        while (!reply->atEnd()) {
+            document << QJsonDocument::fromJson(reply->readLine());
+        }
+        reply->deleteLater();
     }
-    reply->deleteLater();
     return document;
 }
 
@@ -94,8 +96,11 @@ void ArrivalsLogic::onArrivalsDataReceived() {
 
 void ArrivalsLogic::onBusStopDataReceived() {
     QList<QJsonDocument> document = makeDocument(reply_busStop);
-
     //only want the second array as the first one is the version array and there are only 2 arrays
+    if (document.isEmpty()) {
+        qDebug() << "QJsonDocument is empty.";
+        return; //there is nothing to do
+    }
     QList<QJsonDocument>::iterator dataArray = document.begin() + 1;
     if (dataArray->isArray()) {
         //id is set in ArrivalsLogic::getBusStopByCode(const QString&)
@@ -115,7 +120,10 @@ void ArrivalsLogic::onBusStopDataReceived() {
 //public slots:
 void ArrivalsLogic::clearArrivalsData() {
     clearCurrentStop();
-    arrivalsContainer->clearData();
+    if (arrivalsContainer) {
+        arrivalsContainer->clearData();
+    }
+
 }
 
 void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
@@ -130,6 +138,7 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     QString request = baseUrl + stopcode + returnList;
     QUrl url(request);
     reply_busStop = networkMngr->get(QNetworkRequest(url));
+
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
 }
 

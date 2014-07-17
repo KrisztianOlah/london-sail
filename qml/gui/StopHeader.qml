@@ -96,12 +96,9 @@ Item {
         }
     }
     states: [
+
         State {
-            name: "visible"
-//            PropertyChanges {
-//                target: pageHeader
-//                opacity: 0
-//            }
+            name: "invisible"
             PropertyChanges {
                 target: stopHeader
                 opacity: 0
@@ -112,7 +109,7 @@ Item {
             }
         },
         State {
-            name: "invisible"
+            name: "visible"
             PropertyChanges {
                 target: stopHeader
                 opacity: 100
@@ -124,4 +121,7 @@ Item {
         }
 
     ]
+    onTitleChanged: { state = title === "" ? "invisible" : "visible" }
+
+    onStateChanged: {console.log("******* The state is now " + state + "******") }
 }
