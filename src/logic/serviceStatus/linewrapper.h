@@ -44,6 +44,7 @@ private:
     int* pRefCount;
     static const int size = 5;
 public:
+    void debug();
     QString getBgColor(const QString& line);
     QString getTxtColor(const QString& line);
     void setColors();

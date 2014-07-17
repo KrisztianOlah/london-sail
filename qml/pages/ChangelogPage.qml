@@ -52,6 +52,19 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.3.2 - Hotfix.</b><br>
+*Fixed bug: Service Status now works as intended."
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.3.1 - Road Disruptions filters.</b><br>
 *Added filters to Road Disruption page.<br>
 *Fixed bug: Road Disruptions page now correctly displays all labels. No more empty labels.<br>
