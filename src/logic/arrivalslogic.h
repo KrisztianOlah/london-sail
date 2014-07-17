@@ -39,6 +39,7 @@ private slots:
     void onArrivalsDataReceived();
     void onBusStopDataReceived();
 public slots:
+    void clearArrivalsData();
     void clearCurrentStop();
     ArrivalsProxyModel* getArrivalsModel();
     void getBusStopByCode(const QString& code);

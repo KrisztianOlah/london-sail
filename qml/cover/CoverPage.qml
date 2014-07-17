@@ -32,7 +32,6 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 CoverBackground {
-    id: bg
     property bool active: status === Cover.Active
     anchors.fill: parent
     Image {

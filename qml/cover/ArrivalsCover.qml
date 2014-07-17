@@ -41,6 +41,11 @@ Item {
             }
         }
     }
+//    onActiveChanged: {
+//        if (!active) {
+//            v
+//        }
+//    }
 
 //    Label {
 //        anchors.centerIn: parent

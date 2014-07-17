@@ -113,6 +113,11 @@ void ArrivalsLogic::onBusStopDataReceived() {
 }
 
 //public slots:
+void ArrivalsLogic::clearArrivalsData() {
+    clearCurrentStop();
+    arrivalsContainer->clearData();
+}
+
 void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }

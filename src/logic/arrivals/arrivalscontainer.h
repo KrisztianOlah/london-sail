@@ -15,6 +15,7 @@ private:
     ArrivalsModel* model;
 public:
     void add(const Vehicle& vehicle);
+    void clearData();
     void registerModel(ArrivalsModel*);
     void replace(const ArrivalsContainer& rhs);
 

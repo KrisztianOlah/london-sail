@@ -3,6 +3,7 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 //TODO
+//Add ScrollDecorator
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
@@ -57,7 +58,7 @@ Page {
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()
-            arrivalsData.clearCurrentStop()
+            arrivalsData.clearArrivalsData()
         }
 
         onLoadingHeaderChanged: {

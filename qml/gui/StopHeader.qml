@@ -31,7 +31,7 @@ Item {
 
     Rectangle {
         id: stopHeader
-        height: 80
+        height: directionLabel.paintedHeight + Theme.paddingMedium*2
         color: Theme.secondaryHighlightColor
         opacity: 80
         anchors {
@@ -59,24 +59,30 @@ Item {
             }
         }
         Label {
-            id: directionLabel
-            text: ""
-    //        font.pixelSize: Theme.fontSizeLarge
-            color: Theme.highlightColor
-            anchors.centerIn: parent
-        }
-        Label {
             id: towardsLabel
             text: isBusStop ? "towards" : ""
             font.pixelSize: Theme.fontSizeTiny
             color: Theme.highlightColor
             anchors {
-                right: directionLabel.left
+                left: icon.right
+                leftMargin: Theme.paddingExtraLarge
                 top: parent.top
                 topMargin: Theme.paddingSmall
-    //            verticalCenter: parent.verticalCenter
             }
         }
+        Label {
+            id: directionLabel
+            text: ""
+            color: Theme.highlightColor
+            wrapMode: Text.WordWrap
+            anchors {
+                left: towardsLabel.right
+                leftMargin: Theme.paddingSmall
+                right: parent.right
+                rightMargin: Theme.paddingLarge
+            }
+        }
+
 
         Label {
             id: distanceLabel
