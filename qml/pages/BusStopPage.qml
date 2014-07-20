@@ -3,10 +3,6 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 //TODO
-//Add ScrollDecorator
-//Tfl Footer
-//Display loadig sign
-//check if there is no data...
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
@@ -63,7 +59,7 @@ Page {
             busNumber: lineData
             destination: destinationData
             eta: etaData
-//            "idData";//vehicle id
+            busId:  idData
         }
         VerticalScrollDecorator {
             flickable: view
@@ -78,7 +74,6 @@ Page {
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()
-            arrivalsData.clearArrivalsData()
         }
     }
 }

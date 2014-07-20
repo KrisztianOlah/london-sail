@@ -44,7 +44,7 @@ void ArrivalsModel::replaceContainer(const ArrivalsContainer& pOther) {
 
 QHash<int,QByteArray> ArrivalsModel::roleNames() const {
     QHash<int,QByteArray> roles;
-    roles[IdRole] = "idData";//vehicle id
+    roles[IdRole] = "idData";//vehicle id for bus it's the registration number
     roles[LineRole] = "lineData";
     roles[DestinationRole] = "destinationData";
     roles[EtaRole] = "etaData";

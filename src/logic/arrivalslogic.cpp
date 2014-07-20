@@ -7,11 +7,14 @@
 #include <QNetworkReply>
 #include <QTimer>
 #include <QUrl>
+#include <cmath>
 #include "arrivals/arrivalsmodel.h"
 #include "arrivals/arrivalsproxymodel.h"
 #include "arrivals/arrivalscontainer.h"
+#include "arrivals/journeyprogresscontainer.h"
 #include "arrivals/stop.h"
 #include "arrivals/vehicle.h"
+
 
 ArrivalsLogic::ArrivalsLogic(QObject *parent) : QObject(parent),
                                                 activeStops("StopPointState=0"),
@@ -22,27 +25,42 @@ ArrivalsLogic::ArrivalsLogic(QObject *parent) : QObject(parent),
                                                 baseUrl("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?"),
                                                 currentStop(new Stop(this)),
                                                 networkMngr(static_cast<QNetworkAccessManager*>(parent)),
+                                                journeyProgressContainer(new JourneyProgressContainer(this)),
+                                                journeyProgressTimer(new QTimer(this)),
                                                 reply_arrivals(0),
-                                                reply_busStop(0)
+                                                reply_busStop(0),
+                                                reply_journeyProgress(0)
 {
     arrivalsProxyModel->setSourceModel(arrivalsModel);
     arrivalsProxyModel->sort(0);
     connect(arrivalsTimer, SIGNAL(timeout()), this, SLOT(fetchArrivalsData()) );
+    connect(journeyProgressTimer, SIGNAL(timeout()), this, SLOT(fetchJourneyProgress()) );
 }
 
 //private:
-//return LineName,DestinationName,EstimatedTime,VehicleID  //DestinationText for shorter text
-//registration num must not start with X_or contain NEW in the first five letters
-//it should return a model of buses containing the above data, refreshing it every 30 sec
+//VisitNumber,DirectionID
+//return LineName,DestinationName,EstimatedTime,VehicleID//RegistrationNumber  //DestinationText for shorter text
+//FIX registration num must not start with X_or contain NEW in the first five letters
 void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
     QString stopCode = QString("StopCode1=") + code;
-    QString returnList = "&ReturnList=LineName,DestinationName,EstimatedTime,VehicleID";
+    QString returnList = "&ReturnList=LineName,DestinationName,EstimatedTime,RegistrationNumber,DirectionID";
     QString request = baseUrl + stopCode +  returnList;
 
     QUrl url(request);
     reply_arrivals = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_arrivals, SIGNAL(finished()), this, SLOT(onArrivalsDataReceived()) );
+}
+
+void ArrivalsLogic::getBusProgress(const QString& registrationNum) {
+    QString regPart = QString("RegistrationNumber=") + registrationNum;
+    QString directionIDPart = QString("&DirectionID=") + currentBusDirectionId;
+    QString returnList = "&ReturnList=StopPointName,EstimatedTime";
+    QString request = baseUrl + regPart + directionIDPart + returnList;
+    QUrl url(request);
+    reply_journeyProgress = networkMngr->get(QNetworkRequest(url));
+
+    connect(reply_journeyProgress, SIGNAL(finished()), this, SLOT(onBusProgressReceived()) );
 }
 
 QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
@@ -69,6 +87,12 @@ void ArrivalsLogic::fetchArrivalsData() {
 
 }
 
+void ArrivalsLogic::fetchJourneyProgress() {
+    if (currentVehicleId == "") return;
+    //TODO switch on currentStop->type
+    getBusProgress(currentVehicleId);
+}
+
 void ArrivalsLogic::onArrivalsDataReceived() {
     QList<QJsonDocument> document = makeDocument(reply_arrivals);
     QList<QJsonDocument>::iterator first = document.begin();
@@ -81,18 +105,33 @@ void ArrivalsLogic::onArrivalsDataReceived() {
     for (QList<QJsonDocument>::iterator iter = first + 1; iter != document.end(); ++iter) {
         Vehicle bus;
         bus.line = (*(iter->array().begin() + 1)).toString();
-        bus.destination = (*(iter->array().begin() + 2)).toString();
-        bus.id = (*(iter->array().begin() + 3)).toString();
-        double delta = (*(iter->array().begin() + 4)).toDouble() - currentTime;
+        currentBusDirectionId =  QString::number((*(iter->array().begin() + 2)).toDouble());
+        bus.destination = (*(iter->array().begin() + 3)).toString();
+        bus.id = (*(iter->array().begin() + 4)).toString();//registration number
+        double delta = (*(iter->array().begin() + 5)).toDouble() - currentTime;
         double inSec = delta / 1000;
         double inMins = inSec / 60;
-        //truncate to whole numbers
-        bus.eta = inMins;
+        //round to whole numbers
+        bus.eta = std::round(inMins);
         tempContainer.add(bus);
     }
     arrivalsContainer->replace(tempContainer);
 }
 
+void ArrivalsLogic::onBusProgressReceived() {
+    QList<QJsonDocument> document = makeDocument(reply_journeyProgress);
+
+    double serverTime = (*(document.begin()->array().begin() +2)).toDouble();
+    QList<QPair<QString, double>> list;
+    for (QList<QJsonDocument>::iterator iter = document.begin() + 1; iter != document.end(); ++iter) {
+        QPair<QString, double> pair;
+        pair.first = (*(iter->array().begin() +1)).toString();
+        pair.second = (*(iter->array().begin() +2)).toDouble();
+        list.append(pair);
+    }
+    journeyProgressContainer->setTime(serverTime);
+    journeyProgressContainer->refreshData(list);
+}
 
 void ArrivalsLogic::onBusStopDataReceived() {
     QList<QJsonDocument> document = makeDocument(reply_busStop);
@@ -126,9 +165,17 @@ void ArrivalsLogic::clearArrivalsData() {
 
 }
 
+void ArrivalsLogic::clearJourneyProgressData() {
+    currentBusDirectionId = "";
+    setCurrentVehicleId("");
+    journeyProgressContainer->clear();
+}
+
 void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }
+
+ArrivalsProxyModel* ArrivalsLogic::getJourneyProgressModel() { return journeyProgressContainer->getModel(); }
 
 void ArrivalsLogic::getBusStopByCode(const QString& code) {
     currentStop->setID(code);
@@ -142,9 +189,13 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
 }
 
-void ArrivalsLogic::getBusStopsByName(const QString& /*name*/) {}
+void ArrivalsLogic::getBusStopsByName(const QString& /*name*/) {
+    ////////////
+}
 
 Stop* ArrivalsLogic::getCurrentStop() { return currentStop; }
+
+void ArrivalsLogic::setCurrentVehicleId(const QString& id) { currentVehicleId = id;}
 
 void ArrivalsLogic::startArrivalsUpdate() {
     fetchArrivalsData();
@@ -152,7 +203,20 @@ void ArrivalsLogic::startArrivalsUpdate() {
     arrivalsTimer->start(30000);
 }
 
+void ArrivalsLogic::startJourneyProgressUpdate() {
+    qDebug() << "***startJourneyProgressUpdate() ***";
+    fetchJourneyProgress();
+    journeyProgressTimer->start(30000);
+}
+
 void ArrivalsLogic::stopArrivalsUpdate() {
     qDebug() << "updating stopped.";
     arrivalsTimer->stop();
+    clearArrivalsData();
 }
+
+void ArrivalsLogic::stopJourneyProgressUpdate() {
+    journeyProgressTimer->stop();
+    clearJourneyProgressData();
+}
+

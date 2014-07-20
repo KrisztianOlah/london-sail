@@ -7,10 +7,10 @@ struct Vehicle
 {
     enum Type { Boat, Bus, Dlr, OverGround, UnderGround };
     Vehicle();
-    QString id;
+    QString id;//for bus it's the registration number
     QString line;
     QString destination;
-    int eta; //minutes
+    int eta; //in minutes
     QString towards;
     QString platform;
     int type;

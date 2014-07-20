@@ -122,6 +122,4 @@ Item {
 
     ]
     onTitleChanged: { state = title === "" ? "invisible" : "visible" }
-
-    onStateChanged: {console.log("******* The state is now " + state + "******") }
 }

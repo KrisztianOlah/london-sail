@@ -3,8 +3,10 @@ import Sailfish.Silica 1.0
 
 
 BackgroundItem {
+    id: self
     property alias busNumber: numberLabel.text
     property alias destination: destinationLabel.text
+    property string busId: ""
     property int eta: 9999
 
     anchors {
@@ -35,5 +37,10 @@ BackgroundItem {
             rightMargin: Theme.paddingLarge
         }
 
+    }
+    onClicked: {
+        arrivalsData.setCurrentVehicleId(busId)
+        pageStack.push(Qt.resolvedUrl("../pages/JourneyProgressPage.qml"), {'vehicleId' : busId,
+                           'lineName' : busNumber, 'destination' : destination } )
     }
 }

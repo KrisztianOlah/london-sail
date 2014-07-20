@@ -1,27 +1,17 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-
+import harbour.london.sail.utilities 1.0
 import "../gui"
 
 //TODO add "Data provided by Transport for London"
 //TODO user to be able to set radius
 Page {
-    //property DepartureModel myModel: predictionData.getModel()
-
     id: page
-//    Component.onCompleted: {
-//        predictionData.startLocationUpdates()
-//    }
-//    Component.onDestruction: {
-//        predictionData.stopLocationUpdates()
-//    }
-
 
     SilicaListView {
         id: view
         anchors.fill: parent
 
-        Component.onCompleted: arrivalsData.getBusStopByCode("74612")
         //replace by SearchHeader
         header: PageHeader {
             title: "Departures"
@@ -43,7 +33,7 @@ Page {
         }
 
         spacing: 10
-//        model: 10//myModel
+        model: 10//myModel
         delegate: StopInfoWidget {
 //            name: nameData
 //            indicator: indicatorData

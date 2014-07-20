@@ -35,7 +35,9 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/arrivals/arrivalscontainer.cpp \
     src/logic/arrivals/vehicle.cpp \
     src/logic/arrivals/stop.cpp \
-    src/logic/arrivals/arrivalsproxymodel.cpp
+    src/logic/arrivals/arrivalsproxymodel.cpp \
+    src/logic/arrivals/journeyprogressmodel.cpp \
+    src/logic/arrivals/journeyprogresscontainer.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -64,7 +66,8 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/gui/StopInfoWidget.qml \
     qml/gui/StopHeader.qml \
     qml/gui/BusWidget.qml \
-    qml/cover/ArrivalsCover.qml
+    qml/cover/ArrivalsCover.qml \
+    qml/pages/JourneyProgressPage.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \
@@ -87,7 +90,9 @@ HEADERS += \
     src/logic/arrivals/arrivalscontainer.h \
     src/logic/arrivals/vehicle.h \
     src/logic/arrivals/stop.h \
-    src/logic/arrivals/arrivalsproxymodel.h
+    src/logic/arrivals/arrivalsproxymodel.h \
+    src/logic/arrivals/journeyprogressmodel.h \
+    src/logic/arrivals/journeyprogresscontainer.h
 
 RESOURCES += \
     images.qrc

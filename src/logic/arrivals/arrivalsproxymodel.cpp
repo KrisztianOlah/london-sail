@@ -6,7 +6,3 @@ ArrivalsProxyModel::ArrivalsProxyModel(QObject *parent) :
 {
     setSortRole(ArrivalsModel::EtaRole);
 }
-
-//virtual bool ArrivalsProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const {
-//    //
-//}
