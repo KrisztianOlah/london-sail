@@ -35,6 +35,7 @@ ArrivalsLogic::ArrivalsLogic(QObject *parent) : QObject(parent),
     arrivalsProxyModel->sort(0);
     connect(arrivalsTimer, SIGNAL(timeout()), this, SLOT(fetchArrivalsData()) );
     connect(journeyProgressTimer, SIGNAL(timeout()), this, SLOT(fetchJourneyProgress()) );
+    connect(journeyProgressContainer, SIGNAL(dataChanged()), this, SLOT(onProgressDataChanged()) );
 }
 
 //private:
@@ -156,6 +157,9 @@ void ArrivalsLogic::onBusStopDataReceived() {
     else qDebug() << "Invalid QJsonArray";
 }
 
+void ArrivalsLogic::onProgressDataChanged() {
+    emit nextStopChanged();
+}
 //public slots:
 void ArrivalsLogic::clearArrivalsData() {
     clearCurrentStop();
@@ -175,8 +179,6 @@ void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }
 
-ArrivalsProxyModel* ArrivalsLogic::getJourneyProgressModel() { return journeyProgressContainer->getModel(); }
-
 void ArrivalsLogic::getBusStopByCode(const QString& code) {
     currentStop->setID(code);
 
@@ -193,9 +195,21 @@ void ArrivalsLogic::getBusStopsByName(const QString& /*name*/) {
     ////////////
 }
 
+QString ArrivalsLogic::getCurrentDestination() const { return currentDestination;}
+
 Stop* ArrivalsLogic::getCurrentStop() { return currentStop; }
 
+QString ArrivalsLogic::getCurrentVehicleLine() const { return currentVehicleLine; }
+
+ArrivalsProxyModel* ArrivalsLogic::getJourneyProgressModel() { return journeyProgressContainer->getModel(); }
+
+QString ArrivalsLogic::getNextStop() { return journeyProgressContainer->getNextStop().first; }
+
+void ArrivalsLogic::setCurrentDestination(const QString& destination) { currentDestination = destination; }
+
 void ArrivalsLogic::setCurrentVehicleId(const QString& id) { currentVehicleId = id;}
+
+void ArrivalsLogic::setCurrentVehicleLine(const QString& line) { currentVehicleLine = line; }
 
 void ArrivalsLogic::startArrivalsUpdate() {
     fetchArrivalsData();

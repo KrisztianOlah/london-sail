@@ -25,6 +25,7 @@ Page {
         property string distance: ""
         property string stopID: "74612"//"52727"
         property bool isLoading: true
+//        property int pageID: coverData.BusStopPage
 
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
 
@@ -71,9 +72,11 @@ Page {
         }
         Component.onCompleted: {
             arrivalsData.getBusStopByCode(view.stopID)
+            coverData.reportPage(PageCodes.BusStopPage)
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()
+            coverData.reportPage(PageCodes.None)
         }
     }
 }

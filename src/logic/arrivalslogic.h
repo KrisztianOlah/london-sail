@@ -27,8 +27,10 @@ private:
     QTimer* arrivalsTimer;
     QString baseUrl;
     QString currentBusDirectionId;
+    QString currentDestination;
     Stop* currentStop;
     QString currentVehicleId;
+    QString currentVehicleLine;
     QNetworkAccessManager* networkMngr;
     JourneyProgressContainer* journeyProgressContainer;
     QTimer* journeyProgressTimer;
@@ -36,8 +38,12 @@ private:
     QNetworkReply* reply_busStop;
     QNetworkReply* reply_journeyProgress;
 signals:
+    void nextStopChanged();
     void stopDataChanged();
 private:
+    void clearCurrentStop();
+    void clearArrivalsData();
+    void clearJourneyProgressData();
     void getBusArrivalsByCode(const QString& code);
     void getBusProgress(const QString&);
     QList<QJsonDocument> makeDocument(QNetworkReply*);
@@ -47,16 +53,19 @@ private slots:
     void onArrivalsDataReceived();
     void onBusProgressReceived();
     void onBusStopDataReceived();
+    void onProgressDataChanged();
 public slots:
-    void clearArrivalsData();
-    void clearJourneyProgressData();
-    void clearCurrentStop();
     ArrivalsProxyModel* getArrivalsModel();
-    ArrivalsProxyModel* getJourneyProgressModel();
     void getBusStopByCode(const QString& code);
     void getBusStopsByName(const QString& name);
+    QString getCurrentDestination() const;
     Stop* getCurrentStop();
+    QString getCurrentVehicleLine() const;
+    ArrivalsProxyModel* getJourneyProgressModel();
+    QString getNextStop();
+    void setCurrentDestination(const QString& destination);
     void setCurrentVehicleId(const QString& id);
+    void setCurrentVehicleLine(const QString& line);
     void startArrivalsUpdate();
     void startJourneyProgressUpdate();
     void stopArrivalsUpdate();

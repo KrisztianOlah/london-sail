@@ -18,6 +18,13 @@ StopList::iterator find(StopList::iterator begin,StopList::iterator end, const Q
     }
     return end;
 }
+StopList::const_iterator findNextStop(StopList::const_iterator begin,StopList::const_iterator end, double val, double time) {
+    for (StopList::const_iterator iter = begin; iter != end; ++iter) {
+        if (iter->second - time > 0 && iter->second < val) return iter;
+    }
+    return end;
+}
+
 }//end of unnamed namespace
 
 JourneyProgressContainer::JourneyProgressContainer(QObject* parent) : QObject(parent),
@@ -37,6 +44,12 @@ void JourneyProgressContainer::clear() {
     model->endReset();
 }
 
+double JourneyProgressContainer::getDeltaTime(double prediction) const {
+    double delta = prediction - time;
+    return delta;
+}
+
+
 int JourneyProgressContainer::getEta(double prediction) const {
     double deltaInMilliSec = getDeltaTime(prediction);
     double deltaInSec = deltaInMilliSec /1000;
@@ -45,16 +58,25 @@ int JourneyProgressContainer::getEta(double prediction) const {
     return deltaRound;
 }
 
-double JourneyProgressContainer::getDeltaTime(double prediction) const {
-    double delta = prediction - time;
-    return delta;
-}
-
 ArrivalsProxyModel* JourneyProgressContainer::getModel() { return proxyModel; }
+
+QPair<QString,double> JourneyProgressContainer::getNextStop() const {
+    QList<QPair<QString,double> >::const_iterator smallestSoFar, iter = data.begin();
+    while (iter != data.end()) {
+        smallestSoFar = iter;
+        iter = findNextStop(iter,data.end(),iter->second,time);
+    }
+    if (smallestSoFar != data.end()) {
+        return *smallestSoFar;
+    }
+
+    else {
+        return QPair<QString,double>("",0);
+    }
+}
 
 void JourneyProgressContainer::refreshData(QList<QPair<QString,double> > list) {
     //check if other element is in data if yes update if no then set to 0 or delete
-    qDebug() << "################################################################################";
     if (!data.empty()) {
         model->beginReset();
         //check if some elements are already part of data, then just update them with a new time(double)
@@ -74,6 +96,7 @@ void JourneyProgressContainer::refreshData(QList<QPair<QString,double> > list) {
         data.append(*iter);
     }
     model->endInsert();
+    emit dataChanged();
 }
 
 

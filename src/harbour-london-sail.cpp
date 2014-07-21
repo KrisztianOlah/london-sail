@@ -59,9 +59,9 @@ THE SOFTWARE.
 #include <QtQuick>
 #include <sailfishapp.h>
 #include "logic/arrivals/arrivalsproxymodel.h"
-//#include "logic/arrivals/arrivalsmodel.h"
 #include "logic/arrivals/stop.h"
 #include "logic/arrivalslogic.h"
+#include "logic/coverlogic.h"
 #include "logic/servicestatuslogic.h"
 #include "logic/serviceStatus/servicestatusproxymodel.h"
 #include "logic/serviceStatus/thisweekendlinemodel.h"
@@ -103,6 +103,10 @@ int main(int argc, char *argv[])
     qmlRegisterType<Stop>("harbour.london.sail.utilities",1,0,"Stop");
     ArrivalsLogic* arrivalsLogic = new ArrivalsLogic(networkMngr.data());
     view->rootContext()->setContextProperty("arrivalsData", arrivalsLogic);
+
+    qmlRegisterType<CoverLogic>("harbour.london.sail.utilities",1,0,"PageCodes");
+    CoverLogic* coverLogic = new CoverLogic();
+    view->rootContext()->setContextProperty("coverData", coverLogic);
 
     view->show();
 

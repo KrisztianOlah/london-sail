@@ -13,7 +13,7 @@ Page {
     property string destination: "dest"
     property ArrivalsModel progressModel: arrivalsData.getJourneyProgressModel()
 
-    function whatColor(eta,exact) {
+    function whatColor(exact) {
         if (exact > -10000 && exact < 20000) return Theme.highlightColor
         if (exact > -10000) return Theme.primaryColor
         else return Theme.secondaryColor
@@ -82,6 +82,12 @@ Page {
             }
         }
         footer: TflNotice {}
+        PullDownMenu {
+            MenuItem {
+                text: "NextStop"
+                onClicked: arrivalsData.getNextStop()
+            }
+        }
 
         model: progressModel
         displaced: Transition {
@@ -102,6 +108,7 @@ Page {
             Label {
                 id: etaLabel
                 text: sortData > -10000 ? etaData + "min": ""
+                color: whatColor(sortData)
                 anchors {
                     right: parent.right
                     rightMargin: Theme.paddingLarge
@@ -111,8 +118,8 @@ Page {
             Label {
                 id: stopLabel
                 text: stopNameData
-                color: whatColor(etaData,sortData)
-                font.bold: sortData > 0 && sortData < 20000
+                color: whatColor(sortData)
+                font.bold: sortData > -10000 && sortData < 20000
                 wrapMode: Text.WordWrap
                 anchors {
                     top: parent.top
@@ -137,10 +144,12 @@ Page {
     Component.onCompleted: {
         arrivalsData.stopArrivalsUpdate()
         arrivalsData.startJourneyProgressUpdate()
+        coverData.reportPage(PageCodes.JourneyProgressPage)
     }
 
     Component.onDestruction: {
         arrivalsData.stopJourneyProgressUpdate()
         arrivalsData.startArrivalsUpdate()
+        coverData.reportPage(PageCodes.None)
     }
 }

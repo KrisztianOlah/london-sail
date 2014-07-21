@@ -40,6 +40,8 @@ BackgroundItem {
     }
     onClicked: {
         arrivalsData.setCurrentVehicleId(busId)
+        arrivalsData.setCurrentVehicleLine(busNumber)
+        arrivalsData.setCurrentDestination(destination)
         pageStack.push(Qt.resolvedUrl("../pages/JourneyProgressPage.qml"), {'vehicleId' : busId,
                            'lineName' : busNumber, 'destination' : destination } )
     }

@@ -30,9 +30,11 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 
 CoverBackground {
     property bool active: status === Cover.Active
+    property int currentPage: PageCodes.None
     anchors.fill: parent
     Image {
         id: background
@@ -41,10 +43,37 @@ CoverBackground {
             centerIn: parent
         }
     }
+    Connections {
+        target: coverData
+        onPageChanged: {
+            currentPage = coverData.getCurrentPage()
+            switch (currentPage) {
+            case PageCodes.BusStopPage:
+                arrivalsCover.visible = true
+                journeyProgressCover.visible = false
+                break;
+            case PageCodes.JourneyProgressPage:
+                journeyProgressCover.visible = true
+                arrivalsCover.visible = false
+                break;
+            case PageCodes.None:
+                arrivalsCover.visible = false
+                journeyProgressCover.visible = false
+            }
+        }
+    }
+
     ArrivalsCover {
         id: arrivalsCover
+        visible: false
         active: active && pageStack.currentPage.objectName === "busStopPage"
     }
+    JourneyProgressCover {
+        id: journeyProgressCover
+        anchors.fill: parent
+        visible: false
+    }
+
 //    onActiveChanged: {
 //        if (Qt.application.active) {
 //            console.log("active")

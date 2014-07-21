@@ -81,7 +81,6 @@ void ServiceStatusLogic::parse(const QByteArray& data) {
 //It will be called as soon as "reply" signals "finished()"
 void ServiceStatusLogic::downloaded() {
     QByteArray data = reply->readAll();
-    qDebug() << data;
     parse(data);
     reply->deleteLater();
 }
