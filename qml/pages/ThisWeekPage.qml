@@ -24,12 +24,17 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 import "../gui"
 
 Page {
     id: page
     Component.onCompleted: thisWeekendData.refresh()
     allowedOrientations: Orientation.All
+
+    onStatusChanged: {
+                if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
+        }
 
     BusyIndicator {
         id: busyIndicator

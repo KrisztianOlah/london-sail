@@ -35,12 +35,8 @@ import "pages"
 ApplicationWindow
 {
     id: win
-    initialPage: Component { /*BusStopPage {} }  { DeparturePage {} }*/FirstPage { } }
+    initialPage: Component { FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
-    //win.onPageStackChanged:
-    onPageStackChanged: {
-        console.log("It works here")
-    }
 }
 
 

@@ -41,7 +41,6 @@ signals:
     void nextStopChanged();
     void stopDataChanged();
 private:
-    void clearCurrentStop();
     void clearArrivalsData();
     void clearJourneyProgressData();
     void getBusArrivalsByCode(const QString& code);
@@ -55,6 +54,7 @@ private slots:
     void onBusStopDataReceived();
     void onProgressDataChanged();
 public slots:
+    void clearCurrentStop();
     ArrivalsProxyModel* getArrivalsModel();
     void getBusStopByCode(const QString& code);
     void getBusStopsByName(const QString& name);

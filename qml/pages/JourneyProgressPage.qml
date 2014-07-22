@@ -6,12 +6,15 @@ import "../gui"
 
 Page {
     id: page
-    objectName: "journeyProgressPage"
     property string vehicleId: ""
     property string headerTitle: vehicleId
     property string lineName: "lineName"
     property string destination: "dest"
     property ArrivalsModel progressModel: arrivalsData.getJourneyProgressModel()
+
+    onStatusChanged: {
+        if (status === PageStatus.Active) { coverData.reportPage(PageCodes.JourneyProgressPage) }
+    }
 
     function whatColor(exact) {
         if (exact > -10000 && exact < 20000) return Theme.highlightColor
@@ -144,12 +147,10 @@ Page {
     Component.onCompleted: {
         arrivalsData.stopArrivalsUpdate()
         arrivalsData.startJourneyProgressUpdate()
-        coverData.reportPage(PageCodes.JourneyProgressPage)
     }
 
     Component.onDestruction: {
         arrivalsData.stopJourneyProgressUpdate()
         arrivalsData.startArrivalsUpdate()
-        coverData.reportPage(PageCodes.None)
     }
 }

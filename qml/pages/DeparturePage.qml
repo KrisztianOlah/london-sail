@@ -7,6 +7,9 @@ import "../gui"
 //TODO user to be able to set radius
 Page {
     id: page
+    onStatusChanged: {
+                if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
+    }
 
     SilicaListView {
         id: view

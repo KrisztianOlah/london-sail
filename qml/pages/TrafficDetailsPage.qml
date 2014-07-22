@@ -29,14 +29,19 @@ import "../gui"
 
 Page {
     id: page
-    allowedOrientations: Orientation.All
-
     property string location: ""
     property string comment: ""
     property string currentUpdate: ""
     property string severity: ""
     property int disruptionID: 0
     property StreetModel streetModel: trafficData.getStreetModel(disruptionID)
+
+    allowedOrientations: Orientation.All
+
+    onStatusChanged: {
+                if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
+        }
+
     SilicaFlickable {
         id: flick
         anchors.fill: parent

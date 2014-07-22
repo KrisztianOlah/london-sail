@@ -1,4 +1,5 @@
 #include "coverlogic.h"
+#include <QDebug>
 
 CoverLogic::CoverLogic(QObject *parent) :
     QObject(parent)

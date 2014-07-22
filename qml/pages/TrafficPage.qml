@@ -30,12 +30,14 @@ import harbour.london.sail.utilities 1.0
 import "../gui"
 
 Page {
-    property int fewItems: 6
-    property bool hasQuickScroll: view.quickScroll !== undefined
-
     id: page
     allowedOrientations: Orientation.All
 
+    onStatusChanged: {
+            if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
+    }
+    property int fewItems: 6
+    property bool hasQuickScroll: view.quickScroll !== undefined
     property DisruptionModel disruptionModel: trafficData.getDisruptionModel()
     property string currentModel: "Traffic Disruptions"
 

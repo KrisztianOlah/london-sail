@@ -24,11 +24,15 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 
 //This page is just to show some general information to user about the application
 Page {
     id: page
     allowedOrientations: Orientation.All
+    onStatusChanged: {
+        if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
+    }
     SilicaFlickable {
         id: flick
         anchors.fill: parent

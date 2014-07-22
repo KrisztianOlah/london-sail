@@ -39,8 +39,20 @@ ArrivalsLogic::ArrivalsLogic(QObject *parent) : QObject(parent),
 }
 
 //private:
-//VisitNumber,DirectionID
-//return LineName,DestinationName,EstimatedTime,VehicleID//RegistrationNumber  //DestinationText for shorter text
+void ArrivalsLogic::clearArrivalsData() {
+    if (arrivalsContainer) {
+        arrivalsContainer->clearData();
+    }
+
+}
+
+void ArrivalsLogic::clearJourneyProgressData() {
+    currentBusDirectionId = "";
+    setCurrentVehicleId("");
+    journeyProgressContainer->clear();
+}
+
+//DestinationText for shorter text
 //FIX registration num must not start with X_or contain NEW in the first five letters
 void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
     QString stopCode = QString("StopCode1=") + code;
@@ -158,23 +170,11 @@ void ArrivalsLogic::onBusStopDataReceived() {
 }
 
 void ArrivalsLogic::onProgressDataChanged() {
+    qDebug() << " NextStopChanged()";
     emit nextStopChanged();
 }
+
 //public slots:
-void ArrivalsLogic::clearArrivalsData() {
-    clearCurrentStop();
-    if (arrivalsContainer) {
-        arrivalsContainer->clearData();
-    }
-
-}
-
-void ArrivalsLogic::clearJourneyProgressData() {
-    currentBusDirectionId = "";
-    setCurrentVehicleId("");
-    journeyProgressContainer->clear();
-}
-
 void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }

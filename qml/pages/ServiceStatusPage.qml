@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 
 import "../gui"
 //This page displays the status of all tube/dlr/overground lines and displays if there are any disruptions
@@ -33,10 +34,12 @@ Page {
     allowedOrientations: Orientation.All
     onStatusChanged: {
         if (status === PageStatus.Active) {
+            coverData.reportPage(PageCodes.None)
             pageStack.pushAttached(Qt.resolvedUrl("ThisWeekPage.qml"))
         }
         else if (status === PageStatus.Inactive) { view.scrollToTop() }
     }
+
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent

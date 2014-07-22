@@ -8,7 +8,11 @@ import "../gui"
 
 Page {
     id: page
-    objectName: "busStopPage"
+    onStatusChanged: {
+        if (status === PageStatus.Active) {
+            coverData.reportPage(PageCodes.BusStopPage)
+        }
+    }
     BusyIndicator {
         id: busyIndicator
         running: view.loadingData
@@ -25,7 +29,6 @@ Page {
         property string distance: ""
         property string stopID: "74612"//"52727"
         property bool isLoading: true
-//        property int pageID: coverData.BusStopPage
 
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
 
@@ -72,10 +75,11 @@ Page {
         }
         Component.onCompleted: {
             arrivalsData.getBusStopByCode(view.stopID)
-            coverData.reportPage(PageCodes.BusStopPage)
+//            coverData.reportPage(PageCodes.BusStopPage)
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()
+            arrivalsData.clearCurrentStop()
             coverData.reportPage(PageCodes.None)
         }
     }
