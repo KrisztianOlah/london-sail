@@ -43,23 +43,39 @@ CoverBackground {
             centerIn: parent
         }
     }
+
     Connections {
         target: coverData
         onPageChanged: {
             currentPage = coverData.getCurrentPage()
             switch (currentPage) {
             case PageCodes.BusStopPage:
+                placeholder.visible = false
                 arrivalsCover.visible = true
                 journeyProgressCover.visible = false
                 break;
             case PageCodes.JourneyProgressPage:
+                placeholder.visible = false
                 journeyProgressCover.visible = true
                 arrivalsCover.visible = false
                 break;
             case PageCodes.None:
+                placeholder.visible = true
                 arrivalsCover.visible = false
                 journeyProgressCover.visible = false
             }
+        }
+    }
+
+    Label {
+        id: placeholder
+        text: "London Sail"
+        horizontalAlignment: Text.AlignHCenter
+        anchors {
+            top: parent.top
+            topMargin: Theme.paddingMedium
+            left: parent.left
+            right: parent.right
         }
     }
 
