@@ -12,6 +12,8 @@ Page {
     property string destination: "dest"
     property ArrivalsModel progressModel: arrivalsData.getJourneyProgressModel()
 
+    allowedOrientations: Orientation.All
+
     onStatusChanged: {
         if (status === PageStatus.Active) { coverData.reportPage(PageCodes.JourneyProgressPage) }
     }

@@ -8,6 +8,7 @@ import "../gui"
 
 Page {
     id: page
+    allowedOrientations: Orientation.All
     onStatusChanged: {
         if (status === PageStatus.Active) {
             coverData.reportPage(PageCodes.BusStopPage)
