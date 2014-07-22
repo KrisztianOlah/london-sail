@@ -87,12 +87,6 @@ Page {
             }
         }
         footer: TflNotice {}
-        PullDownMenu {
-            MenuItem {
-                text: "NextStop"
-                onClicked: arrivalsData.getNextStop()
-            }
-        }
 
         model: progressModel
         displaced: Transition {
