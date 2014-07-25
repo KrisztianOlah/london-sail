@@ -1,3 +1,28 @@
+/*
+Copyright (C) 2014 Krisztian Olah
+
+  email: fasza2mobile@gmail.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+
 #include "arrivalslogic.h"
 #include <QDebug>
 #include <QJsonArray>
@@ -29,7 +54,8 @@ ArrivalsLogic::ArrivalsLogic(QObject *parent) : QObject(parent),
                                                 journeyProgressTimer(new QTimer(this)),
                                                 reply_arrivals(0),
                                                 reply_busStop(0),
-                                                reply_journeyProgress(0)
+                                                reply_journeyProgress(0),
+                                                reply_stops(0)
 {
     arrivalsProxyModel->setSourceModel(arrivalsModel);
     arrivalsProxyModel->sort(0);
@@ -169,6 +195,22 @@ void ArrivalsLogic::onBusStopDataReceived() {
     else qDebug() << "Invalid QJsonArray";
 }
 
+void ArrivalsLogic::onListOfBusStopsReceived() {
+    //Name,code,type,towards,StopPointIndicator,latitude,longitude, favourite
+//    qDebug() << reply_stops->readAll();
+    QList<QJsonDocument> document = makeDocument(reply_stops);
+    if (document.size() < 1 ) return; //if empty or only have version array then nothing to do
+    //skip version array
+    for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter != document.end();++iter) {
+        qDebug() << "StopPointName" << (*(iter->array().begin() + 1)).toString();
+        qDebug() << "StopCode1" << (*(iter->array().begin() + 2)).toString();
+        qDebug() << "Towards" << (*(iter->array().begin() + 4)).toString();
+        qDebug() << "StopPointIndicator" << (*(iter->array().begin() + 5)).toString();
+        qDebug() << "Latitude" << (*(iter->array().begin() + 6)).toDouble();
+        qDebug() << "Longitude" << (*(iter->array().begin() + 7)).toDouble();
+    }
+}
+
 void ArrivalsLogic::onProgressDataChanged() {
     qDebug() << " NextStopChanged()";
     emit nextStopChanged();
@@ -191,8 +233,14 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
 }
 
-void ArrivalsLogic::getBusStopsByName(const QString& /*name*/) {
-    ////////////
+void ArrivalsLogic::getBusStopsByName(const QString& name) {
+    QString stopPointName = QString("StopPointName=") + name;
+    QString returnList = "&ReturnList=StopPointName,StopCode1,Towards,StopPointIndicator,StopPointType,Latitude,Longitude";
+    QString request = baseUrl + stopPointName + returnList;
+    QUrl url = request;
+
+    reply_stops = networkMngr->get(QNetworkRequest(url) );
+    connect(reply_stops, SIGNAL(finished()), this, SLOT(onListOfBusStopsReceived()) );
 }
 
 QString ArrivalsLogic::getCurrentDestination() const { return currentDestination;}

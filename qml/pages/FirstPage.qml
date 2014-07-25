@@ -31,7 +31,7 @@ Page {
     allowedOrientations: Orientation.All
 
     onStatusChanged: {
-                if (status === PageStatus.Active) { coverData.reportPage(0) }
+//                if (status === PageStatus.Active) { coverData.reportPage(0) }
     }
 
     SilicaFlickable {
@@ -52,14 +52,14 @@ Page {
             }
             BackgroundItem {
                 Label {
-                    text: "Departures"
+                    text: "Bus Departures"
                     anchors {
                         left: parent.left
                         leftMargin: Theme.paddingLarge
                         verticalCenter: parent.verticalCenter
                     }
                 }
-                onClicked: pageStack.push(Qt.resolvedUrl("BusStopPage.qml"))//("DeparturePage.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("DeparturePage.qml"))
             }
             BackgroundItem {
                 Label {

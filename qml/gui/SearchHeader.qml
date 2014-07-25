@@ -29,6 +29,7 @@ Item {
     id: self
     property string title: "Title"
     property alias text: searchField.text
+    property alias searchPlaceholder: searchField.placeholderText
 
     signal filterChanged()
     height: header.height + searchField.height + 2*Theme.paddingLarge
