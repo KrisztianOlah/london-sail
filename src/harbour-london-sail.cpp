@@ -52,6 +52,7 @@ THE SOFTWARE.
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QNetworkAccessManager>
 #include <QQmlContext>
@@ -60,8 +61,10 @@ THE SOFTWARE.
 #include <sailfishapp.h>
 #include "logic/arrivals/arrivalsproxymodel.h"
 #include "logic/arrivals/stop.h"
+#include "logic/arrivals/stopsquerymodel.h"
 #include "logic/arrivalslogic.h"
 #include "logic/coverlogic.h"
+#include "logic/database/databasemanager.h"
 #include "logic/servicestatuslogic.h"
 #include "logic/serviceStatus/servicestatusproxymodel.h"
 #include "logic/serviceStatus/thisweekendlinemodel.h"
@@ -71,7 +74,6 @@ THE SOFTWARE.
 #include "logic/trafficlogic.h"
 
 
-
 int main(int argc, char *argv[])
 {
     //   - SailfishApp::application(int, char *[]) to get the QGuiApplication *
@@ -79,12 +81,14 @@ int main(int argc, char *argv[])
     //   - SailfishApp::pathTo(QString) to get a QUrl to a resource file
 
     QGuiApplication* app = SailfishApp::application(argc, argv);
+    app->setOrganizationName("");
     QQuickView* view = SailfishApp::createView();
     view->setSource(SailfishApp::pathTo("qml/harbour-london-sail.qml"));
 
     //use 1 global QNetworkAccessManager object for all our network needs
     //on the heap so that it can be the parent of serviceLogic
     QScopedPointer<QNetworkAccessManager> networkMngr(new QNetworkAccessManager());
+    QScopedPointer<DatabaseManager> databaseManager(new DatabaseManager());
 
     qmlRegisterType<ServiceStatusProxyModel>("harbour.london.sail.utilities",1,0, "ServiceStatusModel");
     ServiceStatusLogic* serviceLogic = new ServiceStatusLogic(networkMngr.data());
@@ -100,8 +104,9 @@ int main(int argc, char *argv[])
     view->rootContext()->setContextProperty("trafficData", trafficLogic);
 
     qmlRegisterType<ArrivalsProxyModel>("harbour.london.sail.utilities",1,0,"ArrivalsModel");
+    qmlRegisterType<StopsQueryModel>("harbour.london.sail.utilities",1,0,"StopsModel");
     qmlRegisterType<Stop>("harbour.london.sail.utilities",1,0,"Stop");
-    ArrivalsLogic* arrivalsLogic = new ArrivalsLogic(networkMngr.data());
+    ArrivalsLogic* arrivalsLogic = new ArrivalsLogic(databaseManager.data(),networkMngr.data());
     view->rootContext()->setContextProperty("arrivalsData", arrivalsLogic);
 
     qmlRegisterType<CoverLogic>("harbour.london.sail.utilities",1,0,"PageCodes");

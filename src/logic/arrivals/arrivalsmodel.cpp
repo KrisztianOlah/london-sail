@@ -50,6 +50,8 @@ QVariant ArrivalsModel::data(const QModelIndex& index, int role) const {
         return vehicle.eta;
     case TowardRole:
         return vehicle.towards;
+    case TypeRole:
+        return vehicle.type;
     case PlatformRole:
         return vehicle.platform;
     default:
@@ -72,6 +74,7 @@ QHash<int,QByteArray> ArrivalsModel::roleNames() const {
     roles[DestinationRole] = "destinationData";
     roles[EtaRole] = "etaData";
     roles[TowardRole] = "towardData";
+    roles[TypeRole] = "typeData";
     roles[PlatformRole] = "platformData";
     return roles;
 }

@@ -32,17 +32,19 @@ THE SOFTWARE.
 class ArrivalsContainer;
 class ArrivalsModel;
 class ArrivalsProxyModel;
+class DatabaseManager;
 class JourneyProgressContainer;
 class QNetworkAccessManager;
 class QNetworkReply;
 class QTimer;
 class Stop;
+class StopsQueryModel;
 
 class ArrivalsLogic : public QObject
 {
     Q_OBJECT
 public:
-    explicit ArrivalsLogic(QObject *parent = 0);
+    explicit ArrivalsLogic(DatabaseManager* = 0, QObject* parent = 0);
 private:
     QString activeStops;
     ArrivalsContainer* arrivalsContainer;
@@ -52,9 +54,15 @@ private:
     QString baseUrl;
     QString currentBusDirectionId;
     QString currentDestination;
-    Stop* currentStop;
+
     QString currentVehicleId;
     QString currentVehicleLine;
+    DatabaseManager* databaseManager;
+    Stop* currentStop;
+    bool downloadingArrivals;
+    bool downloadingJourneyProgress;
+    bool downloadingListOfStops;
+    bool downloadingStop;
     QNetworkAccessManager* networkMngr;
     JourneyProgressContainer* journeyProgressContainer;
     QTimer* journeyProgressTimer;
@@ -62,7 +70,9 @@ private:
     QNetworkReply* reply_busStop;
     QNetworkReply* reply_journeyProgress;
     QNetworkReply* reply_stops;
+    StopsQueryModel* stopsQueryModel;
 signals:
+    void downloadSatateChanged();
     void nextStopChanged();
     void stopDataChanged();
 private:
@@ -81,14 +91,21 @@ private slots:
     void onProgressDataChanged();
 public slots:
     void clearCurrentStop();
+    bool favorStop(const QString& code, bool);
     ArrivalsProxyModel* getArrivalsModel();
     void getBusStopByCode(const QString& code);
     void getBusStopsByName(const QString& name);
     QString getCurrentDestination() const;
     Stop* getCurrentStop();
     QString getCurrentVehicleLine() const;
+    bool isDownloadingArrivals() const;
+    bool isDownloadingJourneyProgress() const;
+    bool isDownloadingListOfStops() const;
+    bool isDownloadingStop() const;
     ArrivalsProxyModel* getJourneyProgressModel();
     QString getNextStop();
+    StopsQueryModel* getStopsQueryModel();
+    bool isStopFavorite(const QString& code);
     void setCurrentDestination(const QString& destination);
     void setCurrentVehicleId(const QString& id);
     void setCurrentVehicleLine(const QString& line);

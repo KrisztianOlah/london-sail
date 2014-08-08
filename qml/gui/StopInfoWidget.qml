@@ -1,11 +1,15 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 
 Rectangle {
     property alias distance: distanceLabel.text
     property alias name: nameLabel.text
+    property int type: 0
     property string indicator: ""
     property string towards: ""
+    property string code: ""
+    property bool isFavorite: arrivalsData.isStopFavorite(code)
     signal clicked
 
     id: self
@@ -25,22 +29,21 @@ Rectangle {
     Component.onCompleted: mousearea.clicked.connect(clicked)
 
     Rectangle {
-        id: icon
+        id: stopIcon
         height: 60
         width: height
         radius: height/2
-        color: "red"
+        color: (type === Stop.Bus) ? "red" : "blue"
         anchors {
             left: parent.left
             leftMargin: 10
-            top: parent.top
-            topMargin: 12
+            verticalCenter: parent.verticalCenter
         }
     }
     Label {
         id: indicatorLabel
         text: indicator
-        anchors.centerIn: icon
+        anchors.centerIn: stopIcon
         font.bold: true
     }
 
@@ -51,8 +54,10 @@ Rectangle {
         anchors {
             top: parent.top
             topMargin: (towards === "") ? 30 : 10 //no need to leave space when there is nothing to display
-            left: icon.right
-            leftMargin: icon.width + 10
+            left: stopIcon.right
+            leftMargin: Theme.paddingMedium
+            right: iconButton.left
+            rightMargin: Theme.paddingMedium
 
         }
     }
@@ -63,9 +68,10 @@ Rectangle {
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
             top: nameLabel.bottom
-            left: icon.right
-            leftMargin: icon.width + 10
-            right: parent.right
+            left: stopIcon.right
+            leftMargin: Theme.paddingMedium
+            right: iconButton.left
+            rightMargin: Theme.paddingMedium
         }
     }
 
@@ -74,10 +80,27 @@ Rectangle {
         text: "distance"
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
-            top: icon.bottom
+            top: stopIcon.bottom
 //            topMargin: 2//Theme.fontSizeLarge
             left: parent.left
             leftMargin: 10
+        }
+    }
+    IconButton {
+        id: iconButton
+        icon.source: isFavorite ? "image://theme/icon-l-favorite" : "image://theme/icon-l-star"
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: parent.right
+        }
+        onClicked: {
+            if (isFavorite) {
+                arrivalsData.favorStop(code, false)
+            }
+            else {
+                arrivalsData.favorStop(code, true)
+            }
+            isFavorite = arrivalsData.isStopFavorite(code)
         }
     }
 }

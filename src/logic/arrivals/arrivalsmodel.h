@@ -35,7 +35,7 @@ class ArrivalsModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    enum ArrivalsRoles { IdRole = Qt::UserRole + 1, LineRole, DestinationRole, EtaRole, TowardRole, PlatformRole };
+    enum ArrivalsRoles { IdRole = Qt::UserRole + 1, LineRole, DestinationRole, EtaRole, TowardRole, TypeRole, PlatformRole };
     explicit ArrivalsModel(ArrivalsContainer* = 0, QObject *parent = 0);
 private:
     ArrivalsContainer* container;

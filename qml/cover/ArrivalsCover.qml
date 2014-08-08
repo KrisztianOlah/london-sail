@@ -15,9 +15,9 @@ Item {
             topMargin: Theme.paddingMedium
             bottom: parent.bottom
             left: parent.left
-            leftMargin: Theme.paddingLarge
+            leftMargin: 40
             right: parent.right
-            rightMargin: Theme.paddingLarge
+            rightMargin: 40
         }
         model: arrivalsModel
         delegate: Item {

@@ -36,6 +36,7 @@ Item {
     Label {
         id: toLabel
         text: "to"
+        font.pixelSize: Theme.fontSizeSmall
         horizontalAlignment: Text.AlignHCenter
         anchors {
             top: lineLabel.bottom
@@ -62,6 +63,7 @@ Item {
     Label {
         id: nextLabel
         text: "Next stop:"
+        font.pixelSize: Theme.fontSizeSmall
         horizontalAlignment: Text.AlignHCenter
         anchors {
             top: destiationLabel.bottom
@@ -83,6 +85,8 @@ Item {
             leftMargin: Theme.paddingMedium
             right: parent.right
             rightMargin: Theme.paddingMedium
+            bottom: parent.bottom
+            bottomMargin: Theme.paddingMedium
         }
     }
 }

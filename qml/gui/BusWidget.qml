@@ -26,7 +26,16 @@ BackgroundItem {
     Label {
         id: destinationLabel
         text: ""
-        anchors.centerIn: parent
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: numberLabel.right
+            leftMargin: Theme.paddingMedium
+            right: etaLabel.left
+            rightMargin: Theme.paddingMedium
+//            centerIn: parent
+        }
     }
     Label {
         id: etaLabel

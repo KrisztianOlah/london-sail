@@ -30,22 +30,45 @@ import "../gui"
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
+//get stop type using "StopPointType", "SLRS" = river
+
+
+//Millbank pier for Tate Britain
+//Bankside Pier for Tate Modern
+//London Bridge Pier for London Bridge and the Shard
+//Tower Pier for Tower of London and Tower Bridge
+//Hilton London Docklands Riverside Pier
+//North Greenwich Pier for The O2
+//Greenwich Pier for Greenwich
+
 Page {
     id: page
     property string stopID: ""//"74612"//"52727"//"52725"
-
     allowedOrientations: Orientation.All
     onStatusChanged: {
-        console.log(status)
         if (status === PageStatus.Active) {
             coverData.reportPage(PageCodes.BusStopPage)
         }
     }
+//    bool isDownloadingArrivals() const;
+//    bool isDownloadingJourneyProgress() const;
+//    bool isDownloadingListOfStops() const;
+//    bool isDownloadingStop() const;
+//    function isBusy() {
+//        //
+//    }
+
     BusyIndicator {
         id: busyIndicator
-        running: view.loadingData
+        running: !view.count && (arrivalsData.isDownloadingArrivals() || arrivalsData.isDownloadingStop())
         size: BusyIndicatorSize.Large
         anchors.centerIn: parent
+    }
+    Connections {
+        target: arrivalsData
+        onDownloadSatateChanged: {
+            busyIndicator.running = !view.count && (arrivalsData.isDownloadingJourneyProgress() || arrivalsData.isDownloadingStop())
+        }
     }
 
     SilicaListView {
@@ -56,6 +79,7 @@ Page {
         property string direction: ""
         property string distance: ""
         property bool isLoading: true
+        property int type: 0
 
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
 
@@ -63,10 +87,11 @@ Page {
             target: view.currentStop
             onDataChanged: {
                 //this will only happen once when the page opens and downloaded the information for the stop
-                if (view.currentStop.getType() === Stop.Bus ) {
+                if (view.currentStop.getType() === Stop.Bus || view.currentStop.getType() === Stop.River) {
                     view.busStopName = view.currentStop.getName()
                     view.stopIndicator = view.currentStop.getStopPointIndicator()
                     view.direction = view.currentStop.getTowards()
+                    view.type = view.currentStop.getType()
 
                     //only start updating if header data is already available
                     arrivalsData.startArrivalsUpdate()
@@ -81,23 +106,28 @@ Page {
             stopIndicator: view.stopIndicator
             direction: view.direction
             distance: view.distance
-            isBusStop: true
+            type: view.type
             state: "invisible"
         }
         footer: TflNotice {}
 
         delegate: BusWidget {
+            id: busWidget
             busNumber: lineData
             destination: destinationData
             eta: etaData
             busId:  idData
+            ListView.onAdd: AddAnimation {
+                        target: busWidget
+                    }
+                    ListView.onRemove: RemoveAnimation {
+                        target: busWidget
+                    }
         }
         VerticalScrollDecorator {
             flickable: view
         }
         onCountChanged: {
-            isLoading = !count
-            busyIndicator.running = isLoading
             if (footerItem) { footerItem.state = count ? "visible" : "invisible" }
         }
         Component.onCompleted: {

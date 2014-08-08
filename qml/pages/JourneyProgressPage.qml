@@ -27,35 +27,57 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 
-
+//TODO get rid of magic numbers
 Page {
     id: page
     property string vehicleId: ""
-    property string headerTitle: vehicleId
+    property string headerTitle: getName(vehicleId)
     property string lineName: "lineName"
-    property string destination: "dest"
+    property string destination: ""
     property ArrivalsModel progressModel: arrivalsData.getJourneyProgressModel()
+
+    function getName(registrationNum) {
+        if (registrationNum === "1") { return "Sun Clipper" }
+        if (registrationNum === "2") { return "Moon Clipper" }
+        if (registrationNum === "3") { return "Sky Clipper" }
+        if (registrationNum === "4") { return "Storm Clipper" }
+        if (registrationNum === "5") { return "Star Clipper" }
+        if (registrationNum === "6") { return "Meteor Clipper" }
+        if (registrationNum === "7") { return "Cyclone Clipper" }
+        if (registrationNum === "8") { return "Typhoon Clipper" }
+        if (registrationNum === "9") { return "Tornado Clipper" }
+        if (registrationNum === "10") { return "Monsoon Clipper" }
+        if (registrationNum === "11") { return "Aurora Clipper" }
+        if (registrationNum === "12") { return "Hurricane Clipper" }
+        if (registrationNum === "13") { return "Twin Star" }
+        return registrationNum
+    }
+
+    function whatColor(exactTimeToArr) {
+        if (exactTimeToArr > -10000 && exactTimeToArr < 20000) return Theme.highlightColor
+        if (exactTimeToArr > -10000) return Theme.primaryColor
+        else return Theme.secondaryColor
+    }
+
+    BusyIndicator {
+        id: busyIndicator
+        running: !view.count && arrivalsData.isDownloadingJourneyProgress()
+        size: BusyIndicatorSize.Large
+        anchors.fill: parent
+    }
+
+    Connections {
+        target: arrivalsData
+        onDownloadStateChanged: {
+            console.log("downloadStateChanged")
+            busyIndicator.running = !view.count && arrivalsData.isDownloadingJourneyProgress()
+        }
+    }
 
     allowedOrientations: Orientation.All
 
     onStatusChanged: {
         if (status === PageStatus.Active) { coverData.reportPage(PageCodes.JourneyProgressPage) }
-    }
-
-    function whatColor(exact) {
-        if (exact > -10000 && exact < 20000) return Theme.highlightColor
-        if (exact > -10000) return Theme.primaryColor
-        else return Theme.secondaryColor
-    }
-
-    function resetSmallest() {
-        smallest = 30000
-    }
-    Connections {
-        target: progressModel
-        onDataChanged: {
-            resetSmallest()
-        }
     }
 
     SilicaListView {
@@ -117,12 +139,19 @@ Page {
                 NumberAnimation { properties: "x,y"; duration: 1000 }
             }
         delegate: Item {
+            id: item
             height: stopLabel.paintedHeight + Theme.paddingSmall*2
 
             anchors {
                 left: parent.left
                 right: parent.right
             }
+            ListView.onAdd: AddAnimation {
+                        target: item
+                    }
+                    ListView.onRemove: RemoveAnimation {
+                        target: item
+                    }
             Rectangle {
                 anchors.fill: parent
                 color: Theme.secondaryHighlightColor

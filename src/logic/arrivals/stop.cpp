@@ -23,16 +23,24 @@ THE SOFTWARE.
 */
 
 #include "stop.h"
+#include <QDebug>
+#include "../database/databasemanager.h"
 
-Stop::Stop(QObject* parent) : QObject(parent)
+Stop::Stop(QObject* parent) : QObject(parent),
+                              databaseManager(static_cast<DatabaseManager*>(parent))
 {
 }
 
 //public:
+void Stop::addToDb() {
+    if (databaseManager) {
+        databaseManager->addStop(name, id, type, towards, latitude, longitude,stopPointIndicator);
+    }
+}
 
 void Stop::setID(const QString& value) { id = value; }
 void Stop::setLatitude(double value) { latitude = value; }
-void Stop::setLongitude(double value) {longitude = value; }
+void Stop::setLongitude(double value) { longitude = value; }
 void Stop::setName(const QString& value) { name = value;}
 void Stop::setStopPointIndicator(const QString& value) { stopPointIndicator = value; }
 void Stop::setTowards(const QString& value) { towards = value; }

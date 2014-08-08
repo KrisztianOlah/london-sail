@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <QString>
 #include <QObject>
 
+class DatabaseManager;
 //StopPointName,StopPointIndicator,Towards,Latitude,Longitude
 class Stop : public QObject
 {
@@ -38,6 +39,7 @@ public:
     explicit Stop(QObject*  parent = 0);
     enum Type { None, Bus, Underground, River, Overground, Dlr};
 private:
+    DatabaseManager* databaseManager;
     QString id;
     double latitude;//will be replaced with QCoordinates
     double longitude;//   -||-
@@ -46,6 +48,7 @@ private:
     QString towards;//might be empty string for some type such as tube
     int type;
 public:
+    void addToDb();
     void setID(const QString&);
     void setLatitude(double);
     void setLongitude(double);

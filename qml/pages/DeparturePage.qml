@@ -32,13 +32,34 @@ import "../gui"
 Page {
     id: page
     property string code: ""//"74612"//"52727"
+    property StopsModel stopsModel: arrivalsData.getStopsQueryModel()
     onStatusChanged: {
                 if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
     }
 
     function readInput(input) {
-        pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID': input } )
-//        new RegExp()
+        stopsModel.clearStops()
+        var re = /^\d+$/
+        if (re.test(input)) {
+            pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID': input } )
+        }
+        else {
+            arrivalsData.getBusStopsByName(input)
+        }
+    }
+
+    BusyIndicator {
+        id: busyIndicator
+        running: !view.count && arrivalsData.isDownloadingListOfStops()
+        size: BusyIndicatorSize.Large
+        anchors.centerIn: parent
+    }
+
+    Connections {
+        target: arrivalsData
+        onDownloadSatateChanged: {
+            busyIndicator.running = !view.count && arrivalsData.isDownloadingListOfStops()
+        }
     }
 
     SilicaListView {
@@ -46,12 +67,14 @@ Page {
         anchors.fill: parent
 
         header: Item {
-            height: Theme.paddingMedium*6 + pageHeader.height
+            height: 150 + pageHeader.height
             anchors {
                 left: parent.left
                 right: parent.right
             }
-
+            VerticalScrollDecorator {
+                flickable: view
+            }
             Label {
                 id: pageHeader
                 text: "Bus Departures"
@@ -83,37 +106,49 @@ Page {
             }
         }
         footer: TflNotice {}
-        PullDownMenu {
-            id: pulley
-            MenuItem {
-                text: "Check Bus Stop by code"
-            }
-            MenuItem {
-                text: "Search bus stop by name"
-            }
-            MenuItem {
-                text: "Here"
-                enabled: false
-                visible: false
-            }
-        }
+//        PullDownMenu {
+//            id: pulley
+//            MenuItem {
+//                text: "Underground"
+//            }
+//            MenuItem {
+//                text: "Here"
+//                enabled: false
+//                visible: false
+//            }
+//        }
 
         spacing: 10
-        model: 0//10//myModel
+        model: arrivalsData.getStopsQueryModel()
         delegate: StopInfoWidget {
-//            name: nameData
-//            indicator: indicatorData
-//            towards: "towards " + towardsData
-//            distance: distanceData + "m"
+            id: infoWidget
+            name: nameData
+            type: typeData
+            indicator: stopPointIndicatorData
+            towards: towardsData !== "" ? "towards " + towardsData : ""
+            distance: ""
+            code: codeData
             onClicked: {
-                pageStack.push(Qt.resolvedUrl("BusStopPage.qml")) //use codeData to get info on stop/station
+                //trying to open with an empty string would cause application to terminate
+                if (codeData !== "") {
+                    pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID' : codeData})
+                }
+                else {
+                    //TODO let user know that there was a problem
+                }
             }
+            ListView.onAdd: AddAnimation {
+                        target: infoWidget
+                    }
+                    ListView.onRemove: RemoveAnimation {
+                        target: infoWidget
+                    }
         }
         ViewPlaceholder {
             text: "Pull down to enter for Bus Stop's code."
         }
     }
-    Component.onCompleted: {
-        arrivalsData.getBusStopsByName("Greyhound Road")//DEBUG
+    Component.onDestruction: {
+        stopsModel.clearStops()
     }
 }

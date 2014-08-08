@@ -12,7 +12,7 @@ CONFIG += sailfishapp
 
 QMAKE_CXXFLAGS += -std=c++0x
 
-QT += network xml
+QT += network xml sql
 
 SOURCES += src/harbour-london-sail.cpp \
     src/logic/servicestatuslogic.cpp \
@@ -38,7 +38,10 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/arrivals/arrivalsproxymodel.cpp \
     src/logic/arrivals/journeyprogressmodel.cpp \
     src/logic/arrivals/journeyprogresscontainer.cpp \
-    src/logic/coverlogic.cpp
+    src/logic/coverlogic.cpp \
+    src/logic/database/databasemanager.cpp \
+    src/logic/database/database.cpp \
+    src/logic/arrivals/stopsquerymodel.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -95,7 +98,10 @@ HEADERS += \
     src/logic/arrivals/arrivalsproxymodel.h \
     src/logic/arrivals/journeyprogressmodel.h \
     src/logic/arrivals/journeyprogresscontainer.h \
-    src/logic/coverlogic.h
+    src/logic/coverlogic.h \
+    src/logic/database/databasemanager.h \
+    src/logic/database/database.h \
+    src/logic/arrivals/stopsquerymodel.h
 
 RESOURCES += \
     images.qrc
