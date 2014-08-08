@@ -57,6 +57,19 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.4.0 - Bus and River Bus Departures Feature.</b><br>
+*Changed cover picture to accomodate the new cover information"
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.3.2 - Hotfix.</b><br>
 *Fixed bug: Service Status now works as intended."
             }

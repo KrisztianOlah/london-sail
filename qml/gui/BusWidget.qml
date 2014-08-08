@@ -58,7 +58,6 @@ BackgroundItem {
             leftMargin: Theme.paddingMedium
             right: etaLabel.left
             rightMargin: Theme.paddingMedium
-//            centerIn: parent
         }
     }
     Label {

@@ -13,7 +13,7 @@ Name:       harbour-london-sail
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    London Sail is commuter application for London.
-Version:    0.3.2
+Version:    0.4.0
 Release:    1
 Group:      Qt/Qt
 License:    MIT Licence
