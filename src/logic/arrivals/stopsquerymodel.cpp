@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 extern DatabaseManager databaseManager;
 
+// !!! See header for note on parent !!!
 StopsQueryModel::StopsQueryModel(QObject *parent) : QSqlQueryModel(parent),
                                                     databaseManager(static_cast<DatabaseManager*>(parent))
 {
@@ -77,6 +78,8 @@ QHash<int,QByteArray> StopsQueryModel::roleNames() const {
 void StopsQueryModel::showStops() { setQuery("SELECT * FROM stopstable");}
 
 //public slots:
+//clears the database from stops from stopstable that are not set as favorite
+//this does//will not affect underground stations
 void StopsQueryModel::clearStops() {
     if (databaseManager) {
         bool ok = databaseManager->clearStopsTable();

@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <QString>
 
+//this struct holds a Boat, a Bus or a Dlr, an OverGround or an UnderGround train
 struct Vehicle
 {
     enum Type { Boat, Bus, Dlr, OverGround, UnderGround };

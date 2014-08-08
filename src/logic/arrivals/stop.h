@@ -29,7 +29,9 @@ THE SOFTWARE.
 #include <QObject>
 
 class DatabaseManager;
-//StopPointName,StopPointIndicator,Towards,Latitude,Longitude
+
+//This class is to hold a bus/river stop or tube/overground/dlr station and its data
+// !!! Parent MUST be a pointer to a DatabaseManager object !!!
 class Stop : public QObject
 {
     Q_OBJECT
@@ -45,7 +47,7 @@ private:
     double longitude;//   -||-
     QString name;
     QString stopPointIndicator;//for bus stops
-    QString towards;//might be empty string for some type such as tube
+    QString towards;//might be empty string for some types such as Underground
     int type;
 public:
     void addToDb();
@@ -71,4 +73,3 @@ public slots:
 };
 
 #endif // STOP_H
-//wget -O instant http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?StopPointName="Greyhound Road"\&ReturnList=StopCode1,StopPointName,Bearing,StopPointIndicator,StopPointType,Latitude,Longitude

@@ -27,6 +27,7 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 
+//This is displayed while tracking arrivals/deparures of a stop
 Item {
     property bool active: false
     property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
@@ -65,20 +66,4 @@ Item {
             }
         }
     }
-//    onActiveChanged: {
-//        if (!active) {
-//            v
-//        }
-//    }
-
-//    Label {
-//        anchors.centerIn: parent
-//        text: active ? "I'm active!" : "I'm sleeping"
-//        RotationAnimation on rotation {
-//            running: active
-//            duration: 1000
-//            loops: Animation.Infinite
-//            from: 0; to: 360
-//        }
-//    }
 }

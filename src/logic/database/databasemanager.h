@@ -30,6 +30,7 @@ THE SOFTWARE.
 
 class QSqlDatabase;
 
+//this class is to interact with different databases(data, settings, etc...`)
 class DatabaseManager : public QObject
 {
 public:

@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "arrivalsproxymodel.h"
 #include "journeyprogressmodel.h"
 
+//custom search algorithms because Qt algorithms are not sufficent and labmbdas or bind is not available in C++03 to use std algorithms
 namespace {
 typedef QList<QPair<QString,double> > StopList;
 StopList::const_iterator find(StopList::const_iterator begin,StopList::const_iterator end, const QString& val) {
@@ -62,18 +63,23 @@ JourneyProgressContainer::JourneyProgressContainer(QObject* parent) : QObject(pa
 //public:
 QPair<QString,double> JourneyProgressContainer::at(int index) const { return data.at(index); }
 
+//clears data and notifies model
 void JourneyProgressContainer::clear() {
     model->beginReset();
     data.clear();
     model->endReset();
 }
 
+//counts difference between 2 datetime objects in sec or millisec
+//time is server time saved when downloading the data from server
 double JourneyProgressContainer::getDeltaTime(double prediction) const {
     double delta = prediction - time;
     return delta;
 }
 
 
+//for a given datetime object it calculates the difference between
+//server time and arg and returns it in minutes
 int JourneyProgressContainer::getEta(double prediction) const {
     double deltaInMilliSec = getDeltaTime(prediction);
     double deltaInSec = deltaInMilliSec /1000;
@@ -84,6 +90,8 @@ int JourneyProgressContainer::getEta(double prediction) const {
 
 ArrivalsProxyModel* JourneyProgressContainer::getModel() { return proxyModel; }
 
+//Returns the next stop where vehicle is scheduled to stop
+//TODO check if it really need to return a pair or a QString would do
 QPair<QString,double> JourneyProgressContainer::getNextStop() const {
     QList<QPair<QString,double> >::const_iterator smallestSoFar, iter = data.begin();
     while (iter != data.end()) {
@@ -99,6 +107,10 @@ QPair<QString,double> JourneyProgressContainer::getNextStop() const {
     }
 }
 
+//it is called when new data is available, it appends the container with the new stop-eta pairs only
+//if they are not already present otherwise just update eta to the new value,
+//old data is not deleted until user changes the vehicle to track
+//not using a QMap/QHash, because it needs random access iterators for model
 void JourneyProgressContainer::refreshData(QList<QPair<QString,double> > list) {
     //check if other element is in data if yes update if no then set to 0 or delete
     if (!data.empty()) {

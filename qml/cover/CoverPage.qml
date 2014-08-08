@@ -32,6 +32,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
+//main cover page
 CoverBackground {
     property bool active: status === Cover.Active
     property int currentPage: PageCodes.None

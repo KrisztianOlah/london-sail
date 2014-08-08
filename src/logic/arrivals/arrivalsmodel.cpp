@@ -63,6 +63,7 @@ void ArrivalsModel::endInsert() { endInsertRows(); }
 
 void ArrivalsModel::endReset() { endResetModel();}
 
+//swaps its container for another
 void ArrivalsModel::replaceContainer(const ArrivalsContainer& pOther) {
     container->replace(pOther);
 }

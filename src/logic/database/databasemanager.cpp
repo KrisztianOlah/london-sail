@@ -35,15 +35,20 @@ DatabaseManager::DatabaseManager(QObject* parent) : QObject(parent)
 }
 
 //public:
+//adds a stop in DATA database, returns true on success and false otherwise
 bool DatabaseManager::addStop(const QString& name,const QString& code,int type, QString& towards, double latitude, double longitude,
              const QString& stopPointIndicator, bool favorite) {
     return db.addStop(name, code, type, towards, latitude, longitude, stopPointIndicator, favorite);
 }
 
+//clears stopstable from unfavorited stops, returns true on success and false otherwise
 bool DatabaseManager::clearStopsTable() { return db.clearStopsTable(); }
 
+//checks if a stop is favorite
 bool DatabaseManager::isFavorite(const QString& code) { return db.isFavorite(code); }
 
+//makes a stop favorite, returns true on success and false otherwise
 bool DatabaseManager::makeFavorite(const QString& code) { return db.makeFavorite(code); }
 
+//makes a stop to be not favorite, returns true on success and false otherwise
 bool DatabaseManager::unFavorite(const QString& code) { return db.unFavorite(code); }

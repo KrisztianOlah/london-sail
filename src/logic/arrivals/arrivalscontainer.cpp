@@ -31,10 +31,12 @@ ArrivalsContainer::ArrivalsContainer(ArrivalsModel* m) : model(m)
 }
 
 
+//adds a new vehicle, it shouldn't be called on containers whose models are connected to views
 void ArrivalsContainer::add(const Vehicle& vehicle) {
     append(vehicle);
 }
 
+//clears data and notifies model about it
 void ArrivalsContainer::clearData() {
     if (model) {
         model->beginReset();
@@ -45,10 +47,14 @@ void ArrivalsContainer::clearData() {
     }
 }
 
+//when a model is created a model can register itself with a container
+//so that they both have a pointer of each other and can call each other's methods
 void ArrivalsContainer::registerModel(ArrivalsModel* m) {
     model = m;
 }
 
+//swaps another contaier for this and notifies model that a drastic change happened
+//swap so that even when a download goes awry there is data to display to user
 void ArrivalsContainer::replace(const ArrivalsContainer& rhs) {
     if (model) {
         model->beginReset();

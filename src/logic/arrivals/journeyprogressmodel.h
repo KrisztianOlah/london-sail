@@ -29,6 +29,7 @@ THE SOFTWARE.
 
 class JourneyProgressContainer;
 
+//This is a model for Journey Progress
 // !!! Parent MUST be a JourneyProgressContainer* or a nullptr !!!
 class JourneyProgressModel : public QAbstractListModel
 {

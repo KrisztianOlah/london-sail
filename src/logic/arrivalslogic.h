@@ -40,6 +40,7 @@ class QTimer;
 class Stop;
 class StopsQueryModel;
 
+//This class is reponsible to providing the logic to all departure related queries from gui
 class ArrivalsLogic : public QObject
 {
     Q_OBJECT

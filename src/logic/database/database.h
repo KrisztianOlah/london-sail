@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <QSqlDatabase>
 #include <QSqlError>
 
+//This class is responsible to saving/retrieving all data that is required to/from an sqlite database on the device
 class Database
 {
 public:

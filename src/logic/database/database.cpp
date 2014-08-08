@@ -39,6 +39,7 @@ Database::Database() : db(QSqlDatabase::addDatabase("QSQLITE"))
     db.setDatabaseName(path);
     open();
 }
+
 Database::~Database() {
     close();
 }
@@ -47,6 +48,7 @@ Database::~Database() {
 //private:
 void Database::close() { db.close(); }
 
+//creates stopstable and returns true if successful otherwise returns false
 bool Database::createStopsTable() {
     if (!isOpen()) { open();}
     if (isStopsTable()) { return true; }
@@ -75,6 +77,7 @@ bool Database::createStopsTable() {
 
 bool Database::isOpen() const { return db.isOpen(); }
 
+//returns true if stopstable is already present otherwise returns false
 bool Database::isStopsTable() const {
     if (!isOpen()) { return false; }
     QSqlQuery query;
@@ -86,6 +89,7 @@ bool Database::open() { return db.open(); }
 
 
 //public:
+//adds a new stop to stopstable and returns true if successful otherwise returns false
 bool Database::addStop(const QString& name,const QString& code,int type, QString& towards, double latitude, double longitude,
              const QString& stopPointIndicator, bool favorite) {
     if (createStopsTable()) {
@@ -112,12 +116,14 @@ bool Database::addStop(const QString& name,const QString& code,int type, QString
     }
 }
 
+//deletes every entry in stopstable that is not set to favorite by user and returns true if successful otherwise returns fasle
 bool Database::clearStopsTable() {
     QSqlQuery query;
     bool ok = query.exec("DELETE FROM stopstable WHERE favorite=0");
     return ok;
 }
 
+//checks if a given bus stop or pier(by their code) is favorite
 bool Database::isFavorite(const QString& code) const {
     QSqlQuery query;
     query.prepare("SELECT favorite FROM stopstable WHERE code= :code ");
@@ -137,6 +143,7 @@ bool Database::isFavorite(const QString& code) const {
 
 QSqlError Database::lastError() const { return db.lastError(); }
 
+//makes a stop a favorite, returns true on success and false otherwise
 bool Database::makeFavorite(const QString& code) {
     qDebug() << "makeFavorite() called";
     QSqlQuery query;
@@ -147,6 +154,7 @@ bool Database::makeFavorite(const QString& code) {
     return ret;
 }
 
+//makes a stop NOT favorite, returns true on success and false otherwise
 bool Database::unFavorite(const QString& code) {
     qDebug() << "unFavorite() called";
     QSqlQuery query;

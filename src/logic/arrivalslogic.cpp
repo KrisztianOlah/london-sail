@@ -74,21 +74,24 @@ ArrivalsLogic::ArrivalsLogic(DatabaseManager* dbm, QObject* parent) : QObject(pa
 }
 
 //private:
+
+//clears the container holding the vehicles and their predicted eta
+//the container notifies the model which notifies connected views
 void ArrivalsLogic::clearArrivalsData() {
     if (arrivalsContainer) {
         arrivalsContainer->clearData();
     }
-
 }
 
+//clears jorneyprogress data container takes care of notifying model,views
 void ArrivalsLogic::clearJourneyProgressData() {
     currentBusDirectionId = "";
     setCurrentVehicleId("");
     journeyProgressContainer->clear();
 }
 
-//DestinationText for shorter text
 //FIX registration num must not start with X_or contain NEW in the first five letters
+//downloads the data required for bus and river bus arrivals
 void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
     QString stopCode = QString("StopCode1=") + code;
     QString returnList = "&ReturnList=LineName,DestinationName,EstimatedTime,RegistrationNumber,DirectionID";
@@ -102,6 +105,7 @@ void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
     connect(reply_arrivals, SIGNAL(finished()), this, SLOT(onArrivalsDataReceived()) );
 }
 
+//downloads data required for bus journey progress
 void ArrivalsLogic::getBusProgress(const QString& registrationNum) {
     QString regPart = QString("RegistrationNumber=") + registrationNum;
     QString directionIDPart = QString("&DirectionID=") + currentBusDirectionId;
@@ -115,6 +119,7 @@ void ArrivalsLogic::getBusProgress(const QString& registrationNum) {
     connect(reply_journeyProgress, SIGNAL(finished()), this, SLOT(onBusProgressReceived()) );
 }
 
+//creates a list of QJsonDocument arrays from a QNetworkReply so long the format is Json
 QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
     QList<QJsonDocument> document;
     if (reply) {
@@ -127,6 +132,7 @@ QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
 }
 
 //private slots:
+//calls the correct function chain for each kind of Stop to download and process arrivals data such as eta
 void ArrivalsLogic::fetchArrivalsData() {
     qDebug() << "updated";
     switch (currentStop->getType()) {
@@ -141,12 +147,14 @@ void ArrivalsLogic::fetchArrivalsData() {
     }
 }
 
+//calls the correct function chain for each kind of Stop to download and process journey progress
 void ArrivalsLogic::fetchJourneyProgress() {
     if (currentVehicleId == "") return;
     //TODO switch on currentStop->type
     getBusProgress(currentVehicleId);
 }
 
+//gets called when bus arrivals are downloaded and ready to be processed
 void ArrivalsLogic::onArrivalsDataReceived() {
     downloadingArrivals = false;
     downloadSatateChanged();
@@ -175,10 +183,10 @@ void ArrivalsLogic::onArrivalsDataReceived() {
     arrivalsContainer->replace(tempContainer);
 }
 
+//gets called when bus progress data is downloaded and redy to be processed
 void ArrivalsLogic::onBusProgressReceived() {
     downloadingJourneyProgress = false;
     downloadSatateChanged();
-    qDebug() << "onBusProgressReceived() is called";
     QList<QJsonDocument> document = makeDocument(reply_journeyProgress);
     if (document.isEmpty()) return;//nothing to do
     double serverTime = (*(document.begin()->array().begin() +2)).toDouble();
@@ -193,6 +201,7 @@ void ArrivalsLogic::onBusProgressReceived() {
     journeyProgressContainer->refreshData(list);
 }
 
+//gets called when bus stop data is downloaded and ready to be processed
 void ArrivalsLogic::onBusStopDataReceived() {
     QList<QJsonDocument> document = makeDocument(reply_busStop);
     //only want the second array as the first one is the version array and there are only 2 arrays
@@ -221,6 +230,7 @@ void ArrivalsLogic::onBusStopDataReceived() {
     downloadSatateChanged();
 }
 
+//gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
     QList<QJsonDocument> document = makeDocument(reply_stops);
     if (document.size() < 1 ) return; //if empty or only have version array then nothing to do
@@ -255,14 +265,15 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
     downloadSatateChanged();
 }
 
+//signals to gui that there is a new next stop
 void ArrivalsLogic::onProgressDataChanged() {
-    qDebug() << " NextStopChanged()";
     emit nextStopChanged();
 }
 
 //public slots:
 void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
+//makes stop a favorite or removes it from favorites depending on the second arg
 bool ArrivalsLogic::favorStop(const QString& code, bool b) {
     if (b) {
         return databaseManager->makeFavorite(code);
@@ -272,6 +283,7 @@ bool ArrivalsLogic::favorStop(const QString& code, bool b) {
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }
 
+//downloads bus stop data for a bus stop  with a given code
 void ArrivalsLogic::getBusStopByCode(const QString& code) {
     currentStop->setID(code);
 
@@ -286,6 +298,7 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
 }
 
+//downloads a list of stops that bear the same name
 void ArrivalsLogic::getBusStopsByName(const QString& name) {
     QString stopPointName = QString("StopPointName=") + name;
     QString returnList = "&ReturnList=StopPointName,StopCode1,Towards,StopPointIndicator,StopPointType,Latitude,Longitude";
@@ -325,24 +338,29 @@ void ArrivalsLogic::setCurrentVehicleId(const QString& id) { currentVehicleId = 
 
 void ArrivalsLogic::setCurrentVehicleLine(const QString& line) { currentVehicleLine = line; }
 
+//starts timer to periodically download arrivals data
+//time interval might be different for each kind of stops
 void ArrivalsLogic::startArrivalsUpdate() {
     fetchArrivalsData();
-    //it might be different for other kinds of stops!
-    arrivalsTimer->start(30000);
+    arrivalsTimer->start(30000);//30 sec
 }
 
+//starts timer to periodically download journey progress data
+//time interval might be different for each kind of stops
 void ArrivalsLogic::startJourneyProgressUpdate() {
     qDebug() << "***startJourneyProgressUpdate() ***";
     fetchJourneyProgress();
-    journeyProgressTimer->start(30000);
+    journeyProgressTimer->start(30000);//30 sec
 }
 
+//stops timer to download arrivals data
 void ArrivalsLogic::stopArrivalsUpdate() {
     qDebug() << "updating stopped.";
     arrivalsTimer->stop();
     clearArrivalsData();
 }
 
+//stops timer to download journey progress data
 void ArrivalsLogic::stopJourneyProgressUpdate() {
     journeyProgressTimer->stop();
     clearJourneyProgressData();

@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <QSortFilterProxyModel>
 
+//a proxy model to sort arrivals by eta
 class ArrivalsProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT

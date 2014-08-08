@@ -26,11 +26,12 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
+//displayed when tracking a vehicle
 Item {
     id: self
 
-    property string line: "220"
-    property string destination: "Putney"
+    property string line: ""
+    property string destination: ""
     property string nextStop: "?"
 
     Connections {

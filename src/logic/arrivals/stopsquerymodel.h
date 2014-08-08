@@ -29,6 +29,8 @@ THE SOFTWARE.
 
 class DatabaseManager;
 
+//model to interact with sqlite database holding different stops
+// !!! Parent MUST be a pointer to DatabaseManager object !!!
 class StopsQueryModel : public QSqlQueryModel
 {
     Q_OBJECT

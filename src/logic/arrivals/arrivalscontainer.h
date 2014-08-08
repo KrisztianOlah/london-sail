@@ -31,6 +31,7 @@ THE SOFTWARE.
 class QString;
 class ArrivalsModel;
 
+//class to hold arrivals/departure data for each vehicle with an eta
 class ArrivalsContainer : public QList<Vehicle>
 {
 public:

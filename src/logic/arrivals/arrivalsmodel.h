@@ -31,6 +31,7 @@ THE SOFTWARE.
 
 class ArrivalsContainer;
 
+//model for vehicle arrivals/departures
 class ArrivalsModel : public QAbstractListModel
 {
     Q_OBJECT

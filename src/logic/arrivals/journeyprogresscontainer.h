@@ -32,6 +32,7 @@ THE SOFTWARE.
 class ArrivalsProxyModel;
 class JourneyProgressModel;
 
+//container to hold journey progress data ie: what stops are coming up at what eta
 class JourneyProgressContainer : public QObject
 {
     Q_OBJECT

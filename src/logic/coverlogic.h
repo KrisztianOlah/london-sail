@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <QObject>
 
+//This class is to track what pages are active so that the correct cover is displayed
 class CoverLogic : public QObject
 {
     Q_OBJECT
