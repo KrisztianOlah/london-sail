@@ -52,15 +52,26 @@ Rectangle {
     }
     Component.onCompleted: mousearea.clicked.connect(clicked)
 
+    Image  {
+        id: waves
+        source: "qrc:///waves.png"
+        visible: (type === Stop.River) ? true : false
+        anchors {
+            left: parent.left
+            leftMargin: 10
+            verticalCenter: parent.verticalCenter
+        }
+    }
     Rectangle {
         id: stopIcon
         height: 60
         width: height
         radius: height/2
-        color: (type === Stop.Bus) ? "red" : "blue"
+        color: "red"
+        visible: (type === Stop.Bus) ? true : false
         anchors {
             left: parent.left
-            leftMargin: 10
+            leftMargin: 20
             verticalCenter: parent.verticalCenter
         }
     }
@@ -78,7 +89,7 @@ Rectangle {
         anchors {
             top: parent.top
             topMargin: (towards === "") ? 30 : 10 //no need to leave space when there is nothing to display
-            left: stopIcon.right
+            left: waves.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left
             rightMargin: Theme.paddingMedium
@@ -92,7 +103,7 @@ Rectangle {
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
             top: nameLabel.bottom
-            left: stopIcon.right
+            left: waves.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left
             rightMargin: Theme.paddingMedium

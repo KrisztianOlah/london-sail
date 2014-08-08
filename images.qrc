@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file alias="tubemap.png">images/tubemap.png</file>
         <file alias="coverBackground.png">images/coverBackGround.png</file>
+        <file alias="waves.png">images/waves_64.png</file>
     </qresource>
 </RCC>

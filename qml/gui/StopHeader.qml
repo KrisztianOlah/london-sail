@@ -70,15 +70,27 @@ Item {
             right: parent.right
         }
 
+        Image  {
+            id: waves
+            source: "qrc:///waves.png"
+            visible: (type === Stop.River) ? true : false
+            anchors {
+                left: parent.left
+                leftMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+        }
+
         Rectangle {
             id: icon
             height: 50
             width: 50
             radius: 25
             color: (type === Stop.Bus) ? "red" : "blue"
+            visible: (type === Stop.Bus) ? true : false
             anchors {
                 left: parent.left
-                leftMargin: 10
+                leftMargin: 20
                 verticalCenter: parent.verticalCenter
             }
             Label {
@@ -94,7 +106,7 @@ Item {
             font.pixelSize: Theme.fontSizeTiny
             color: Theme.highlightColor
             anchors {
-                left: icon.right
+                left: waves.right
                 leftMargin: Theme.paddingExtraLarge
                 top: parent.top
                 topMargin: Theme.paddingSmall
