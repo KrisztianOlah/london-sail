@@ -61,6 +61,7 @@ Page {
         spacing: 10
         model: serviceStatusData.getModel()
         delegate: LineInfoWidget {
+            id: lineInfoWidget
             name: nameData
             statusText: statusData
             details: messageData
@@ -69,6 +70,13 @@ Page {
             state: "visible"
             onClicked: { view.positionViewAtIndex(index, ListView.Contain) }
         }
+        ListView.onAdd: AddAnimation {
+            target: lineInfoWidget
+        }
+        ListView.onRemove: RemoveAnimation {
+            target: lineInfoWidget
+        }
+
         ViewPlaceholder {
             enabled: (!busyIndicator.running && !view.count)
             text: "Pull down to refresh."

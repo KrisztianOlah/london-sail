@@ -219,4 +219,16 @@ Rectangle {
     Behavior on opacity {
         FadeAnimation {}
     }
+    transitions: [
+        Transition {
+            from: "normal"
+            to: "detailed"
+            NumberAnimation { target: self; properties: "height" ; duration: 200 }
+        },
+        Transition {
+            from: "detailed"
+            to: "normal"
+            NumberAnimation { target: self; properties: "height" ; duration: 200 }
+        }
+    ]
 }

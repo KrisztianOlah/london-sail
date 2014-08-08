@@ -139,10 +139,10 @@ Page {
             }
             ListView.onAdd: AddAnimation {
                         target: infoWidget
-                    }
-                    ListView.onRemove: RemoveAnimation {
+            }
+            ListView.onRemove: RemoveAnimation {
                         target: infoWidget
-                    }
+            }
         }
         ViewPlaceholder {
             text: "Pull down to enter for Bus Stop's code."

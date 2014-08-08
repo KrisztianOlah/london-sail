@@ -168,6 +168,7 @@ Page {
         model: disruptionModel
         spacing: 10
         delegate: RoadDisruptionWidget {
+            id: roadDisruptionWiget
             location: locationData
             comment: commentsData
             currentUpdate: currentUpdateData
@@ -175,6 +176,13 @@ Page {
             disruptionID: idData
 
         }
+        ListView.onAdd: AddAnimation {
+            target: roadDisruptionWiget
+        }
+        ListView.onRemove: RemoveAnimation {
+            target: roadDisruptionWiget
+        }
+
         onCountChanged: {
             if (headerItem && headerItem.state === "") {
                 headerItem.state = count || !disruptionModel.isFilterEmptyString() ? "searchable" : ""
