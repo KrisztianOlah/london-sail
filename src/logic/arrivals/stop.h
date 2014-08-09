@@ -50,7 +50,6 @@ private:
     QString towards;//might be empty string for some types such as Underground
     int type;
 public:
-    void addToDb();
     void setID(const QString&);
     void setLatitude(double);
     void setLongitude(double);
@@ -62,6 +61,7 @@ public:
 signals:
     void dataChanged();
 public slots:
+    void addToDb(bool favorite = false);
     void clear();
     QString getID() const;
     double getLatitude() const;

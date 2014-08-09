@@ -30,17 +30,6 @@ import "../gui"
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
-//get stop type using "StopPointType", "SLRS" = river
-
-
-//Millbank pier for Tate Britain
-//Bankside Pier for Tate Modern
-//London Bridge Pier for London Bridge and the Shard
-//Tower Pier for Tower of London and Tower Bridge
-//Hilton London Docklands Riverside Pier
-//North Greenwich Pier for The O2
-//Greenwich Pier for Greenwich
-
 Page {
     id: page
     property string stopID: ""//"74612"//"52727"//"52725"
@@ -50,13 +39,6 @@ Page {
             coverData.reportPage(PageCodes.BusStopPage)
         }
     }
-//    bool isDownloadingArrivals() const;
-//    bool isDownloadingJourneyProgress() const;
-//    bool isDownloadingListOfStops() const;
-//    bool isDownloadingStop() const;
-//    function isBusy() {
-//        //
-//    }
 
     BusyIndicator {
         id: busyIndicator
@@ -76,6 +58,7 @@ Page {
         property Stop currentStop: arrivalsData.getCurrentStop()
         property string busStopName: ""
         property string stopIndicator: ""
+        property string stopCode: ""
         property string direction: ""
         property string distance: ""
         property bool isLoading: true
@@ -92,6 +75,7 @@ Page {
                     view.stopIndicator = view.currentStop.getStopPointIndicator()
                     view.direction = view.currentStop.getTowards()
                     view.type = view.currentStop.getType()
+                    view.stopCode = view.currentStop.getID()
 
                     //only start updating if header data is already available
                     arrivalsData.startArrivalsUpdate()
@@ -106,6 +90,7 @@ Page {
             stopIndicator: view.stopIndicator
             direction: view.direction
             distance: view.distance
+            stopCode: view.stopCode
             type: view.type
             state: "invisible"
         }

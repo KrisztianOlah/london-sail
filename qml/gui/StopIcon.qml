@@ -22,37 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef DATABASE_H
-#define DATABASE_H
 
-#include <QSqlDatabase>
-#include <QSqlError>
+import QtQuick 2.0
+import Sailfish.Silica 1.0
+import harbour.london.sail.utilities 1.0
 
-//This class is responsible to saving/retrieving all data that is required to/from an sqlite database on the device
-class Database
-{
-public:
-    Database();
-public:
-    ~Database();
-private:
-    QSqlDatabase db;
-private:
-    void close();
-    bool createStopsTable();
-    bool isOpen() const;
-    bool isStopsTable() const;
-    bool open();
-public:
-    bool addStop(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
-                 const QString& stopPointIndicator = QString(), bool favorite = false);
-    bool clearStopsTable();
-//    bool createFavorite(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
-//                        const QString& stopPointIndicator = QString(), bool favorite = false);
-    bool isFavorite(const QString& code) const;
-    QSqlError lastError() const; 
-    bool makeFavorite(const QString& code);
-    bool unFavorite(const QString& code);
-};
+Item {
+    id: self
+    property int type : Stop.None
+    property string stopPointIndicator: ""
 
-#endif // DATABASE_H
+    height: 64
+    width: 64
+    Image  {
+        id: icon
+        source: "qrc:///waves.png"
+        visible: (type === Stop.River) ? true : false
+        anchors.centerIn: parent
+    }
+    Rectangle {
+        id: busStopIcon
+        height: 60
+        width: height
+        radius: height/2
+        color: "red"
+        visible: (type === Stop.Bus) ? true : false
+        enabled: (type === Stop.Bus) ? true : false
+        anchors.centerIn: parent
+        Label {
+            id: busStopIndicatorLabel
+            text: stopPointIndicator
+            anchors.centerIn: parent
+            font.bold: true
+        }
+    }
+}

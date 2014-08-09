@@ -27,9 +27,12 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
 Item {
-    property alias stopIndicator: stopID.text
+    property string stopIndicator: ""
     property alias direction: directionLabel.text
     property alias distance: distanceLabel.text
+    property Stop currentStop: arrivalsData.getCurrentStop()
+    property string stopCode: ""
+    property bool isFavorite: arrivalsData.isStopFavorite(stopCode)
     property int type: 0
     property string title: ""
 
@@ -70,33 +73,29 @@ Item {
             right: parent.right
         }
 
-        Image  {
-            id: waves
-            source: "qrc:///waves.png"
-            visible: (type === Stop.River) ? true : false
+        StopIcon {
+            id: icon
+            stopPointIndicator: stopIndicator
+            type: self.type
             anchors {
-                left: parent.left
-                leftMargin: 10
                 verticalCenter: parent.verticalCenter
+                left: parent.left
+                leftMargin: Theme.paddingSmall
             }
         }
 
-        Rectangle {
-            id: icon
-            height: 50
-            width: 50
-            radius: 25
-            color: (type === Stop.Bus) ? "red" : "blue"
-            visible: (type === Stop.Bus) ? true : false
+        IconButton {
+            id: favoriteButton
+            icon.source: isFavorite ? "image://theme/icon-l-favorite" : "image://theme/icon-l-star"
             anchors {
-                left: parent.left
-                leftMargin: 20
+                right: parent.right
                 verticalCenter: parent.verticalCenter
             }
-            Label {
-                id: stopID
-                anchors.centerIn: parent
-                text: ""
+            onClicked: {
+                if (!isFavorite) {
+                    self.currentStop.addToDb(true)
+                    isFavorite = arrivalsData.isStopFavorite(stopCode)
+                }
             }
         }
 
@@ -106,7 +105,7 @@ Item {
             font.pixelSize: Theme.fontSizeTiny
             color: Theme.highlightColor
             anchors {
-                left: waves.right
+                left: icon.right
                 leftMargin: Theme.paddingExtraLarge
                 top: parent.top
                 topMargin: Theme.paddingSmall
@@ -120,7 +119,7 @@ Item {
             anchors {
                 left: towardsLabel.right
                 leftMargin: Theme.paddingSmall
-                right: parent.right
+                right: favoriteButton.left
                 rightMargin: Theme.paddingLarge
             }
         }
@@ -161,7 +160,22 @@ Item {
                 opacity: 100
             }
         }
-
     ]
-    onTitleChanged: { state = title === "" ? "invisible" : "visible" }
+    transitions: [
+        Transition {
+            from: "invisible"
+            to: "visible"
+            FadeAnimation {
+                target: self
+            }
+        },
+        Transition {
+            from: "visible"
+            to: "invisible"
+            FadeAnimation {
+                target: self
+            }
+        }
+    ]
+    onTitleChanged: { state = (title === "") ? "invisible" : "visible" }
 }

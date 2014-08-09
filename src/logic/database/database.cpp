@@ -123,6 +123,9 @@ bool Database::clearStopsTable() {
     return ok;
 }
 
+//bool Database::createFavorite(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
+//                    const QString& stopPointIndicator = QString(), bool favorite = false) {}
+
 //checks if a given bus stop or pier(by their code) is favorite
 bool Database::isFavorite(const QString& code) const {
     QSqlQuery query;
@@ -145,7 +148,7 @@ QSqlError Database::lastError() const { return db.lastError(); }
 
 //makes a stop a favorite, returns true on success and false otherwise
 bool Database::makeFavorite(const QString& code) {
-    qDebug() << "makeFavorite() called";
+    qDebug() << "makeFavorite() called on" << code;
     QSqlQuery query;
     query.prepare("UPDATE stopstable SET favorite=1 WHERE code= :code ");
     query.bindValue(":code", code);

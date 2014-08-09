@@ -72,7 +72,8 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/gui/BusWidget.qml \
     qml/cover/ArrivalsCover.qml \
     qml/pages/JourneyProgressPage.qml \
-    qml/cover/JourneyProgressCover.qml
+    qml/cover/JourneyProgressCover.qml \
+    qml/gui/StopIcon.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \

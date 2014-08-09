@@ -30,7 +30,7 @@ Rectangle {
     property alias distance: distanceLabel.text
     property alias name: nameLabel.text
     property int type: 0
-    property string indicator: ""
+    property string indicator: ""//TODO rename
     property string towards: ""
     property string code: ""
     property bool isFavorite: arrivalsData.isStopFavorite(code)
@@ -52,34 +52,15 @@ Rectangle {
     }
     Component.onCompleted: mousearea.clicked.connect(clicked)
 
-    Image  {
-        id: waves
-        source: "qrc:///waves.png"
-        visible: (type === Stop.River) ? true : false
+    StopIcon {
+        id: icon
+        stopPointIndicator: indicator
+        type: self.type
         anchors {
             left: parent.left
-            leftMargin: 10
+            leftMargin: Theme.paddingMedium
             verticalCenter: parent.verticalCenter
         }
-    }
-    Rectangle {
-        id: stopIcon
-        height: 60
-        width: height
-        radius: height/2
-        color: "red"
-        visible: (type === Stop.Bus) ? true : false
-        anchors {
-            left: parent.left
-            leftMargin: 20
-            verticalCenter: parent.verticalCenter
-        }
-    }
-    Label {
-        id: indicatorLabel
-        text: indicator
-        anchors.centerIn: stopIcon
-        font.bold: true
     }
 
     Label {
@@ -89,7 +70,7 @@ Rectangle {
         anchors {
             top: parent.top
             topMargin: (towards === "") ? 30 : 10 //no need to leave space when there is nothing to display
-            left: waves.right
+            left: icon.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left
             rightMargin: Theme.paddingMedium
@@ -103,7 +84,7 @@ Rectangle {
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
             top: nameLabel.bottom
-            left: waves.right
+            left: icon.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left
             rightMargin: Theme.paddingMedium
@@ -115,7 +96,7 @@ Rectangle {
         text: "distance"
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
-            top: stopIcon.bottom
+            top: icon.bottom
 //            topMargin: 2//Theme.fontSizeLarge
             left: parent.left
             leftMargin: 10

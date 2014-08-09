@@ -33,13 +33,6 @@ Stop::Stop(QObject* parent) : QObject(parent),
 }
 
 //public:
-//adds itself to the database
-void Stop::addToDb() {
-    if (databaseManager) {
-        databaseManager->addStop(name, id, type, towards, latitude, longitude,stopPointIndicator);
-    }
-}
-
 //setters
 void Stop::setID(const QString& value) { id = value; }
 void Stop::setLatitude(double value) { latitude = value; }
@@ -52,6 +45,13 @@ void Stop::setType(int value) { type =value; }
 void Stop::updated() { emit dataChanged(); }
 
 //public slots:
+//adds itself to the database
+void Stop::addToDb(bool favorite) {
+    if (databaseManager) {
+        databaseManager->addStop(name, id, type, towards, latitude, longitude,stopPointIndicator, favorite);
+    }
+}
+
 //resets itself to a sensible default value
 void Stop::clear() {
     type = None;
