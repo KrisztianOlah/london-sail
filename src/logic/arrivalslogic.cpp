@@ -87,7 +87,7 @@ void ArrivalsLogic::clearArrivalsData() {
 void ArrivalsLogic::clearJourneyProgressData() {
     currentBusDirectionId = "";
     setCurrentVehicleId("");
-    journeyProgressContainer->clear();
+    if(journeyProgressContainer) { journeyProgressContainer->clear(); }
 }
 
 //FIX registration num must not start with X_or contain NEW in the first five letters
@@ -135,16 +135,19 @@ QList<QJsonDocument> ArrivalsLogic::makeDocument(QNetworkReply* reply) {
 //calls the correct function chain for each kind of Stop to download and process arrivals data such as eta
 void ArrivalsLogic::fetchArrivalsData() {
     qDebug() << "updated";
-    switch (currentStop->getType()) {
-    case Stop::None:
-        return;
-    case Stop::Bus:
-        getBusArrivalsByCode(currentStop->getID());
-        return;
-    case Stop::River:
-        getBusArrivalsByCode(currentStop->getID());
-        return;
+    if (currentStop) {
+        switch (currentStop->getType()) {
+        case Stop::None:
+            return;
+        case Stop::Bus:
+            getBusArrivalsByCode(currentStop->getID());
+            return;
+        case Stop::River:
+            getBusArrivalsByCode(currentStop->getID());
+            return;
+        }
     }
+
 }
 
 //calls the correct function chain for each kind of Stop to download and process journey progress
@@ -161,14 +164,19 @@ void ArrivalsLogic::onArrivalsDataReceived() {
     QList<QJsonDocument> document = makeDocument(reply_arrivals);
     QList<QJsonDocument>::iterator first = document.begin();
 
-    if (document.isEmpty()) return;//nothing to do
     //server time UTC in msec from Epoch at the time of request
     //use this to compare with expected arrival time, if device clock is not correctly set
     //the arrival times are still accurately presented to user
+    if ((first->array().begin() +2 >= first.array().end)) { return; } //currentTime would be invalid
     double currentTime = (*(first->array().begin() +2)).toDouble();
     ArrivalsContainer tempContainer(arrivalsModel);
+    if (first == document.end()) { return; } //nothing to do
     for (QList<QJsonDocument>::iterator iter = first + 1; iter != document.end(); ++iter) {
         Vehicle bus;
+        if (iter->array().begin() + 5 >= iter->array().end() ) {
+            //TODO throw exception
+            break;
+        }
         bus.line = (*(iter->array().begin() + 1)).toString();
         currentBusDirectionId =  QString::number((*(iter->array().begin() + 2)).toDouble());
         bus.destination = (*(iter->array().begin() + 3)).toString();
@@ -180,7 +188,9 @@ void ArrivalsLogic::onArrivalsDataReceived() {
         bus.eta = std::round(inMins);
         tempContainer.add(bus);
     }
-    arrivalsContainer->replace(tempContainer);
+    if (arrivalsContainer) {
+        arrivalsContainer->replace(tempContainer);
+    }
 }
 
 //gets called when bus progress data is downloaded and redy to be processed
@@ -188,54 +198,65 @@ void ArrivalsLogic::onBusProgressReceived() {
     downloadingJourneyProgress = false;
     downloadSatateChanged();
     QList<QJsonDocument> document = makeDocument(reply_journeyProgress);
-    if (document.isEmpty()) return;//nothing to do
+    if (document.begin() == document.end() ||
+            document.begin()->array().begin() + 2 >= document.begin()->array().end()) return;//nothing to do
     double serverTime = (*(document.begin()->array().begin() +2)).toDouble();
     QList<QPair<QString, double>> list;
-    for (QList<QJsonDocument>::iterator iter = document.begin() + 1; iter != document.end(); ++iter) {
+    for (QList<QJsonDocument>::iterator iter = document.begin() + 1; iter < document.end(); ++iter) {
+        if (iter->array().begin() +2 >= iter->array().end()) {
+            //TODO trow
+            break;
+        }
         QPair<QString, double> pair;
         pair.first = (*(iter->array().begin() +1)).toString();
         pair.second = (*(iter->array().begin() +2)).toDouble();
         list.append(pair);
     }
-    journeyProgressContainer->setTime(serverTime);
-    journeyProgressContainer->refreshData(list);
+    if (journeyProgressContainer) {
+        journeyProgressContainer->setTime(serverTime);
+        journeyProgressContainer->refreshData(list);
+    }
 }
 
 //gets called when bus stop data is downloaded and ready to be processed
 void ArrivalsLogic::onBusStopDataReceived() {
-    QList<QJsonDocument> document = makeDocument(reply_busStop);
-    //only want the second array as the first one is the version array and there are only 2 arrays
-    if (document.isEmpty()) {
-        qDebug() << "QJsonDocument is empty.";
-        return; //there is nothing to do
-    }
-    QList<QJsonDocument>::iterator dataArray = document.begin() + 1;
-    if (dataArray->isArray()) {
-        //id is set in ArrivalsLogic::getBusStopByCode(const QString&)
-        currentStop->setName( (*(dataArray->array().begin() + 1)).toString() );
-        currentStop->setTowards( (*(dataArray->array().begin() + 3)).toString() );
-        currentStop->setStopPointIndicator( (*(dataArray->array().begin() + 4)).toString() );
-        currentStop->setLatitude( (*(dataArray->array().begin() + 5)).toDouble() );
-        currentStop->setLongitude( (*(dataArray->array().begin() + 6)).toDouble() );
-        if ( (*(dataArray->array().begin() + 2)).toString() == QString("SLRS") ) {
-            currentStop->setType(Stop::River);
-        }
-        else { currentStop->setType(Stop::Bus); }
-
-        currentStop->updated();
-        emit stopDataChanged();
-    }
-    else qDebug() << "Invalid QJsonArray";
     downloadingStop = false;
     downloadSatateChanged();
+    QList<QJsonDocument> document = makeDocument(reply_busStop);
+    //only want the second array as the first one is the version array and there are only 2 arrays
+
+    if (document.begin() + 1 >= document.end()) { return; } //there is nothing to do
+    QList<QJsonDocument>::iterator dataArray = document.begin() + 1;
+    if (currentStop) {
+        if (dataArray->isArray() ) {
+            if (dataArray->array().begin() + 6 >= dataArray->array().end()) { return; } //TODO throw
+            //id is set in ArrivalsLogic::getBusStopByCode(const QString&)
+            currentStop->setName( (*(dataArray->array().begin() + 1)).toString() );
+            currentStop->setTowards( (*(dataArray->array().begin() + 3)).toString() );
+            currentStop->setStopPointIndicator( (*(dataArray->array().begin() + 4)).toString() );
+            currentStop->setLatitude( (*(dataArray->array().begin() + 5)).toDouble() );
+            currentStop->setLongitude( (*(dataArray->array().begin() + 6)).toDouble() );
+            if ( (*(dataArray->array().begin() + 2)).toString() == QString("SLRS") ) {
+                currentStop->setType(Stop::River);
+            }
+            else { currentStop->setType(Stop::Bus); }
+
+            currentStop->updated();
+            emit stopDataChanged();
+        }
+        else qDebug() << "Invalid QJsonArray";
+    }
 }
 
 //gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
+    downloadingListOfStops = false;
+    downloadSatateChanged();
     QList<QJsonDocument> document = makeDocument(reply_stops);
-    if (document.size() < 1 ) return; //if empty or only have version array then nothing to do
+    QString stopPointType;
     //skip version array
-    for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter != document.end();++iter) {
+    for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter > document.end();++iter) {
+        if (iter->array().begin() + 7) { break; } //TODO throw
         Stop stop(databaseManager);
         stop.setName((*(iter->array().begin() + 1)).toString());
         stop.setID((*(iter->array().begin() + 2)).toString());
@@ -243,7 +264,7 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
         stop.setStopPointIndicator((*(iter->array().begin() + 5)).toString());
         stop.setLatitude((*(iter->array().begin() + 6)).toDouble());
         stop.setLongitude((*(iter->array().begin() + 7)).toDouble());
-        QString stopPointType = (*(iter->array().begin() + 3)).toString();
+        stopPointType = (*(iter->array().begin() + 3)).toString();
         if ( stopPointType == QString("SLRS")) {
             stop.setType(Stop::River);
         }
@@ -260,9 +281,9 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
             if (!(*(iter->array().begin() + 2)).isNull()) { stop.addToDb(); }
         }
     }
-    stopsQueryModel->showStops();
-    downloadingListOfStops = false;
-    downloadSatateChanged();
+    if (stopsQueryModel) {
+        stopsQueryModel->showStops();
+    }
 }
 
 //signals to gui that there is a new next stop
@@ -275,6 +296,7 @@ void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
 
 //makes stop a favorite or removes it from favorites depending on the second arg
 bool ArrivalsLogic::favorStop(const QString& code, bool b) {
+    if (!databaseManager) { return false; }
     if (b) {
         return databaseManager->makeFavorite(code);
     }
