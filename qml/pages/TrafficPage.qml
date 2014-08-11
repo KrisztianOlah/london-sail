@@ -61,6 +61,11 @@ Page {
                         pulley.enabled = false
                     }
                     else {
+                        if (refreshWidget.title === "") {
+                            refreshWidget.state = "inactive" //so that animation works fine
+                        }
+
+
                         refreshWidget.active = true
                         refreshWidget.title = !trafficData.isDownloading() ? "Parsing" : "Downloading"
                     }
@@ -205,9 +210,11 @@ Page {
     }
     RefreshWidget {
         id: refreshWidget
+//        state: "inactive"
     }
     onOrientationChanged: {
         //BUG: its seems to be reverted for some reason
+        console.log("OrientationChanged")
         refreshWidget.isPortrait = !isPortrait
     }
     //in case user closes page with a filter set

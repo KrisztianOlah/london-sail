@@ -326,7 +326,7 @@ bool ArrivalsLogic::isDownloadingStop() const { return downloadingStop; }
 
 ArrivalsProxyModel* ArrivalsLogic::getJourneyProgressModel() { return journeyProgressContainer->getModel(); }
 
-QString ArrivalsLogic::getNextStop() { return journeyProgressContainer->getNextStop().first; }
+QString ArrivalsLogic::getNextStop() { return journeyProgressContainer->getNextStop(); }
 
 StopsQueryModel* ArrivalsLogic::getStopsQueryModel() { return stopsQueryModel; }
 

@@ -38,7 +38,7 @@ Rectangle {
         right: parent.right
     }
 
-    height: 100
+    height: 0
     color: Theme.secondaryHighlightColor
     opacity: 0
     state: "inactive"
@@ -61,7 +61,7 @@ Rectangle {
 
     Label {
         id: label
-        text: "Downloading"
+        text: ""
         color: Theme.secondaryColor
         opacity: 0
         anchors.centerIn: parent
@@ -79,6 +79,7 @@ Rectangle {
             PropertyChanges {
                 target: self
                 opacity: active ? 100 : 0
+                height: active ? 100 : 0
                 y: Screen.height - height
             }
             PropertyChanges {
@@ -91,6 +92,7 @@ Rectangle {
             PropertyChanges {
                 target: self
                 opacity: active ? 100 : 0
+                height: active ? 100 : 0
                 y: Screen.width - height
             }
             PropertyChanges {
@@ -102,6 +104,7 @@ Rectangle {
             name: "active"
             PropertyChanges {
                 target: self
+                height: 100
                 opacity: 100
             }
             PropertyChanges {
@@ -113,39 +116,26 @@ Rectangle {
             name: "inactive"
             PropertyChanges {
                 target: self
+                height: 0
                 opacity: 0
             }
             PropertyChanges {
                 target: label
                 opacity: 0
-            }
-        },
-
-        State {
-            name: "downloading"
-            PropertyChanges {
-                target: self
-                opacity: 100
-            }
-            PropertyChanges {
-                target: label
-                opacity: 100
-                text: "Downloading"
-            }
-        },
-        State {
-            name: "parsing"
-            PropertyChanges {
-                target: self
-                opacity: 100
-                y: isPortrait ? (Screen.height - height) : (Screen.width - height)
-            }
-            PropertyChanges {
-                target: label
-                opacity: 100
-                text: "Parsing"
             }
         }
-
+    ]
+    transitions: [
+        Transition {
+            from: "inactive"
+            to: "active"
+            NumberAnimation { target: self; properties: "height"; duration: 300 }
+        },
+        Transition {
+            from: "active"
+            to: "inactive"
+            NumberAnimation { target: self; properties: "height"; duration: 300 }
+            NumberAnimation { target: self; properties: "opacity" ; duration: 300 }
+        }
     ]
 }

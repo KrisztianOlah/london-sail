@@ -91,19 +91,18 @@ int JourneyProgressContainer::getEta(double prediction) const {
 ArrivalsProxyModel* JourneyProgressContainer::getModel() { return proxyModel; }
 
 //Returns the next stop where vehicle is scheduled to stop
-//TODO check if it really need to return a pair or a QString would do
-QPair<QString,double> JourneyProgressContainer::getNextStop() const {
+QString JourneyProgressContainer::getNextStop() const {
     QList<QPair<QString,double> >::const_iterator smallestSoFar, iter = data.begin();
     while (iter != data.end()) {
         smallestSoFar = iter;
         iter = findNextStop(iter,data.end(),iter->second,time);
     }
     if (smallestSoFar != data.end()) {
-        return *smallestSoFar;
+        return smallestSoFar->first;
     }
 
     else {
-        return QPair<QString,double>("",0);
+        return QString();
     }
 }
 

@@ -31,8 +31,9 @@ import "../gui"
 //TODO user to be able to set radius
 Page {
     id: page
-    property string code: ""//"74612"//"52727"
+    property string code: ""
     property StopsModel stopsModel: arrivalsData.getStopsQueryModel()
+    allowedOrientations: Orientation.All
     onStatusChanged: {
                 if (status === PageStatus.Active) { coverData.reportPage(PageCodes.None) }
     }
@@ -54,11 +55,23 @@ Page {
         size: BusyIndicatorSize.Large
         anchors.centerIn: parent
     }
+    BusyIndicator {
+        id: busyIndicator_2
+        running: view.count && arrivalsData.isDownloadingListOfStops()
+        size: BusyIndicatorSize.Medium
+        anchors {
+            left: view.left
+            leftMargin: Theme.paddingSmall*5
+            top: view.top
+            topMargin: Theme.paddingSmall*19
+        }
+    }
 
     Connections {
         target: arrivalsData
         onDownloadSatateChanged: {
             busyIndicator.running = !view.count && arrivalsData.isDownloadingListOfStops()
+            busyIndicator_2.running = view.count && arrivalsData.isDownloadingListOfStops()
         }
     }
 
@@ -148,6 +161,7 @@ Page {
             text: "Pull down to enter for Bus Stop's code."
         }
     }
+
     Component.onDestruction: {
         stopsModel.clearStops()
     }
