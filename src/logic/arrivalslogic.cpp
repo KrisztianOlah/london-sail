@@ -99,7 +99,7 @@ void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
 
     QUrl url(request);
     downloadingArrivals = true;
-    downloadSatateChanged();
+    downloadStateChanged();
     reply_arrivals = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_arrivals, SIGNAL(finished()), this, SLOT(onArrivalsDataReceived()) );
@@ -113,7 +113,7 @@ void ArrivalsLogic::getBusProgress(const QString& registrationNum) {
     QString request = baseUrl + regPart + directionIDPart + returnList;
     QUrl url(request);
     downloadingJourneyProgress = true;
-    downloadSatateChanged();
+    downloadStateChanged();
     reply_journeyProgress = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_journeyProgress, SIGNAL(finished()), this, SLOT(onBusProgressReceived()) );
@@ -160,20 +160,20 @@ void ArrivalsLogic::fetchJourneyProgress() {
 //gets called when bus arrivals are downloaded and ready to be processed
 void ArrivalsLogic::onArrivalsDataReceived() {
     downloadingArrivals = false;
-    downloadSatateChanged();
+    downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_arrivals);
     QList<QJsonDocument>::iterator first = document.begin();
 
     //server time UTC in msec from Epoch at the time of request
     //use this to compare with expected arrival time, if device clock is not correctly set
     //the arrival times are still accurately presented to user
-    if ((first->array().begin() +2 >= first.array().end)) { return; } //currentTime would be invalid
+    if (first->array().begin() +2 >= first->array().end() ) { return; } //currentTime would be invalid
     double currentTime = (*(first->array().begin() +2)).toDouble();
     ArrivalsContainer tempContainer(arrivalsModel);
-    if (first == document.end()) { return; } //nothing to do
-    for (QList<QJsonDocument>::iterator iter = first + 1; iter != document.end(); ++iter) {
+    for (QList<QJsonDocument>::iterator iter = first + 1; iter < document.end(); ++iter) {
         Vehicle bus;
         if (iter->array().begin() + 5 >= iter->array().end() ) {
+            qDebug() << "";
             //TODO throw exception
             break;
         }
@@ -196,15 +196,19 @@ void ArrivalsLogic::onArrivalsDataReceived() {
 //gets called when bus progress data is downloaded and redy to be processed
 void ArrivalsLogic::onBusProgressReceived() {
     downloadingJourneyProgress = false;
-    downloadSatateChanged();
+    downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_journeyProgress);
     if (document.begin() == document.end() ||
-            document.begin()->array().begin() + 2 >= document.begin()->array().end()) return;//nothing to do
+            document.begin()->array().begin() + 2 >= document.begin()->array().end()) {
+        return;
+    }//nothing to do
     double serverTime = (*(document.begin()->array().begin() +2)).toDouble();
+    ////////////////////////////////////////////////////////////
+    //BUG check why list might be empty, server or client error
     QList<QPair<QString, double>> list;
     for (QList<QJsonDocument>::iterator iter = document.begin() + 1; iter < document.end(); ++iter) {
         if (iter->array().begin() +2 >= iter->array().end()) {
-            //TODO trow
+            //TODO throw
             break;
         }
         QPair<QString, double> pair;
@@ -221,7 +225,7 @@ void ArrivalsLogic::onBusProgressReceived() {
 //gets called when bus stop data is downloaded and ready to be processed
 void ArrivalsLogic::onBusStopDataReceived() {
     downloadingStop = false;
-    downloadSatateChanged();
+    downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_busStop);
     //only want the second array as the first one is the version array and there are only 2 arrays
 
@@ -251,12 +255,13 @@ void ArrivalsLogic::onBusStopDataReceived() {
 //gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
     downloadingListOfStops = false;
-    downloadSatateChanged();
+    downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_stops);
     QString stopPointType;
     //skip version array
-    for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter > document.end();++iter) {
-        if (iter->array().begin() + 7) { break; } //TODO throw
+    for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter < document.end();++iter) {
+        if (iter->array().begin() + 7 >= iter->array().end()) {
+            break; } //TODO throw
         Stop stop(databaseManager);
         stop.setName((*(iter->array().begin() + 1)).toString());
         stop.setID((*(iter->array().begin() + 2)).toString());
@@ -314,7 +319,7 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     QString request = baseUrl + stopcode + returnList;
     QUrl url(request);
     downloadingStop = true;
-    downloadSatateChanged();
+    downloadStateChanged();
     reply_busStop = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
@@ -327,7 +332,7 @@ void ArrivalsLogic::getBusStopsByName(const QString& name) {
     QString request = baseUrl + stopPointName + returnList;
     QUrl url = request;
     downloadingListOfStops = true;
-    downloadSatateChanged();
+    downloadStateChanged();
     reply_stops = networkMngr->get(QNetworkRequest(url) );
     connect(reply_stops, SIGNAL(finished()), this, SLOT(onListOfBusStopsReceived()) );
 }

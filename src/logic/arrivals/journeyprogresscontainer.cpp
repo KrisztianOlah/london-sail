@@ -125,13 +125,15 @@ void JourneyProgressContainer::refreshData(QList<QPair<QString,double> > list) {
         }
         model->endReset();
     }
-    //any (remaining)elements of list that wasn't/isn't in data will now be inserted
-    model->beginInsert(data.size(),data.size()+ list.size()-1);
-    for (QList<QPair<QString,double> >::const_iterator iter = list.begin();iter != list.end(); ++iter) {
-        data.append(*iter);
+    //any (remaining)elements of list that wasn't/isn't in data will now be inserted if list is empty then nothing to do
+    if (list.size() ) {
+        model->beginInsert(data.size(),data.size() + list.size()-1);
+        for (QList<QPair<QString,double> >::const_iterator iter = list.begin();iter != list.end(); ++iter) {
+            data.append(*iter);
+        }
+        model->endInsert();
+        emit dataChanged();
     }
-    model->endInsert();
-    emit dataChanged();
 }
 
 

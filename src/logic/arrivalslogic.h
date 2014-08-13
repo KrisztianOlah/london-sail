@@ -73,7 +73,7 @@ private:
     QNetworkReply* reply_stops;
     StopsQueryModel* stopsQueryModel;
 signals:
-    void downloadSatateChanged();
+    void downloadStateChanged();
     void nextStopChanged();
     void stopDataChanged();
 private:
