@@ -86,12 +86,13 @@ Page {
         anchors.fill: parent
         model: arrivalsModel
         header: StopHeader {
-            title: view.busStopName
-            stopIndicator: view.stopIndicator
-            direction: view.direction
+            currentStop: view.currentStop
+//            title: view.busStopName
+//            stopIndicator: view.stopIndicator
+//            direction: view.direction
             distance: view.distance
-            stopCode: view.stopCode
-            type: view.type
+//            stopCode: view.stopCode
+//            type: view.type
             state: "invisible"
         }
         footer: TflNotice {}

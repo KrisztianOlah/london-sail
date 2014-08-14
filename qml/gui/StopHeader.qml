@@ -27,16 +27,29 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
 Item {
-    property string stopIndicator: ""
-    property alias direction: directionLabel.text
-    property alias distance: distanceLabel.text
-    property Stop currentStop: arrivalsData.getCurrentStop()
-    property string stopCode: ""
-    property bool isFavorite: arrivalsData.isStopFavorite(stopCode)
-    property int type: 0
-    property string title: ""
-
     id: self
+    property Stop currentStop: arrivalsData.getCurrentStop()
+    property string stopPointIndicator: currentStop.getStopPointIndicator()
+    property string direction: currentStop.getTowards()
+    property alias distance: distanceLabel.text
+    property string stopCode: currentStop.getID()
+    property int type: currentStop.getType()
+    property string title: currentStop.getName()
+    property bool isFavorite: arrivalsData.isStopFavorite(stopCode)
+
+    Connections {
+        target: self.currentStop
+        onDataChanged: {
+            self.stopPointIndicator = currentStop.getStopPointIndicator()
+            self.direction = currentStop.getTowards()
+            self.distance = distanceLabel.text
+            self.stopCode = currentStop.getID()
+            self.type = currentStop.getType()
+            self.title = currentStop.getName()
+            self.isFavorite = arrivalsData.isStopFavorite(stopCode)
+
+        }
+    }
 
     anchors {
         left: parent.left
@@ -75,7 +88,7 @@ Item {
 
         StopIcon {
             id: icon
-            stopPointIndicator: stopIndicator
+            stopPointIndicator: self.stopPointIndicator
             type: self.type
             anchors {
                 verticalCenter: parent.verticalCenter
@@ -93,7 +106,12 @@ Item {
             }
             onClicked: {
                 if (!isFavorite) {
-                    self.currentStop.addToDb(true)
+                    self.currentStop.addToDb(true)//won't do anything if record is already in db
+                    arrivalsData.favorStop(stopCode, true)//make sure it is favorite in case record was already in db
+                    isFavorite = arrivalsData.isStopFavorite(stopCode)
+                }
+                else {
+                    arrivalsData.favorStop(stopCode, false)
                     isFavorite = arrivalsData.isStopFavorite(stopCode)
                 }
             }
@@ -111,9 +129,10 @@ Item {
                 topMargin: Theme.paddingSmall
             }
         }
+
         Label {
             id: directionLabel
-            text: ""
+            text: currentStop.getTowards()//""
             color: Theme.highlightColor
             wrapMode: Text.WordWrap
             anchors {
@@ -123,7 +142,6 @@ Item {
                 rightMargin: Theme.paddingLarge
             }
         }
-
 
         Label {
             id: distanceLabel
