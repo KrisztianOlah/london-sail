@@ -110,6 +110,7 @@ public slots:
     void setCurrentDestination(const QString& destination);
     void setCurrentVehicleId(const QString& id);
     void setCurrentVehicleLine(const QString& line);
+    void setStopsQueryModel(int);
     void startArrivalsUpdate();
     void startJourneyProgressUpdate();
     void stopArrivalsUpdate();

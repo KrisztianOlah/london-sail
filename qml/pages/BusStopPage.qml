@@ -87,12 +87,8 @@ Page {
         model: arrivalsModel
         header: StopHeader {
             currentStop: view.currentStop
-//            title: view.busStopName
-//            stopIndicator: view.stopIndicator
-//            direction: view.direction
             distance: view.distance
-//            stopCode: view.stopCode
-//            type: view.type
+
             state: "invisible"
         }
         footer: TflNotice {}
@@ -123,6 +119,7 @@ Page {
             arrivalsData.stopArrivalsUpdate()
             arrivalsData.clearCurrentStop()
             coverData.reportPage(PageCodes.None)
+            arrivalsData.setStopsQueryModel(StopsModel.Bus)
         }
     }
 }

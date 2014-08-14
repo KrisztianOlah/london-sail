@@ -34,9 +34,11 @@ class DatabaseManager;
 class StopsQueryModel : public QSqlQueryModel
 {
     Q_OBJECT
+    Q_ENUMS(QueryTypes)
 public:
     enum QueryRoles { NameRole = Qt::UserRole + 1,CodeRole,TypeRole,TowardsRole,
                       LatitudeRole,LongitudeRole, StopPointIndicatorRole };
+    enum QueryTypes { Bus, Underground };
     explicit StopsQueryModel(QObject* parent = 0);
 private:
     DatabaseManager* databaseManager;

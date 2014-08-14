@@ -287,6 +287,7 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
             if (!(*(iter->array().begin() + 2)).isNull()) { stop.addToDb(); }
         }
     }
+    //////////////////////////////////////////////////
     if (stopsQueryModel) {
         stopsQueryModel->showStops();
     }
@@ -366,6 +367,18 @@ void ArrivalsLogic::setCurrentDestination(const QString& destination) { currentD
 void ArrivalsLogic::setCurrentVehicleId(const QString& id) { currentVehicleId = id;}
 
 void ArrivalsLogic::setCurrentVehicleLine(const QString& line) { currentVehicleLine = line; }
+
+//set stopsQueryModel to show one of the preset queries
+void ArrivalsLogic::setStopsQueryModel(int type) {
+    //TODO Move switch to queryModel and let model do the work
+    switch (type) {
+    case StopsQueryModel::Bus:
+        stopsQueryModel->showStops();
+        break;
+    case StopsQueryModel::Underground:
+        break;
+    }
+}
 
 //starts timer to periodically download arrivals data
 //time interval might be different for each kind of stops
