@@ -63,7 +63,7 @@ Page {
         id: busyIndicator
         running: !view.count && arrivalsData.isDownloadingJourneyProgress()
         size: BusyIndicatorSize.Large
-        anchors.fill: parent
+        anchors.centerIn: parent
     }
 
     Connections {
@@ -95,7 +95,7 @@ Page {
                 text: headerTitle
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeLarge
-                horizontalAlignment: Text.AlignRight
+                horizontalAlignment: Text.AlignRightss
                 anchors {
                     top: parent.top
                     topMargin: Theme.paddingMedium*2
@@ -121,6 +121,7 @@ Page {
                 text: "to " + destination
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeLarge
+                wrapMode: Text.WordWrap
                 anchors {
                     top: pageHeader.bottom
                     topMargin: Theme.paddingMedium*2
@@ -133,6 +134,10 @@ Page {
             }
         }
         footer: TflNotice {}
+        ViewPlaceholder {
+            text: "Sorry, data may not be available."
+            enabled: !view.count
+        }
 
         model: progressModel
         displaced: Transition {

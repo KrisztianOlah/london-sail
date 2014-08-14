@@ -57,7 +57,7 @@ Item {
             right: parent.right
             rightMargin: Theme.paddingLarge
             left: parent.left
-            leftMargin: 100
+            leftMargin: 130
         }
     }
 

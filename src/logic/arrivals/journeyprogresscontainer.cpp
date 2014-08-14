@@ -92,17 +92,21 @@ ArrivalsProxyModel* JourneyProgressContainer::getModel() { return proxyModel; }
 
 //Returns the next stop where vehicle is scheduled to stop
 QString JourneyProgressContainer::getNextStop() const {
-    QList<QPair<QString,double> >::const_iterator smallestSoFar, iter = data.begin();
-    while (iter != data.end()) {
+    QList<QPair<QString,double> >::const_iterator smallestSoFar = data.begin(), iter = data.begin();
+    while (iter < data.end()) {
         smallestSoFar = iter;
-        iter = findNextStop(iter,data.end(),iter->second,time);
+        iter = findNextStop(iter,data.end(),smallestSoFar->second,time);
     }
     if (smallestSoFar != data.end()) {
-        return smallestSoFar->first;
+        if (smallestSoFar->second - time < 0) {
+            return QString("TERMINATED");
+        }
+        else return smallestSoFar->first;
     }
 
     else {
-        return QString();
+        //Not available
+        return QString("NOT AVAILABLE");
     }
 }
 
@@ -132,8 +136,8 @@ void JourneyProgressContainer::refreshData(QList<QPair<QString,double> > list) {
             data.append(*iter);
         }
         model->endInsert();
-        emit dataChanged();
     }
+    emit dataChanged();
 }
 
 

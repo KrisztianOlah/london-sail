@@ -203,9 +203,10 @@ void ArrivalsLogic::onBusProgressReceived() {
         return;
     }//nothing to do
     double serverTime = (*(document.begin()->array().begin() +2)).toDouble();
-    ////////////////////////////////////////////////////////////
     //BUG check why list might be empty, server or client error
     QList<QPair<QString, double>> list;
+    if (document.begin() + 1 >= document.end()) {
+    }
     for (QList<QJsonDocument>::iterator iter = document.begin() + 1; iter < document.end(); ++iter) {
         if (iter->array().begin() +2 >= iter->array().end()) {
             //TODO throw
@@ -293,6 +294,7 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
 
 //signals to gui that there is a new next stop
 void ArrivalsLogic::onProgressDataChanged() {
+    qDebug() << "NewStop: " << getNextStop();
     emit nextStopChanged();
 }
 
