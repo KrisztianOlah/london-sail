@@ -57,8 +57,24 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.4.1 - Bug fixes.</b><br>
+*Fixed bug: that was causing client to terminate unexpectedly.<br>
+*Fixed bug: Cover now displays TERMINATED after last stop has been reached.<br>
+*Piers have received a new icon.<br>
+*Other minor GUI improvements."
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.4.0 - Bus and River Bus Departures Feature.</b><br>
-*Changed cover picture to accomodate the new cover information"
+*Changed cover picture to accomodate the new cover information."
             }
             Label {
                 anchors {
@@ -100,7 +116,7 @@ Page {
                 textFormat: Text.RichText
                 text: "<b>0.3.0 - Road Disruptions Feature.</b><br>
 *Fixed bug: Service Status/This Weekend now correctly displays special characters(&, ', etc)<br>
-*Fixed bug: Service Status and This Weekend colours match as intended"
+*Fixed bug: Service Status and This Weekend colours match as intended."
             }
 
             Label {
