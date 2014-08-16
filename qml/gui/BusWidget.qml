@@ -70,6 +70,15 @@ BackgroundItem {
         }
 
     }
+    Separator {
+        anchors {
+            top: destinationLabel.bottom
+            left: parent.left
+            right: parent.right
+        }
+        color: Theme.highlightColor
+    }
+
     onClicked: {
         arrivalsData.setCurrentVehicleId(busId)
         arrivalsData.setCurrentVehicleLine(busNumber)

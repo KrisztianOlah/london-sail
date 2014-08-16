@@ -100,11 +100,11 @@ Page {
             eta: etaData
             busId:  idData
             ListView.onAdd: AddAnimation {
-                        target: busWidget
-                    }
-                    ListView.onRemove: RemoveAnimation {
-                        target: busWidget
-                    }
+                target: busWidget
+            }
+            ListView.onRemove: RemoveAnimation {
+                target: busWidget
+            }
         }
         VerticalScrollDecorator {
             flickable: view
