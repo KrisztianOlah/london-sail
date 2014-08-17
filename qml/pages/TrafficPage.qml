@@ -210,11 +210,9 @@ Page {
     }
     RefreshWidget {
         id: refreshWidget
-//        state: "inactive"
     }
     onOrientationChanged: {
         //BUG: its seems to be reverted for some reason
-        console.log("OrientationChanged")
         refreshWidget.isPortrait = !isPortrait
     }
     //in case user closes page with a filter set

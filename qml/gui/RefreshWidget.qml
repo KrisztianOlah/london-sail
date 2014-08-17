@@ -25,7 +25,7 @@ THE SOFTWARE.
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-Rectangle {
+Item {
     id: self
     property bool active: false
     property bool isPortrait: parent.isPortrait
@@ -39,10 +39,21 @@ Rectangle {
     }
 
     height: 0
-    color: Theme.secondaryHighlightColor
     opacity: 0
     state: "inactive"
 
+    Rectangle {
+        id: background
+        color: Theme.secondaryHighlightColor
+        anchors.fill: parent
+        opacity: parent.opacity
+    }
+    OpacityRampEffect {
+        sourceItem: background
+        direction: OpacityRamp.BottomToTop
+        slope: 4
+        offset: 0.6
+    }
     Item {
         height: parent.height
         width: parent.height
@@ -54,7 +65,11 @@ Rectangle {
         BusyIndicator {
             running: active
             size: BusyIndicatorSize.Medium
-            anchors.centerIn: parent
+            anchors {
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: Theme.paddingLarge
+                horizontalCenter: parent.horizontalCenter
+            }
         }
     }
 
@@ -64,7 +79,11 @@ Rectangle {
         text: ""
         color: Theme.secondaryColor
         opacity: 0
-        anchors.centerIn: parent
+        anchors {
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: Theme.paddingLarge
+            horizontalCenter: parent.horizontalCenter
+        }
     }
     onActiveChanged: {
         state = active ? "active" : "inactive"
@@ -79,7 +98,7 @@ Rectangle {
             PropertyChanges {
                 target: self
                 opacity: active ? 100 : 0
-                height: active ? 100 : 0
+                height: active ? 130 : 0
                 y: Screen.height - height
             }
             PropertyChanges {
@@ -92,7 +111,7 @@ Rectangle {
             PropertyChanges {
                 target: self
                 opacity: active ? 100 : 0
-                height: active ? 100 : 0
+                height: active ? 130 : 0
                 y: Screen.width - height
             }
             PropertyChanges {
@@ -104,7 +123,7 @@ Rectangle {
             name: "active"
             PropertyChanges {
                 target: self
-                height: 100
+                height: 130
                 opacity: 100
             }
             PropertyChanges {
