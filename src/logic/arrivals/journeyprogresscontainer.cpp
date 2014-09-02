@@ -37,12 +37,17 @@ StopList::const_iterator find(StopList::const_iterator begin,StopList::const_ite
     }
     return end;
 }
+
 StopList::iterator find(StopList::iterator begin,StopList::iterator end, const QString& val) {
     for (StopList::iterator iter = begin; iter != end; ++iter) {
         if (iter->first == val) return iter;
     }
     return end;
 }
+
+//given a StopList container a time value and a current time value it returns the first element where
+//the elements time is less than the given time but more than the current time given
+//any other case it just returns end() iterator
 StopList::const_iterator findNextStop(StopList::const_iterator begin,StopList::const_iterator end, double val, double time) {
     for (StopList::const_iterator iter = begin; iter != end; ++iter) {
         if (iter->second - time > 0 && iter->second < val) return iter;
@@ -98,14 +103,15 @@ QString JourneyProgressContainer::getNextStop() const {
         iter = findNextStop(iter,data.end(),smallestSoFar->second,time);
     }
     if (smallestSoFar != data.end()) {
-        if (smallestSoFar->second - time < 0) {
+        double eta = smallestSoFar->second;
+        double theTime = time;
+        if (eta - theTime < 0) {
             return QString("TERMINATED");
         }
         else return smallestSoFar->first;
     }
 
     else {
-        //Not available
         return QString("NOT AVAILABLE");
     }
 }
