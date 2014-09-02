@@ -52,12 +52,16 @@ THE SOFTWARE.
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef QT_QML_DEBUG
+#include <QtQuick>
+#endif
+
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QNetworkAccessManager>
+#include <QtQml>
 #include <QQmlContext>
 #include <QQuickView>
-#include <QtQuick>
 #include <sailfishapp.h>
 #include "logic/arrivals/arrivalsproxymodel.h"
 #include "logic/arrivals/stop.h"
