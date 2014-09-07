@@ -30,6 +30,8 @@ import "../gui"
 //          ---==Remind Me==---//needs busNr(s), Dest, time, ability to skip to next...
 //         ---==show on Map==---
 
+//This page Shows a Bus stop and its data relevant to users such as what buses are supposed to arrive, when and with what destination.
+//It also displays any relevant messages from Tfl.
 Page {
     id: page
     property string stopID: ""//"74612"//"52727"//"52725"
@@ -49,7 +51,7 @@ Page {
     Connections {
         target: arrivalsData
         onDownloadSatateChanged: {
-            busyIndicator.running = !view.count && (arrivalsData.isDownloadingJourneyProgress() || arrivalsData.isDownloadingStop())
+            busyIndicator.running = !view.count && (arrivalsData.isDownloadingArrivals() || arrivalsData.isDownloadingStop())
         }
     }
 
@@ -83,14 +85,6 @@ Page {
                 }
             }
         }
-//        PullDownMenu {
-//            MenuItem {
-//                text: "StateChange"
-//                onClicked: {
-//                    //
-//                }
-//            }
-//        }
 
         anchors.fill: parent
         model: arrivalsModel
