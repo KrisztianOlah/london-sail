@@ -136,7 +136,7 @@ Page {
         footer: TflNotice {}
         ViewPlaceholder {
             text: "Sorry, data may not be available."
-            enabled: !view.count
+            enabled: !view.count && !busyIndicator.running
         }
 
         model: progressModel
