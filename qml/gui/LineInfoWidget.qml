@@ -124,6 +124,8 @@ Rectangle {
     }
     Label {
         id: detailLabel
+        clip: true
+        truncationMode: TruncationMode.Fade
         color: textColor
         font.pixelSize: Theme.fontSizeExtraSmall
         text: details
@@ -137,6 +139,7 @@ Rectangle {
             rightMargin: 10
             topMargin: 5
             top: statusLabel.bottom
+            bottom: self.bottom
         }
     }
 
@@ -223,12 +226,24 @@ Rectangle {
         Transition {
             from: "normal"
             to: "detailed"
-            NumberAnimation { target: self; properties: "height" ; duration: 200 }
+            NumberAnimation { target: self; property: "height" ; duration: (detailedHeight - idealHeight) * 2 }
+            NumberAnimation {
+                target: detailLabel;
+                property: "opacity";
+                duration: (detailedHeight - idealHeight) * 2;
+                easing.type: Easing.InQuint
+            }
         },
         Transition {
             from: "detailed"
             to: "normal"
-            NumberAnimation { target: self; properties: "height" ; duration: 200 }
+            NumberAnimation { target: self; property: "height" ; duration: (detailedHeight - idealHeight) * 2 }
+            NumberAnimation {
+                target: detailLabel;
+                property: "opacity";
+                duration: (detailedHeight - idealHeight) * 2;
+                easing.type: Easing.OutQuint
+            }
         }
     ]
 }
