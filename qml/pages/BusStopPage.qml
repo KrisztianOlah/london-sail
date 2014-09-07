@@ -76,12 +76,21 @@ Page {
                     view.direction = view.currentStop.getTowards()
                     view.type = view.currentStop.getType()
                     view.stopCode = view.currentStop.getID()
+                    arrivalsData.refreshArrivalsModel()
 
                     //only start updating if header data is already available
                     arrivalsData.startArrivalsUpdate()
                 }
             }
         }
+//        PullDownMenu {
+//            MenuItem {
+//                text: "StateChange"
+//                onClicked: {
+//                    //
+//                }
+//            }
+//        }
 
         anchors.fill: parent
         model: arrivalsModel
@@ -114,6 +123,7 @@ Page {
         }
         Component.onCompleted: {
             arrivalsData.getBusStopByCode(page.stopID)
+            arrivalsData.getBusStopMessage(page.stopID)
         }
         Component.onDestruction: {
             arrivalsData.stopArrivalsUpdate()

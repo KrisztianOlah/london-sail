@@ -42,13 +42,17 @@ private:
     ArrivalsContainer* container;
 public:
     void beginInsert(int rows);
+    void beginRemove();
     void beginReset();
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     void endInsert();
+    void endRemove();
     void endReset();
     void replaceContainer(const ArrivalsContainer&);
     virtual QHash<int,QByteArray> roleNames() const;
     virtual int rowCount(const QModelIndex& parent = QModelIndex() ) const;
+public slots:
+    void refresh();
 };
 
 #endif // ARRIVALSMODEL_H

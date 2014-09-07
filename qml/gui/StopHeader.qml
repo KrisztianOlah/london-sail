@@ -32,10 +32,12 @@ Item {
     property string stopPointIndicator: currentStop.getStopPointIndicator()
     property string direction: currentStop.getTowards()
     property alias distance: distanceLabel.text
+    property string message: ""
     property string stopCode: currentStop.getID()
     property int type: currentStop.getType()
     property string title: currentStop.getName()
     property bool isFavorite: arrivalsData.isStopFavorite(stopCode)
+    property double headerOpacity: Theme.highlightBackgroundOpacity
 
     Connections {
         target: self.currentStop
@@ -55,7 +57,7 @@ Item {
         left: parent.left
         right: parent.right
     }
-    height: pageHeader.height + stopHeader.height + Theme.paddingMedium*4
+    height: pageHeader.height + stopHeader.height + messageBox.height + Theme.paddingMedium*4
 
     Label {
         id: pageHeader
@@ -73,93 +75,103 @@ Item {
             leftMargin: 130
         }
     }
-
-    Rectangle {
-        id: stopHeader
-        height: directionLabel.paintedHeight + Theme.paddingMedium*2
-        color: Theme.secondaryHighlightColor
-        opacity: 80
+    RunningText {
+        id: messageBox
         anchors {
             top: pageHeader.bottom
             topMargin: Theme.paddingMedium*2
             left: parent.left
             right: parent.right
         }
+    }
 
-        StopIcon {
-            id: icon
-            stopPointIndicator: self.stopPointIndicator
-            type: self.type
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: parent.left
-                leftMargin: Theme.paddingSmall
-            }
+    Rectangle {
+        id: stopHeader
+        height: directionLabel.paintedHeight + Theme.paddingMedium*2
+        color: Theme.highlightBackgroundColor
+        opacity: headerOpacity
+        anchors {
+            top: messageBox.bottom
+            left: parent.left
+            right: parent.right
         }
-
-        IconButton {
-            id: favoriteButton
-            icon.source: isFavorite ? "image://theme/icon-l-favorite" : "image://theme/icon-l-star"
-            anchors {
-                right: parent.right
-                verticalCenter: parent.verticalCenter
-            }
-            onClicked: {
-                if (!isFavorite) {
-                    self.currentStop.addToDb(true)//won't do anything if record is already in db
-                    arrivalsData.favorStop(stopCode, true)//make sure it is favorite in case record was already in db
-                    isFavorite = arrivalsData.isStopFavorite(stopCode)
-                }
-                else {
-                    arrivalsData.favorStop(stopCode, false)
-                    isFavorite = arrivalsData.isStopFavorite(stopCode)
-                }
-            }
+    }
+    StopIcon {
+        id: icon
+        stopPointIndicator: self.stopPointIndicator
+        type: self.type
+        anchors {
+            verticalCenter: stopHeader.verticalCenter
+            left: stopHeader.left
+            leftMargin: Theme.paddingSmall
         }
-
-        Label {
-            id: towardsLabel
-            text: (directionLabel.text !== "" && (type === Stop.Bus || type === Stop.River)) ? "towards" : ""
-            font.pixelSize: Theme.fontSizeTiny
-            color: Theme.highlightColor
-            anchors {
-                left: icon.right
-                leftMargin: Theme.paddingExtraLarge
-                top: parent.top
-                topMargin: Theme.paddingSmall
-            }
+    }
+    IconButton {
+        id: favoriteButton
+        icon.source: isFavorite ? "image://theme/icon-l-favorite" : "image://theme/icon-l-star"
+        anchors {
+            right: stopHeader.right
+            verticalCenter: stopHeader.verticalCenter
         }
-
-        Label {
-            id: directionLabel
-            text: currentStop.getTowards()//""
-            color: Theme.highlightColor
-            wrapMode: Text.WordWrap
-            anchors {
-                left: towardsLabel.right
-                leftMargin: Theme.paddingSmall
-                right: favoriteButton.left
-                rightMargin: Theme.paddingLarge
+        onClicked: {
+            if (!isFavorite) {
+                self.currentStop.addToDb(true)//won't do anything if record is already in db
+                arrivalsData.favorStop(stopCode, true)//make sure it is favorite in case record was already in db
+                isFavorite = arrivalsData.isStopFavorite(stopCode)
             }
-        }
-
-        Label {
-            id: distanceLabel
-            text: ""
-            font.pixelSize: Theme.fontSizeExtraSmall
-            color: Theme.highlightColor
-            anchors {
-                right: parent.right
-                bottom: parent.bottom
+            else {
+                arrivalsData.favorStop(stopCode, false)
+                isFavorite = arrivalsData.isStopFavorite(stopCode)
             }
         }
     }
+    Label {
+        id: towardsLabel
+        text: (directionLabel.text !== "" && (type === Stop.Bus || type === Stop.River)) ? "towards" : ""
+        font.pixelSize: Theme.fontSizeTiny
+        color: Theme.highlightColor
+        anchors {
+            left: icon.right
+            leftMargin: Theme.paddingExtraLarge
+            top: stopHeader.top
+            topMargin: Theme.paddingSmall
+        }
+    }
+
+    Label {
+        id: directionLabel
+        text: currentStop.getTowards()
+        color: Theme.highlightColor
+        wrapMode: Text.WordWrap
+        anchors {
+            top: stopHeader.top
+            topMargin: Theme.paddingMedium
+            bottom: stopHeader.bottom
+            bottomMargin: Theme.paddingMedium
+            left: towardsLabel.right
+            leftMargin: Theme.paddingSmall
+            right: favoriteButton.left
+            rightMargin: Theme.paddingLarge
+        }
+    }
+
+    Label {
+        id: distanceLabel
+        text: ""
+        font.pixelSize: Theme.fontSizeExtraSmall
+        color: Theme.highlightColor
+        anchors {
+            right: stopHeader.right
+            bottom: stopHeader.bottom
+        }
+    }
+
     states: [
 
         State {
             name: "invisible"
             PropertyChanges {
-                target: stopHeader
+                target: self
                 opacity: 0
             }
             PropertyChanges {
@@ -170,7 +182,7 @@ Item {
         State {
             name: "visible"
             PropertyChanges {
-                target: stopHeader
+                target: self
                 opacity: 100
             }
             PropertyChanges {

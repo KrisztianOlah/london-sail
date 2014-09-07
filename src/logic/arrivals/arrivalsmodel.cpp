@@ -26,6 +26,8 @@ THE SOFTWARE.
 #include "arrivalscontainer.h"
 #include "vehicle.h"
 
+#include <QDebug>
+
 ArrivalsModel::ArrivalsModel(ArrivalsContainer* c, QObject *parent) : QAbstractListModel(parent),
                                                                       container(c)
 {
@@ -34,8 +36,14 @@ ArrivalsModel::ArrivalsModel(ArrivalsContainer* c, QObject *parent) : QAbstractL
 
 void ArrivalsModel::beginInsert(int rows) { beginInsertRows(QModelIndex(),0,rows);}
 
+void ArrivalsModel::beginRemove() {
+    beginRemoveRows(QModelIndex(),0,rowCount() -1);
+}
+
 //informs model that whatever is in the model is to be invalid
-void ArrivalsModel::beginReset() { beginResetModel();}
+void ArrivalsModel::beginReset() {
+    beginResetModel();
+}
 
 QVariant ArrivalsModel::data(const QModelIndex& index, int role) const {
     Vehicle vehicle = container->at(index.row());
@@ -61,7 +69,13 @@ QVariant ArrivalsModel::data(const QModelIndex& index, int role) const {
 
 void ArrivalsModel::endInsert() { endInsertRows(); }
 
-void ArrivalsModel::endReset() { endResetModel();}
+void ArrivalsModel::endRemove() {
+    endRemoveRows();
+}
+
+void ArrivalsModel::endReset() {
+    endResetModel();
+}
 
 //swaps its container for another
 void ArrivalsModel::replaceContainer(const ArrivalsContainer& pOther) {
@@ -85,6 +99,13 @@ int ArrivalsModel::rowCount(const QModelIndex& /*parent*/) const {
     else return 0;
 }
 
+//public slots:
+void ArrivalsModel::refresh() {
+    beginReset();
+    beginInsertRows(QModelIndex(),0,rowCount() -1);
+    endInsertRows();
+    endReset();
+}
 
 
 

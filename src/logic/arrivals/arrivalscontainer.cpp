@@ -39,11 +39,11 @@ void ArrivalsContainer::add(const Vehicle& vehicle) {
 //clears data and notifies model about it
 void ArrivalsContainer::clearData() {
     if (model) {
-        model->beginReset();
+        model->beginRemove();
     }
     clear();
     if (model) {
-        model->endReset();
+        model->endRemove();
     }
 }
 
@@ -57,14 +57,13 @@ void ArrivalsContainer::registerModel(ArrivalsModel* m) {
 //swap so that even when a download goes awry there is data to display to user
 void ArrivalsContainer::replace(const ArrivalsContainer& rhs) {
     if (model) {
-        model->beginReset();
-        model->beginInsert(size());
+        clearData();
+        model->beginInsert(rhs.size() - 1);
     }
 
     if (this != &rhs) { *this = rhs; }
 
     if (model) {
         model->endInsert();
-        model->endReset();
     }
 }

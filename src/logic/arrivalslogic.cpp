@@ -28,8 +28,10 @@ THE SOFTWARE.
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QList>
+#include <QMultiMap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QStringListModel>
 #include <QTimer>
 #include <QUrl>
 #include <cmath>
@@ -60,6 +62,7 @@ ArrivalsLogic::ArrivalsLogic(DatabaseManager* dbm, QObject* parent) : QObject(pa
                                                 journeyProgressTimer(new QTimer(this)),
                                                 reply_arrivals(0),
                                                 reply_busStop(0),
+                                                reply_busStopMessage(0),
                                                 reply_journeyProgress(0),
                                                 reply_stops(0),
                                                 stopsQueryModel(new StopsQueryModel(databaseManager))
@@ -88,6 +91,18 @@ void ArrivalsLogic::clearJourneyProgressData() {
     currentBusDirectionId = "";
     setCurrentVehicleId("");
     if(journeyProgressContainer) { journeyProgressContainer->clear(); }
+}
+
+void ArrivalsLogic::fillCurrentStopMessages(const QMap<int,QString>& map) {
+    //there are 5 priorities at the moment, it may change to 6 in the near future and up to 10 in the far future
+    for (int index = 0; index != 6; ++index) {
+        QList<QString> listOfMessages = map.values(index);
+        for (QList<QString>::const_iterator iter = listOfMessages.begin();iter < listOfMessages.end(); ++iter) {
+            currentStopMessages.append(" * ");
+            currentStopMessages.append(*iter);
+        }
+    }
+    emit currentStopMessagesChanged();
 }
 
 //FIX registration num must not start with X_or contain NEW in the first five letters
@@ -253,6 +268,36 @@ void ArrivalsLogic::onBusStopDataReceived() {
     }
 }
 
+//when getBusStopMessage(const QString&) download finishes
+void ArrivalsLogic::onBusStopMessageReceived() {
+    QList<QJsonDocument> document = makeDocument(reply_busStopMessage);
+    if (document.empty()) { return; } //nothing to do
+
+    QJsonArray versionArray = document.begin()->array();
+    if (versionArray.begin() + 2 < versionArray.end() ) {
+        double serverTime = (*(versionArray.begin() + 2 )).toDouble();
+        QMultiMap<int,QString> messages;
+        for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1; iter < document.end(); ++iter) {
+            if (iter->array().begin() + 4 < iter->array().end()) {
+                int priority = (*(iter->array().begin() + 1)).toDouble();
+                QString text = (*(iter->array().begin() + 2)).toString();
+                double startTime = (*(iter->array().begin() + 3)).toDouble();
+                double expireTime = (*(iter->array().begin() + 4)).toDouble();
+                if (startTime <= serverTime && expireTime >= serverTime) {
+                    messages.insert(priority, text);
+                }
+            }
+            else {
+                qDebug() << "The array doesn't contain 4 elements.";
+                break;
+            }
+        }
+        fillCurrentStopMessages(messages);
+    }
+    else return;
+    /////////////////////////////////////////////////
+}
+
 //gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
     downloadingListOfStops = false;
@@ -262,7 +307,8 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
     //skip version array
     for (QList<QJsonDocument>::const_iterator iter = document.begin() + 1;iter < document.end();++iter) {
         if (iter->array().begin() + 7 >= iter->array().end()) {
-            break; } //TODO throw
+            break;
+        } //TODO throw
         Stop stop(databaseManager);
         stop.setName((*(iter->array().begin() + 1)).toString());
         stop.setID((*(iter->array().begin() + 2)).toString());
@@ -287,7 +333,6 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
             if (!(*(iter->array().begin() + 2)).isNull()) { stop.addToDb(); }
         }
     }
-    //////////////////////////////////////////////////
     if (stopsQueryModel) {
         stopsQueryModel->showStops();
     }
@@ -300,7 +345,11 @@ void ArrivalsLogic::onProgressDataChanged() {
 }
 
 //public slots:
-void ArrivalsLogic::clearCurrentStop() { currentStop->clear();}
+//called by BusStopPage onDestruction()
+void ArrivalsLogic::clearCurrentStop() {
+    currentStop->clear();
+    currentStopMessages.clear();
+}
 
 //makes stop a favorite or removes it from favorites depending on the second arg
 bool ArrivalsLogic::favorStop(const QString& code, bool b) {
@@ -328,6 +377,17 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
 }
 
+void ArrivalsLogic::getBusStopMessage(const QString& code) {
+    QString stopCode = QString("StopCode1=") + code;
+    QString returnList = "&ReturnList=MessagePriority,MessageText,StartTime,ExpireTime";
+    QString request = baseUrl + stopCode + returnList;
+    QUrl url(request);
+
+    reply_busStopMessage = networkMngr->get(QNetworkRequest(url));
+
+    connect(reply_busStopMessage, SIGNAL(finished()), this, SLOT(onBusStopMessageReceived()) );
+}
+
 //downloads a list of stops that bear the same name
 void ArrivalsLogic::getBusStopsByName(const QString& name) {
     QString stopPointName = QString("StopPointName=") + name;
@@ -343,6 +403,10 @@ void ArrivalsLogic::getBusStopsByName(const QString& name) {
 QString ArrivalsLogic::getCurrentDestination() const { return currentDestination;}
 
 Stop* ArrivalsLogic::getCurrentStop() { return currentStop; }
+
+QString ArrivalsLogic::getCurrentStopMessages() const {
+    return currentStopMessages;
+}
 
 QString ArrivalsLogic::getCurrentVehicleLine() const { return currentVehicleLine; }
 
@@ -361,6 +425,10 @@ QString ArrivalsLogic::getNextStop() { return journeyProgressContainer->getNextS
 StopsQueryModel* ArrivalsLogic::getStopsQueryModel() { return stopsQueryModel; }
 
 bool ArrivalsLogic::isStopFavorite(const QString& code) { return databaseManager->isFavorite(code); }
+
+void ArrivalsLogic::refreshArrivalsModel() {
+    arrivalsModel->refresh();
+}
 
 void ArrivalsLogic::setCurrentDestination(const QString& destination) { currentDestination = destination; }
 

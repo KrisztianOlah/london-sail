@@ -159,8 +159,8 @@ Page {
                     }
             Rectangle {
                 anchors.fill: parent
-                color: Theme.secondaryHighlightColor
-                opacity: index % 2 ? 0 : 100
+                color: Theme.highlightBackgroundColor
+                opacity: index % 2 ? 0 : Theme.highlightBackgroundOpacity
             }
             Label {
                 id: etaLabel
