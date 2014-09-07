@@ -57,6 +57,24 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.4.2 - Bus Stop Messages.</b><br>
+*Added Bus stop messages: relevant messages now appear in the header.<br>
+*Fixed bug: Widgets in This Weekend and Service Status pages' expand and contract consistently and text is displayed only inside widget.<br>
+*Pulley menu is now disabled on This Weekend and Service Status pages when busy to avoid possible segfault.
+*Fixed bug: on Bus Stop page BusyIndicator is now correctly shown whilst dowloading.<br>
+*Fixed bug: on Journey Progress page placeholder is now not visible during downloading.<br>
+*Other minor GUI improvements."
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.4.1 - Bug fixes.</b><br>
 *Fixed bug: that was causing client to terminate unexpectedly.<br>
 *Fixed bug: Cover now displays TERMINATED after last stop has been reached.<br>

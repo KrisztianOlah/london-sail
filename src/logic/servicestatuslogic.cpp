@@ -72,16 +72,15 @@ void ServiceStatusLogic::parse(const QByteArray& data) {
         qDebug() << ">>> Parsed Successfuly <<<";
         emit dataChanged();
     }
-    downloading = false;
-    emit stateChanged();
 }
 
 //private slots:
 
 //It will be called as soon as "reply" signals "finished()"
 void ServiceStatusLogic::downloaded() {
-    QByteArray data = reply->readAll();
-    parse(data);
+    downloading = false;
+    emit stateChanged();
+    parse(reply->readAll());
     reply->deleteLater();
 }
 

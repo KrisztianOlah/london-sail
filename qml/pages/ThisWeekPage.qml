@@ -47,6 +47,7 @@ Page {
             onStateChanged: {
                 busyIndicator.running = thisWeekendData.isDownloading()
                 pulley.busy = thisWeekendData.isDownloading()
+                pulley.enabled = !thisWeekendData.isDownloading()
             }
         }
     }

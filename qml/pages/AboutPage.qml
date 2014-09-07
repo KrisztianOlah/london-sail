@@ -59,7 +59,7 @@ Page {
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
-                text: "Version: 0.4.1"
+                text: "Version: 0.4.2"
             }
             Label {
                 id: descriptionLabel

@@ -63,13 +63,13 @@ void ThisWeekendLogic::parseData(const QByteArray& data) {
         qDebug() << "Parsing failed";
     }
     qDebug() << "Not Downloading";
-    downloading = false;
-    emit stateChanged();
 }
 
 //private slots:
 //This slot is called when data is downloaded
 void ThisWeekendLogic::downloaded() {
+    downloading = false;
+    emit stateChanged();
     parseData(reply->readAll());
     reply->deleteLater();
 }

@@ -51,6 +51,7 @@ Page {
             onStateChanged: {
                 busyIndicator.running = serviceStatusData.isDownloading()
                 pulley.busy = serviceStatusData.isDownloading()
+                pulley.enabled = !serviceStatusData.isDownloading()
             }
         }
     }
