@@ -21,6 +21,9 @@ Item {
         color: backgroundColor
         opacity: backgroundOpacity
         anchors.fill: parent
+//        Component.onDestruction: {
+//            console.log("")
+//        }
 
         Label {
             id: messageLabel
@@ -28,24 +31,31 @@ Item {
             clip: true
             text: arrivalsData.getCurrentStopMessages()
             anchors.verticalCenter: parent.verticalCenter
-            NumberAnimation {
-                alwaysRunToEnd: true
-                target: messageLabel
-                from: parent.width
-                to: 0 - messageLabel.paintedWidth
-                //should have the same speed for any length text
-                duration: (messageLabel.paintedWidth - parent.width) * 10
-                property: "x"
-                running: true
-                loops: Animation.Infinite
-            }
+
+//            Component.onCompleted: {
+//                console.log("**** speed: " + (messageLabel.paintedWidth - self.width) )
+//            }
+
+
             onTextChanged: {
                 state = (messageLabel.text === "") ? "invisible" : "visible"
                 arrivalsData.refreshArrivalsModel()
             }
         }
+        NumberAnimation {
+            id: animation
+            target: messageLabel
+            from: parent.width
+            to: 0 - messageLabel.paintedWidth
+            //should have the same speed for any length text
+            duration: (messageLabel.paintedWidth + self.width) * 5
+            property: "x"
+            running: true
+            loops: Animation.Infinite
+        }
 
     }
+
     OpacityRampEffect {
         sourceItem: shade
         direction: OpacityRamp.RightToLeft
