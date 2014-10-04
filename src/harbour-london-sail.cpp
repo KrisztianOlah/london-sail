@@ -69,6 +69,9 @@ THE SOFTWARE.
 #include "logic/arrivalslogic.h"
 #include "logic/coverlogic.h"
 #include "logic/database/databasemanager.h"
+#include "logic/maplogic.h"
+#include "logic/maps/mapfilesmodel.h"
+#include "logic/maps/mapsmodel.h"
 #include "logic/servicestatuslogic.h"
 #include "logic/serviceStatus/servicestatusproxymodel.h"
 #include "logic/serviceStatus/thisweekendlinemodel.h"
@@ -76,7 +79,6 @@ THE SOFTWARE.
 #include "logic/traffic/streetmodel.h"
 #include "logic/thisweekendlogic.h"
 #include "logic/trafficlogic.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -116,6 +118,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<CoverLogic>("harbour.london.sail.utilities",1,0,"PageCodes");
     CoverLogic* coverLogic = new CoverLogic();
     view->rootContext()->setContextProperty("coverData", coverLogic);
+
+    qmlRegisterType<MapFilesModel>("harbour.london.sail.utilities",1,0,"FilesModel");
+
+    qmlRegisterType<MapsModel>("harbour.london.sail.utilities",1,0,"MapsModel");
+    MapLogic* mapLogic = new MapLogic(networkMngr.data());
+    view->rootContext()->setContextProperty("mapData", mapLogic);
 
     view->show();
 
