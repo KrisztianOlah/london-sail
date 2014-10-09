@@ -86,14 +86,14 @@ Page {
 
             BackgroundItem {
                 Label {
-                    text: "Tube Map"
+                    text: "Maps"
                     anchors {
                         left: parent.left
                         leftMargin: Theme.paddingLarge
                         verticalCenter: parent.verticalCenter
                     }
                 }
-                onClicked: pageStack.push(Qt.resolvedUrl("TubeMapPage.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("MapsPage.qml"))
             }
         }
     }
