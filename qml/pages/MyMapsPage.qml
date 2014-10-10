@@ -28,7 +28,7 @@ Page {
 
             function deleteFile() {
                 remorseItem.execute( fileDelegate, "Deleting",
-                                    function () { fileModel.remove(index) } )
+                                    function () { console.log("deleting index: " + index); fileModel.remove(index) } )
             }
 
             height: menuOpen ? backgroundItem.height + view.contextMenu.height : backgroundItem.height
@@ -78,6 +78,7 @@ Page {
                     text: "delete"
                     onClicked: {
                         // +2 because header and footer are also children
+                        console.log("cIndex: " + view.cIndex)
                         view.contentItem.children[view.cIndex + 2].deleteFile()
                     }
                 }
@@ -88,4 +89,5 @@ Page {
             flickable: view
         }
     }
+    Component.onCompleted: fileModel.reset()
 }

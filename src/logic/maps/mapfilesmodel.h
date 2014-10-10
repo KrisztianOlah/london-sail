@@ -16,6 +16,7 @@ private:
 public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE bool remove(int index);
+    Q_INVOKABLE void reset();
     virtual QHash<int,QByteArray> roleNames() const;
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
     void setRootPath(const QString& path);

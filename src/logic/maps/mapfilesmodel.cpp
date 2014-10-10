@@ -31,6 +31,11 @@ bool MapFilesModel::remove(int qmlIndex) {
     return ok;
 }
 
+void MapFilesModel::reset() {
+    beginResetModel();
+    endResetModel();
+}
+
 QHash<int,QByteArray> MapFilesModel::roleNames() const {
     QHash<int,QByteArray> hash;
     hash[NameRole] = "nameData";
