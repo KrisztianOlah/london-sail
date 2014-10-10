@@ -3,6 +3,8 @@ import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
 Page {
+    id: page
+    allowedOrientations: Orientation.All
     //TODO add delete all function and in the pulley
     property FilesModel fileModel: mapData.getMapFilesModel()
     SilicaListView {
@@ -39,6 +41,8 @@ Page {
                 }
                 Label {
                     text: nameData
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
                     anchors {
                         left: parent.left
                         right: parent.right
