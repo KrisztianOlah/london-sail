@@ -40,7 +40,7 @@ Page {
             }
             Label {
                 id: pageHeader
-                text: "Bus Departures"
+                text: "Bus Maps"
                 color: Theme.highlightColor
                 font.pixelSize: Theme.fontSizeLarge
                 horizontalAlignment: Text.AlignRight

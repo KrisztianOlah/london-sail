@@ -13,6 +13,7 @@ Page {
         property string currentName: ""
         property string currentLink: ""
         property int cIndex: 0
+        signal deleteRequested (int index)
 
         anchors.fill: parent
         model: mapData.getMapsModel()
@@ -22,6 +23,7 @@ Page {
 
         delegate: Item {
             id: itemDelegate
+            objectName: "mapDelegate"
 
             width: ListView.view.width
             height: loader.height + contentItem.height
@@ -33,6 +35,10 @@ Page {
             function deleteMap() {
                 remorseItem.execute( itemDelegate ,"Deleting",
                                     function () { mapData.deleteMap(nameData)} )
+            }
+
+            function deleteMapByIndex (ix) {
+                if (ix === index) { deleteMap() }
             }
 
             BackgroundItem {
@@ -100,8 +106,7 @@ Page {
                     text: contextMenu.isLocalFile ? "delete" : "download"
                     onClicked: {
                         if (contextMenu.isLocalFile) {
-                            //+1 is because header is first child
-                            view.contentItem.children[view.cIndex + 1].deleteMap()
+                            view.deleteRequested(view.cIndex)
                         }
                         else {
                             mapData.downloadMap(view.currentName, view.currentLink)
@@ -112,6 +117,13 @@ Page {
         }
         VerticalScrollDecorator {
             flickable: view
+        }
+        onDeleteRequested: {
+            for (var i = 0; i !== view.contentItem.children.length; ++i) {
+                if (view.contentItem.children[i].objectName === "mapDelegate") {
+                    view.contentItem.children[i].deleteMapByIndex(index)
+                }
+            }
         }
     }
     Connections {

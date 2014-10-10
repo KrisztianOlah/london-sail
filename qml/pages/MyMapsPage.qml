@@ -11,6 +11,7 @@ Page {
         id: view
         property Item contextMenu
         property int cIndex: 0
+        signal deleteRequested (int index)
 
         anchors.fill: parent
         header: PageHeader {
@@ -22,13 +23,18 @@ Page {
         }
 
         model: fileModel
+
         delegate: Item {
             id: fileDelegate
+            objectName: "fileDelegate"
             property bool menuOpen: view.contextMenu != null && view.contextMenu.parent === fileDelegate
 
             function deleteFile() {
                 remorseItem.execute( fileDelegate, "Deleting",
-                                    function () { console.log("deleting index: " + index); fileModel.remove(index) } )
+                                    function () { fileModel.remove(index) } )
+            }
+            function deleteByIndex(i) {
+                if ( i === index ) { deleteFile() }
             }
 
             height: menuOpen ? backgroundItem.height + view.contextMenu.height : backgroundItem.height
@@ -69,6 +75,13 @@ Page {
                 target: fileDelegate
             }
         }
+        onDeleteRequested: {
+            for (var ix = 0; ix !== view.contentItem.children.length; ++ix) {
+                if (view.contentItem.children[ix].objectName === "fileDelegate") {
+                    view.contentItem.children[ix].deleteByIndex(index)
+                }
+            }
+        }
 
 
         Component {
@@ -77,9 +90,7 @@ Page {
                 MenuItem {
                     text: "delete"
                     onClicked: {
-                        // +2 because header and footer are also children
-                        console.log("cIndex: " + view.cIndex)
-                        view.contentItem.children[view.cIndex + 2].deleteFile()
+                        view.deleteRequested(view.cIndex)
                     }
                 }
             }
