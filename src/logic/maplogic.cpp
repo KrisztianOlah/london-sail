@@ -68,7 +68,7 @@ QString MapLogic::parseForName(const QString& page, int& pos) {
         pos = endPos;
     }
     else pos = -1;
-    return name;
+    return name.trimmed();
 }
 
 void MapLogic::parseListOfMapsPage(const QString& page) {
