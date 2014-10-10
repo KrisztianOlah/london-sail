@@ -31,9 +31,22 @@ bool MapFilesModel::remove(int qmlIndex) {
     return ok;
 }
 
+bool MapFilesModel::removeAll() {
+    beginRemoveRows(QModelIndex(),0,rowCount());
+
+    bool ok = true;
+    foreach (QFileInfo info, dir.entryInfoList()) {
+        //only want to know if there was a problem
+        if (ok) ok  = dir.remove(info.absoluteFilePath());
+        else dir.remove(info.absoluteFilePath());
+    }
+    dir.setPath(_rootPath);
+    endRemoveRows();
+    return ok;
+}
+
 void MapFilesModel::reset() {
-    beginResetModel();
-    endResetModel();
+    setRootPath(_rootPath);
 }
 
 QHash<int,QByteArray> MapFilesModel::roleNames() const {
@@ -50,6 +63,7 @@ int MapFilesModel::rowCount(const QModelIndex& /*parent*/) const {
 
 void MapFilesModel::setRootPath(const QString& path) {
     beginResetModel();
+    _rootPath = path;
     dir.setPath(path);
     endResetModel();
 }

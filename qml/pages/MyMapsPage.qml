@@ -7,6 +7,13 @@ Page {
     allowedOrientations: Orientation.All
     //TODO add delete all function and in the pulley
     property FilesModel fileModel: mapData.getMapFilesModel()
+
+    function deleteAllLocalMaps() {
+        remorsePopup.execute("Deleting all maps",function () {fileModel.removeAll()})
+    }
+
+    RemorsePopup { id: remorsePopup }
+
     SilicaListView {
         id: view
         property Item contextMenu
@@ -17,9 +24,21 @@ Page {
         header: PageHeader {
             title: "My Bus Maps"
         }
+
         footer: Item {
             height: Theme.paddingLarge
             width: 1
+        }
+        PullDownMenu {
+            visible: view.count
+            MenuItem {
+                text: "Delete all maps"
+                onClicked: deleteAllLocalMaps()
+            }
+        }
+        ViewPlaceholder {
+            enabled: !view.count
+            text: "There are no maps downloaded."
         }
 
         model: fileModel
@@ -71,10 +90,12 @@ Page {
                     view.contextMenu.show(fileDelegate)
                 }
             }
+
             ListView.onRemove: RemoveAnimation {
                 target: fileDelegate
             }
         }
+
         onDeleteRequested: {
             for (var ix = 0; ix !== view.contentItem.children.length; ++ix) {
                 if (view.contentItem.children[ix].objectName === "fileDelegate") {
@@ -82,7 +103,6 @@ Page {
                 }
             }
         }
-
 
         Component {
             id: contextMenuComponent
