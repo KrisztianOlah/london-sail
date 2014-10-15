@@ -104,7 +104,6 @@ Page {
 
             SearchField {
                 id: searchfield
-//                validator:
                 placeholderText: "Code/Stop Name"
                 EnterKey.onClicked: readInput(text)
                 anchors {

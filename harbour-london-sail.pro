@@ -41,7 +41,12 @@ SOURCES += src/harbour-london-sail.cpp \
     src/logic/coverlogic.cpp \
     src/logic/database/databasemanager.cpp \
     src/logic/database/database.cpp \
-    src/logic/arrivals/stopsquerymodel.cpp
+    src/logic/arrivals/stopsquerymodel.cpp \
+    src/logic/maplogic.cpp \
+    src/logic/maps/mapsmodel.cpp \
+    src/logic/maps/busmap.cpp \
+    src/logic/maps/busmapdownloader.cpp \
+    src/logic/maps/mapfilesmodel.cpp
 
 OTHER_FILES += qml/harbour-london-sail.qml \
     qml/cover/CoverPage.qml \
@@ -74,7 +79,11 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/pages/JourneyProgressPage.qml \
     qml/cover/JourneyProgressCover.qml \
     qml/gui/StopIcon.qml \
-    qml/gui/RunningText.qml
+    qml/gui/RunningText.qml \
+    qml/pages/MapsPage.qml \
+    qml/pages/BusMapsPage.qml \
+    qml/pages/MyMapsPage.qml \
+    qml/gui/NotificationWidget.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \
@@ -103,7 +112,12 @@ HEADERS += \
     src/logic/coverlogic.h \
     src/logic/database/databasemanager.h \
     src/logic/database/database.h \
-    src/logic/arrivals/stopsquerymodel.h
+    src/logic/arrivals/stopsquerymodel.h \
+    src/logic/maplogic.h \
+    src/logic/maps/mapsmodel.h \
+    src/logic/maps/busmap.h \
+    src/logic/maps/busmapdownloader.h \
+    src/logic/maps/mapfilesmodel.h
 
 RESOURCES += \
     images.qrc
