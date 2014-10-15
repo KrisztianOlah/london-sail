@@ -21,6 +21,7 @@ QVariant MapFilesModel::data(const QModelIndex& index, int role) const {
     }
 }
 
+//To delete map file according to its index in the model
 bool MapFilesModel::remove(int qmlIndex) {
     QModelIndex mi = index(qmlIndex);
     QString filePath = mi.data(PathRole).toString();
@@ -31,6 +32,7 @@ bool MapFilesModel::remove(int qmlIndex) {
     return ok;
 }
 
+//To delete all map files that user previously downloaded
 bool MapFilesModel::removeAll() {
     beginRemoveRows(QModelIndex(),0,rowCount());
 
@@ -45,6 +47,7 @@ bool MapFilesModel::removeAll() {
     return ok;
 }
 
+//resets model
 void MapFilesModel::reset() {
     setRootPath(_rootPath);
 }
@@ -61,6 +64,7 @@ int MapFilesModel::rowCount(const QModelIndex& /*parent*/) const {
     return fileList.size();
 }
 
+//sets a different path to display
 void MapFilesModel::setRootPath(const QString& path) {
     beginResetModel();
     _rootPath = path;

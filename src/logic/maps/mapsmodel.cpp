@@ -5,12 +5,14 @@ MapsModel::MapsModel(QList<BusMap>* pL, QObject* parent) : QAbstractListModel(pa
 {
 }
 
+//Adds a new BusMap in the list
 void MapsModel::addMap(const BusMap& map) {
     beginInsertRows(QModelIndex(),rowCount(),rowCount());
     pList->append(map);
     endInsertRows();
 }
 
+//Clears list and model
 void MapsModel::clearData() {
     beginResetModel();
     pList->clear();

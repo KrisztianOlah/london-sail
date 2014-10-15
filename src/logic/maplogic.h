@@ -11,6 +11,7 @@ class MapsModel;
 class QNetworkAccessManager;
 class QNetworkReply;
 
+//Class to handle downloading maps for GUI
 class MapLogic : public QObject
 {
     Q_OBJECT

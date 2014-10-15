@@ -3,9 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QDir>
-#include <QFileInfoList>
 
-
+//Model to show and delete downloaded maps to/for user
 class MapFilesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -15,7 +14,6 @@ public:
 private:
     QDir dir;
     QString _rootPath;
-//    QFileInfoList fileList;
 public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE bool remove(int index);

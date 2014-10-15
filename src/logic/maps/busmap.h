@@ -3,6 +3,7 @@
 
 #include <QString>
 
+//Struct to hold a Bus Map object during parsing
 struct BusMap
 {
     BusMap();

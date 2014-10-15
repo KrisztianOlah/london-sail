@@ -31,6 +31,7 @@ MapLogic::MapLogic(QObject *parent) : QObject(parent),
     connect(mapDownloader, SIGNAL(downloadingChanged()), this, SLOT(onDownloadingChanged())  );
 }
 //private:
+//Parses webpage for downloadable map files
 QString MapLogic::parseForLink(const QString& page, int& pos) {
     QRegExp re("document-download-wrap  pdf. href=.");
     QRegExp reEnd("\"");
@@ -53,7 +54,7 @@ QString MapLogic::parseForLink(const QString& page, int& pos) {
     return link;
 }
 
-//can contain special html chars
+//Parses webpage for map names that can be displayed to user, can contain special html chars
 QString MapLogic::parseForName(const QString& page, int& pos) {
     QRegExp re("document-download-text\"><p>");
     QRegExp reEnd("</p></div>");
@@ -68,9 +69,11 @@ QString MapLogic::parseForName(const QString& page, int& pos) {
         pos = endPos;
     }
     else pos = -1;
+    //trim any heading or trailing whitespace
     return name.trimmed();
 }
 
+//Parses the webpage, delegates the real work to parseForLink(args) and parseForName(args)
 void MapLogic::parseListOfMapsPage(const QString& page) {
     int pos = 0;
     while (pos != -1) {
@@ -84,12 +87,13 @@ void MapLogic::parseListOfMapsPage(const QString& page) {
 }
 
 //private slots:
+//Called when mapDownloader's downloading state is changed
 void MapLogic::onDownloadingChanged() {
     downloading = mapDownloader->isDownloading();
     emit downloadingChanged();
-    qDebug() << "downloading changed to: " << downloading;
 }
 
+//Called when downloadListOfMapsFor(arg) finished and reply is ready to process
 void MapLogic::onListOfMapsDownloaded() {
     downloading = false;
     emit downloadingChanged();
@@ -98,16 +102,19 @@ void MapLogic::onListOfMapsDownloaded() {
     parseListOfMapsPage(page);
 }
 
+//Called when a single map in the queue is downloaded
 void MapLogic::onMapDownloadFinished() {
     emit mapDownloaded();
 }
 
 
 //public slots:
+//Clears map model so that wnen new model is requested, wrong data will not be presented to user
 void MapLogic::clearMapList() {
     mapsModel->clearData();
 }
 
+//Deletes a map by name, called from GUI
 void MapLogic::deleteMap(const QString& name) {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     path = path + QString("/busmaps/") + name + QString(".pdf");
@@ -120,6 +127,7 @@ void MapLogic::deleteMap(const QString& name) {
     else qDebug() << "Removing" << name << "failed.";
 }
 
+//Downloads a list of maps for a given area or route
 void MapLogic::downloadListOfMapsFor(const QString& userInput) {
     //the full string for Kingston returns an empty list
     QString input = (userInput == "Kingston upon Thames") ? "Kingston" : userInput;
@@ -132,12 +140,15 @@ void MapLogic::downloadListOfMapsFor(const QString& userInput) {
     connect(reply, SIGNAL(finished()),this, SLOT(onListOfMapsDownloaded()) );
 }
 
+//Adds a map to the download queue called by GUI
 void MapLogic::downloadMap(const QString& name, const QString& link) {
     mapDownloader->queueMap(name,link);
 }
 
+//returns true if mapDownloader or MapLogic is downloading otherwise false, called from GUI
 bool MapLogic::isDownloading() const { return downloading; }
 
+//Returns true if file with name exists in a map data location, called from GUI
 bool MapLogic::isThereLocalFile(const QString& name) const {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     path = path + QString("/busmaps/") + name + QString(".pdf");
@@ -145,11 +156,13 @@ bool MapLogic::isThereLocalFile(const QString& name) const {
     return file.exists();
 }
 
+//Used by MyMapsPage
 MapFilesModel* MapLogic::getMapFilesModel() { return mapFilesModel; }
 
+//Used by BusMapsPage
 MapsModel* MapLogic::getMapsModel() { return mapsModel; }
 
-
+//Opens a map file externally with default pdf viewer
 void MapLogic::openMap(const QString& name) {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     path = QString("file:///") + path + QString("/busmaps/") + name + QString(".pdf");

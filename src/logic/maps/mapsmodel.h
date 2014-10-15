@@ -5,6 +5,7 @@
 #include <QList>
 #include "busmap.h"
 
+//Model to contain a list of downloadable maps' name and corresponding link for an area or route
 class MapsModel : public QAbstractListModel
 {
     Q_OBJECT

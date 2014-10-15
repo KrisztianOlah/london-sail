@@ -8,6 +8,7 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
+//Class to queue and download BusMap objects
 class BusMapDownloader : public QObject
 {
     Q_OBJECT
