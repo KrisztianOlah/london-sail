@@ -91,6 +91,8 @@ void MapLogic::onDownloadingChanged() {
 }
 
 void MapLogic::onListOfMapsDownloaded() {
+    downloading = false;
+    emit downloadingChanged();
     QString page = reply->readAll();
     reply->deleteLater();
     parseListOfMapsPage(page);
@@ -111,7 +113,6 @@ void MapLogic::deleteMap(const QString& name) {
     path = path + QString("/busmaps/") + name + QString(".pdf");
     QFile file(path);
     bool ok = file.remove();
-    //TODO Refresh model when item removed
     if (ok) {
         emit mapDeleted();
         qDebug() << name << "is removed successfuly.";
@@ -124,6 +125,8 @@ void MapLogic::downloadListOfMapsFor(const QString& userInput) {
     QString input = (userInput == "Kingston upon Thames") ? "Kingston" : userInput;
     QString request = baseUrl + input;
     QUrl url(request);
+    downloading = true;
+    emit downloadingChanged();
     reply = networkMngr->get(QNetworkRequest(url));
 
     connect(reply, SIGNAL(finished()),this, SLOT(onListOfMapsDownloaded()) );

@@ -19,6 +19,7 @@ Page {
         property string currentName: ""
         property string currentLink: ""
         property int cIndex: 0
+        property bool isDownloadingList: !view.count && mapData.isDownloading()
         signal deleteRequested (int index)
 
         anchors.fill: parent
@@ -147,11 +148,18 @@ Page {
                 }
             }
         }
+        BusyIndicator {
+            id: busyIndicator
+            running: view.isDownloadingList
+            anchors.centerIn: parent
+            size: BusyIndicatorSize.Large
+        }
     }
     Connections {
         target: mapData
         onDownloadingChanged: {
-            refreshWidget.active = mapData.isDownloading()
+            refreshWidget.active = view.count ? mapData.isDownloading() : false
+            view.isDownloadingList = !view.count && mapData.isDownloading()
         }
     }
 
