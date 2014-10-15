@@ -20,6 +20,10 @@ Page {
         header: PageHeader {
             title: headertitle
         }
+        footer: Item {
+            height: Theme.paddingLarge
+            width: 1
+        }
 
         delegate: Item {
             id: itemDelegate
@@ -45,6 +49,16 @@ Page {
                 id: contentItem
 
                 width: parent.width
+                height: label.paintedHeight + Theme.paddingMedium * 2 < 80 ? 80 : label.paintedHeight + Theme.paddingMedium * 2
+
+                Separator {
+                    color: Theme.secondaryHighlightColor
+                    anchors {
+                        top: parent.bottom
+                        left: parent.left
+                        right: parent.right
+                    }
+                }
 
                 Label {
                     id: label

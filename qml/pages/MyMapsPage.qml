@@ -60,11 +60,23 @@ Page {
             width: ListView.view.width
             BackgroundItem {
                 id: backgroundItem
+                height: label.paintedHeight + Theme.paddingMedium * 2 < 80 ? 80 : label.paintedHeight + Theme.paddingMedium * 2
                 anchors {
                     left: parent.left
                     right: parent.right
                 }
+                Separator {
+                    color: Theme.secondaryHighlightColor
+//                    alignment: Qt.AlignHCenter
+                    anchors {
+                        top: parent.bottom
+                        left: parent.left
+                        right: parent.right
+                    }
+                }
+
                 Label {
+                    id: label
                     text: nameData
                     wrapMode: Text.WordWrap
                     textFormat: Text.RichText
