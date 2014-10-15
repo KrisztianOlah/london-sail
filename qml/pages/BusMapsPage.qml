@@ -8,6 +8,12 @@ Page {
     property string headertitle: ""
     id: page
     allowedOrientations: Orientation.All
+
+    NotificationWidget {
+        id: notification
+        timeOut: 2000
+    }
+
     SilicaListView {
         id: view
         property string currentName: ""
@@ -96,6 +102,8 @@ Page {
 
                 onClicked: {
                     if (mapData.isThereLocalFile(nameData)) {
+                        notification.text = "Opening " + nameData + "..."
+                        notification.active = true
                         mapData.openMap(nameData)
                     }
                 }

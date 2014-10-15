@@ -2,6 +2,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.london.sail.utilities 1.0
 
+import "../gui"
+
 Page {
     id: page
     allowedOrientations: Orientation.All
@@ -10,6 +12,10 @@ Page {
 
     function deleteAllLocalMaps() {
         remorsePopup.execute("Deleting all maps",function () {fileModel.removeAll()})
+    }
+    NotificationWidget {
+        id: notification
+        timeOut: 2000
     }
 
     RemorsePopup { id: remorsePopup }
@@ -91,6 +97,8 @@ Page {
                 RemorseItem { id: remorseItem }
                 onClicked: {
                     if (mapData.isThereLocalFile(nameData)) {
+                        notification.text = "Opening " + nameData + "..."
+                        notification.active = true
                         mapData.openMap(nameData)
                     }
                 }

@@ -82,7 +82,8 @@ OTHER_FILES += qml/harbour-london-sail.qml \
     qml/gui/RunningText.qml \
     qml/pages/MapsPage.qml \
     qml/pages/BusMapsPage.qml \
-    qml/pages/MyMapsPage.qml
+    qml/pages/MyMapsPage.qml \
+    qml/gui/NotificationWidget.qml
 
 HEADERS += \
     src/logic/servicestatuslogic.h \
