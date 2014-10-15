@@ -37,7 +37,7 @@ Rectangle {
     signal clicked
 
     id: self
-    height: 80 + towardLabel.lineCount * 20
+    height: nameLabel.paintedHeight + towardLabel.paintedHeight + Theme.paddingMedium * 2
     radius: 10
     color: Theme.secondaryHighlightColor
     anchors {
@@ -66,10 +66,11 @@ Rectangle {
     Label {
         id: nameLabel
         text: "Name of Stop"
+        wrapMode: Text.WordWrap
         font.pixelSize: Theme.fontSizeMedium
         anchors {
             top: parent.top
-            topMargin: (towards === "") ? 30 : 10 //no need to leave space when there is nothing to display
+            topMargin: (towards === "") ? (parent.height - nameLabel.paintedHeight) / 2 : Theme.paddingMedium //no need to leave space when there is nothing to display
             left: icon.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left

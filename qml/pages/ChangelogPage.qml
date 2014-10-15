@@ -58,7 +58,8 @@ Page {
                 color: Theme.highlightColor
                 textFormat: Text.RichText
                 text: "<b>0.4.3 - Bus Maps.</b><br>
-*Added Bus Maps: it is now possible to download, delete and to open(with default pdf reader) bus maps."
+*Added Bus Maps: it is now possible to download, delete and to open(with default pdf reader) bus maps.<br>
+*Fixed bug: on Bus Departures Page text can no longer be outside of its widget."
             }
             Label {
                 anchors {
