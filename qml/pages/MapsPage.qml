@@ -59,9 +59,6 @@ Page {
                 left: parent.left
                 right: parent.right
             }
-            VerticalScrollDecorator {
-                flickable: view
-            }
             Label {
                 id: pageHeader
                 text: "Bus Maps"

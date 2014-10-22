@@ -37,9 +37,7 @@ Item {
         left: parent.left
         right: parent.right
     }
-    onHeightChanged: console.log("###### Height Changed")
-    onXChanged: console.log("##### x Changed")
-    onYChanged: console.log("#### y Changed")
+
     SearchHeader {
         id: searchHeader
         title: self.title

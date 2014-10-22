@@ -91,7 +91,7 @@ Page {
         Connections {
             target: trafficData
             onDownloadProgress: {
-                if(!view.count && disruptionModel.isFilterEmptyString()) {
+                if( !view.count && disruptionModel.isFilterEmptyString()) {
                     progressLabel.text = value + ' bytes'
                 }
             }
@@ -109,6 +109,7 @@ Page {
             }
         }
     }
+
     function setModel(str) {
         currentModel = str
         view.headerItem.state = str
@@ -118,14 +119,16 @@ Page {
     SilicaListView {
         id: view
         anchors.fill: parent
-        header: SearchHeader {
-            title: currentModel//"Traffic Disruptions"
+        header: TrafficSearchHeader {
+            id: pageHeader
+            title: currentModel
             state: ""
             onFilterChanged: { disruptionModel.filter(text) }
         }
 
 
         footer: TflNotice {}
+
         PullDownMenu {
             id: pulley
             MenuItem {
@@ -158,6 +161,7 @@ Page {
                 onClicked: trafficData.refresh()
             }
         }
+
         PushUpMenu {
             id: pushy
             enabled: !hasQuickScroll && view.count > fewItems
@@ -179,14 +183,8 @@ Page {
             currentUpdate: currentUpdateData
             severity: severityData
             disruptionID: idData
+        }
 
-        }
-        ListView.onAdd: AddAnimation {
-            target: roadDisruptionWiget
-        }
-        ListView.onRemove: RemoveAnimation {
-            target: roadDisruptionWiget
-        }
 
         onCountChanged: {
             if (headerItem && headerItem.state === "") {
@@ -208,9 +206,12 @@ Page {
             text: (view.headerItem.state === "") ? "Pull down to refresh." : "No matches :("
         }
     }
+
+
     RefreshWidget {
         id: refreshWidget
     }
+
     onOrientationChanged: {
         //BUG: its seems to be reverted for some reason
         refreshWidget.isPortrait = !isPortrait

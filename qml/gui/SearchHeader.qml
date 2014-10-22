@@ -29,20 +29,23 @@ Item {
     id: self
     property string title: "Title"
     property alias text: searchField.text
-    property alias searchPlaceholder: searchField.placeholderText
+    property string placeholderText: "Search"
+    property bool readOnly: searchField.readOnly
 
-    signal filterChanged()
-    height: header.height + searchField.height + 2*Theme.paddingLarge
+    signal enterClicked(string searchText)
+
+    height: header.height + searchField.height + 2 * Theme.paddingLarge
     anchors {
         left: parent.left
         right: parent.right
     }
-    state: ""
+
     Label {
         id: header
         text: title
         font.pixelSize: Theme.fontSizeLarge
         color: Theme.highlightColor
+        horizontalAlignment: Text.AlignRight
         anchors {
             top: parent.top
             topMargin: Theme.paddingMedium*2
@@ -50,93 +53,47 @@ Item {
             rightMargin: Theme.paddingLarge
         }
     }
+
     SearchField {
         id: searchField
-        width: 480
-        opacity: 0
         readOnly: true
+        opacity: parent.opacity
         anchors {
             top: header.bottom
+            topMargin: Theme.paddingMedium*2
             left: parent.left
-            leftMargin: Theme.paddingLarge
+            leftMargin: Theme.paddingMedium
+            right: parent.right
+            rightMargin: Theme.paddingMedium
         }
-        placeholderText: "Search/Filter"
+        placeholderText: self.placeholderText
         inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
         EnterKey.onClicked: {
             searchField.focus = false
+            self.enterClicked(text)
         }
         onClicked: {
             forceActiveFocus()
         }
-
-        onTextChanged: {
-            self.filterChanged()
-        }
     }
     states: [
         State {
-            name: ""
+            name: "invisible"
             PropertyChanges {
                 target: searchField
-                opacity: 0
+                visible: false
                 readOnly: true
             }
         },
         State {
-            name: "searchable"
+            name: "visible"
             PropertyChanges {
                 target: searchField
-                opacity: 100
-                readOnly: false
-            }
-        },
-        State {
-            name: "Traffic Disruptions"
-            PropertyChanges {
-                target: self
-                title: "Traffic Disruptions"
-            }
-            PropertyChanges {
-                target: searchField
-                opacity: 100
-                readOnly: false
-            }
-        },
-        State {
-            name: "Scheduled"
-            PropertyChanges {
-                target: self
-                title: "Scheduled"
-            }
-            PropertyChanges {
-                target: searchField
-                opacity: 100
-                readOnly: false
-            }
-        },
-        State {
-            name: "Recurring Works"
-            PropertyChanges {
-                target: self
-                title: "Recurring Works"
-            }
-            PropertyChanges {
-                target: searchField
-                opacity: 100
-                readOnly: false
-            }
-        },
-        State {
-            name: "Recently Cleared"
-            PropertyChanges {
-                target: self
-                title: "Recently Cleared"
-            }
-            PropertyChanges {
-                target: searchField
-                opacity: 100
+                visible: true
                 readOnly: false
             }
         }
+
     ]
 }
+
