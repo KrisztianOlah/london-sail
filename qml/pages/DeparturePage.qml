@@ -75,48 +75,21 @@ Page {
         }
     }
 
+    VerticalScrollDecorator {
+        flickable: view
+    }
+
     SilicaListView {
         id: view
         anchors.fill: parent
 
-        header: Item {
-            height: 150 + pageHeader.height
-            anchors {
-                left: parent.left
-                right: parent.right
-            }
-            VerticalScrollDecorator {
-                flickable: view
-            }
-            Label {
-                id: pageHeader
-                text: "Bus Departures"
-                color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeLarge
-                horizontalAlignment: Text.AlignRight
-                anchors {
-                    top: parent.top
-                    topMargin: Theme.paddingMedium*2
-                    right: parent.right
-                    rightMargin: Theme.paddingLarge
-                }
-            }
-
-            SearchField {
-                id: searchfield
-                placeholderText: "Code/Stop Name"
-                EnterKey.onClicked: readInput(text)
-                anchors {
-                    top: pageHeader.bottom
-                    topMargin: Theme.paddingMedium*2
-                    left: parent.left
-                    leftMargin: Theme.paddingMedium
-                    right: parent.right
-                    rightMargin: Theme.paddingMedium
-                }
-
-            }
+        header: SearchHeader {
+            title: "Bus Departures"
+            placeholderText: "Code/Stop Name"
+            onEnterClicked: readInput(text)
+            state: "visible"
         }
+
         footer: TflNotice {}
 //        PullDownMenu {
 //            id: pulley

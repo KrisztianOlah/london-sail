@@ -32,7 +32,7 @@ Item {
     property string placeholderText: "Search"
     property bool readOnly: searchField.readOnly
 
-    signal enterClicked(string searchText)
+    signal enterClicked()
 
     height: header.height + searchField.height + 2 * Theme.paddingLarge
     anchors {
@@ -70,7 +70,7 @@ Item {
         inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
         EnterKey.onClicked: {
             searchField.focus = false
-            self.enterClicked(text)
+            self.enterClicked()
         }
         onClicked: {
             forceActiveFocus()
