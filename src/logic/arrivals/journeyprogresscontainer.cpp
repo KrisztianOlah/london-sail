@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "arrivalsproxymodel.h"
 #include "journeyprogressmodel.h"
 
-//custom search algorithms because Qt algorithms are not sufficent and labmbdas or bind is not available in C++03 to use std algorithms
+//custom search algorithms because Qt algorithms are not sufficent and lambdas or bind is not available in C++03 to use std algorithms
 namespace {
 typedef QList<QPair<QString,double> > StopList;
 StopList::const_iterator find(StopList::const_iterator begin,StopList::const_iterator end, const QString& val) {
@@ -50,11 +50,14 @@ StopList::iterator find(StopList::iterator begin,StopList::iterator end, const Q
 //any other case it just returns end() iterator
 StopList::const_iterator findNextStop(StopList::const_iterator begin,StopList::const_iterator end, double val, double time) {
     for (StopList::const_iterator iter = begin; iter != end; ++iter) {
-        if (iter->second - time > 0 && iter->second < val) return iter;
+        if ((iter->second - time > 0)) {
+            //if the original time is in the past and this isn't, then this is still better match,
+            //otherwise only return if it is smaller then given value
+            if (val - time < 0 || iter->second < val) { return iter; }
+        }
     }
     return end;
 }
-
 }//end of unnamed namespace
 
 JourneyProgressContainer::JourneyProgressContainer(QObject* parent) : QObject(parent),
@@ -110,7 +113,6 @@ QString JourneyProgressContainer::getNextStop() const {
         }
         else return smallestSoFar->first;
     }
-
     else {
         return QString("NOT AVAILABLE");
     }
