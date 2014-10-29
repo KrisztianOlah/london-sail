@@ -69,7 +69,6 @@ Page {
     Connections {
         target: arrivalsData
         onDownloadStateChanged: {
-            console.log("downloadStateChanged")
             busyIndicator.running = !view.count && arrivalsData.isDownloadingJourneyProgress()
         }
     }
@@ -83,8 +82,20 @@ Page {
     SilicaListView {
         id: view
         anchors.fill: parent
+
+        //BUG: after refresh data is not available
+//        PullDownMenu {
+//            MenuItem {
+//                text: "Refresh"
+//                onClicked: {
+//                    arrivalsData.stopJourneyProgressUpdate()
+//                    arrivalsData.startJourneyProgressUpdate()
+//                }
+//            }
+//        }
+
         header: Item {
-            height: Theme.paddingMedium*6 + pageHeader.height + destinationLabel.paintedHeight
+            height: Theme.paddingMedium*6 + pageHeader.height + destinationLabel.paintedHeight + Theme.paddingLarge
             anchors {
                 left: parent.left
                 right: parent.right
@@ -131,6 +142,27 @@ Page {
                     rightMargin: Theme.paddingLarge
                 }
 
+            }
+            ProgressBar {
+                id: progressBar
+                minimumValue: 0
+                maximumValue: 100
+                value: 0
+
+                anchors {
+                    left: parent.left
+                    leftMargin: -65
+                    right: parent.right
+                    rightMargin: -65
+                    verticalCenter: lineNameLabel.bottom
+                    verticalCenterOffset: Theme.paddingSmall
+                }
+            }
+            Connections {
+                target: arrivalsData
+                onDisplayTimerTicked: {
+                    progressBar.value = arrivalsData.getTimerProgress_journeyProgress()
+                }
             }
         }
         footer: TflNotice {}

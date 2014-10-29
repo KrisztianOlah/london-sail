@@ -422,7 +422,11 @@ double ArrivalsLogic::getTimerProgress_arrivals() const {
     return (interval - remaining) / interval * 100;
 }
 
-double ArrivalsLogic::getTimerProgress_journeyProgress() const { return 0; }
+double ArrivalsLogic::getTimerProgress_journeyProgress() const {
+    double interval = journeyProgressTimer->interval();
+    double remaining = journeyProgressTimer->remainingTime();
+    return (interval - remaining) / interval * 100;
+}
 
 bool ArrivalsLogic::isDownloadingArrivals() const { return downloadingArrivals; }
 
