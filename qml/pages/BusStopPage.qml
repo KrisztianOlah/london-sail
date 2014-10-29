@@ -35,6 +35,7 @@ import "../gui"
 Page {
     id: page
     property string stopID: ""//"74612"//"52727"//"52725"
+    property bool isDownloading: false
     allowedOrientations: Orientation.All
     onStatusChanged: {
         if (status === PageStatus.Active) {
@@ -50,8 +51,10 @@ Page {
     }
     Connections {
         target: arrivalsData
-        onDownloadSatateChanged: {
+        onDownloadStateChanged: {
             busyIndicator.running = !view.count && (arrivalsData.isDownloadingArrivals() || arrivalsData.isDownloadingStop())
+            pulley.busy = arrivalsData.isDownloadingArrivals() || arrivalsData.isDownloadingStop()
+            refreshMenuItem.enabled = !(arrivalsData.isDownloadingArrivals() || arrivalsData.isDownloadingStop())
         }
     }
 
@@ -67,6 +70,18 @@ Page {
         property int type: 0
 
         property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
+
+        PullDownMenu {
+            id: pulley
+            MenuItem {
+                id: refreshMenuItem
+                text: "Refresh"
+                onClicked: {
+                    arrivalsData.stopArrivalsUpdate()
+                    arrivalsData.startArrivalsUpdate()
+                }
+            }
+        }
 
         Connections {
             target: view.currentStop

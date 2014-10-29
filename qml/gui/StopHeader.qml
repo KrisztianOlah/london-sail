@@ -165,6 +165,26 @@ Item {
             bottom: stopHeader.bottom
         }
     }
+    ProgressBar {
+        id: progressBar
+        anchors {
+            left: self.left
+            leftMargin: -65
+            right: self.right
+            rightMargin: -65
+            verticalCenter: parent.bottom
+        }
+
+        minimumValue: 0
+        maximumValue: 100
+        value: 0
+    }
+    Connections {
+        target: arrivalsData
+        onDisplayTimerTicked: {
+            progressBar.value = arrivalsData.getTimerProgress_arrivals()
+        }
+    }
 
     states: [
 

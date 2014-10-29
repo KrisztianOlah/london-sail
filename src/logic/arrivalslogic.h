@@ -65,6 +65,7 @@ private:
     DatabaseManager* databaseManager;
     Stop* currentStop;
     QString currentStopMessages;
+    QTimer* displayTimer;
     bool downloadingArrivals;
     bool downloadingJourneyProgress;
     bool downloadingListOfStops;
@@ -82,6 +83,7 @@ signals:
     void currentStopMessagesChanged();
     void downloadStateChanged();
     void nextStopChanged();
+    void displayTimerTicked();
     void stopDataChanged();
 private:
     void clearArrivalsData();
@@ -97,6 +99,7 @@ private slots:
     void onBusProgressReceived();
     void onBusStopDataReceived();
     void onBusStopMessageReceived();
+    void onDisplayTimerTicked();
     void onListOfBusStopsReceived();
     void onProgressDataChanged();
 public slots:
@@ -110,6 +113,8 @@ public slots:
     Stop* getCurrentStop();
     QString getCurrentStopMessages() const;
     QString getCurrentVehicleLine() const;
+    double getTimerProgress_arrivals() const;
+    double getTimerProgress_journeyProgress() const;
     bool isDownloadingArrivals() const;
     bool isDownloadingJourneyProgress() const;
     bool isDownloadingListOfStops() const;
