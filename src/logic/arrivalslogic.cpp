@@ -53,6 +53,7 @@ ArrivalsLogic::ArrivalsLogic(DatabaseManager* dbm, QObject* parent) : QObject(pa
                                                 baseUrl("http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?"),
                                                 databaseManager(dbm),
                                                 currentStop(new Stop(databaseManager)),
+                                                displayTimer(new QTimer(this)),
                                                 downloadingArrivals(false),
                                                 downloadingJourneyProgress(false),
                                                 downloadingListOfStops(false),
@@ -74,6 +75,7 @@ ArrivalsLogic::ArrivalsLogic(DatabaseManager* dbm, QObject* parent) : QObject(pa
     connect(arrivalsTimer, SIGNAL(timeout()), this, SLOT(fetchArrivalsData()) );
     connect(journeyProgressTimer, SIGNAL(timeout()), this, SLOT(fetchJourneyProgress()) );
     connect(journeyProgressContainer, SIGNAL(dataChanged()), this, SLOT(onProgressDataChanged()) );
+    connect(displayTimer, SIGNAL(timeout()), this, SLOT(onDisplayTimerTicked()) );
 }
 
 //private:
@@ -298,6 +300,10 @@ void ArrivalsLogic::onBusStopMessageReceived() {
     /////////////////////////////////////////////////
 }
 
+void ArrivalsLogic::onDisplayTimerTicked() {
+    emit displayTimerTicked();
+}
+
 //gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
     downloadingListOfStops = false;
@@ -410,6 +416,18 @@ QString ArrivalsLogic::getCurrentStopMessages() const {
 
 QString ArrivalsLogic::getCurrentVehicleLine() const { return currentVehicleLine; }
 
+double ArrivalsLogic::getTimerProgress_arrivals() const {
+    double interval = arrivalsTimer->interval();
+    double remaining = arrivalsTimer->remainingTime();
+    return (interval - remaining) / interval * 100;
+}
+
+double ArrivalsLogic::getTimerProgress_journeyProgress() const {
+    double interval = journeyProgressTimer->interval();
+    double remaining = journeyProgressTimer->remainingTime();
+    return (interval - remaining) / interval * 100;
+}
+
 bool ArrivalsLogic::isDownloadingArrivals() const { return downloadingArrivals; }
 
 bool ArrivalsLogic::isDownloadingJourneyProgress() const { return downloadingJourneyProgress; }
@@ -453,6 +471,7 @@ void ArrivalsLogic::setStopsQueryModel(int type) {
 void ArrivalsLogic::startArrivalsUpdate() {
     fetchArrivalsData();
     arrivalsTimer->start(30000);//30 sec
+    displayTimer->start(16);
 }
 
 //starts timer to periodically download journey progress data
@@ -461,17 +480,20 @@ void ArrivalsLogic::startJourneyProgressUpdate() {
     qDebug() << "***startJourneyProgressUpdate() ***";
     fetchJourneyProgress();
     journeyProgressTimer->start(30000);//30 sec
+    displayTimer->start(16);
 }
 
 //stops timer to download arrivals data
 void ArrivalsLogic::stopArrivalsUpdate() {
     qDebug() << "updating stopped.";
+    displayTimer->stop();
     arrivalsTimer->stop();
     clearArrivalsData();
 }
 
 //stops timer to download journey progress data
 void ArrivalsLogic::stopJourneyProgressUpdate() {
+    displayTimer->stop();
     journeyProgressTimer->stop();
     clearJourneyProgressData();
 }

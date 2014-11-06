@@ -34,6 +34,11 @@ Page {
                     "Enfield", "Greenwich", "Hackney", "Hammersmith and Fulham", "Haringey", "Harrow", "Havering", "Hillingdon",
                     "Hounslow", "Islington", "Kensington and Chelsea", "Kingston upon Thames", "Lambeth", "Lewisham", "Merton",
                     "Newham", "Redbridge", "Richmond", "Southwark", "Sutton", "Tower Hamlets", "Waltham Forest", "Wandsworth", "Westminster"]
+
+    function readInput(text) {
+        pageStack.push(Qt.resolvedUrl("BusMapsPage.qml"), { 'headertitle' : text })
+    }
+
     SilicaListView {
         id: view
         anchors.fill: parent
@@ -49,48 +54,15 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("TubeMapPage.qml"))
             }
         }
-        header: Item {
-            function readInput(text) {
-                pageStack.push(Qt.resolvedUrl("BusMapsPage.qml"), { 'headertitle' : text })
-            }
 
-            height: 150 + pageHeader.height
-            anchors {
-                left: parent.left
-                right: parent.right
-            }
-            VerticalScrollDecorator {
-                flickable: view
-            }
-            Label {
-                id: pageHeader
-                text: "Bus Maps"
-                color: Theme.highlightColor
-                font.pixelSize: Theme.fontSizeLarge
-                horizontalAlignment: Text.AlignRight
-                anchors {
-                    top: parent.top
-                    topMargin: Theme.paddingMedium*2
-                    right: parent.right
-                    rightMargin: Theme.paddingLarge
-                }
-            }
+        header:  SearchHeader {
+            title: "Bus Maps"
+            placeholderText: "By Route"
+            state: "visible"
 
-            SearchField {
-                id: searchfield
-                placeholderText: "By Route"
-                EnterKey.onClicked: readInput(text)
-                anchors {
-                    top: pageHeader.bottom
-                    topMargin: Theme.paddingMedium*2
-                    left: parent.left
-                    leftMargin: Theme.paddingMedium
-                    right: parent.right
-                    rightMargin: Theme.paddingMedium
-                }
-
-            }
+            onEnterClicked: readInput(text)
         }
+
         footer: Item {
             height: Theme.paddingLarge
             width: 1
@@ -109,6 +81,7 @@ Page {
                 pageStack.push(Qt.resolvedUrl("BusMapsPage.qml"), { 'headertitle' : boroughs[index] })
             }
         }
+
         VerticalScrollDecorator {
             flickable: view
         }

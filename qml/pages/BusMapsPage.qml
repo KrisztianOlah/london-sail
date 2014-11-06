@@ -67,6 +67,7 @@ Page {
                 loader.item.isLocalFile = mapData.isThereLocalFile(nameData)
                 label.color = mapData.isThereLocalFile(nameData) ?
                                                Theme.primaryColor : Theme.secondaryColor }
+
             function deleteMap() {
                 remorseItem.execute( itemDelegate ,"Deleting",
                                     function () { mapData.deleteMap(nameData)} )
