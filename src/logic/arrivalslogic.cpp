@@ -297,7 +297,6 @@ void ArrivalsLogic::onBusStopMessageReceived() {
         fillCurrentStopMessages(messages);
     }
     else return;
-    /////////////////////////////////////////////////
 }
 
 void ArrivalsLogic::onDisplayTimerTicked() {

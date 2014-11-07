@@ -83,16 +83,14 @@ Page {
         id: view
         anchors.fill: parent
 
-        //BUG: after refresh data is not available
-//        PullDownMenu {
-//            MenuItem {
-//                text: "Refresh"
-//                onClicked: {
-//                    arrivalsData.stopJourneyProgressUpdate()
-//                    arrivalsData.startJourneyProgressUpdate()
-//                }
-//            }
-//        }
+        PullDownMenu {
+            MenuItem {
+                text: "Refresh"
+                onClicked: {
+                    arrivalsData.startJourneyProgressUpdate()
+                }
+            }
+        }
 
         header: Item {
             height: Theme.paddingMedium*6 + pageHeader.height + destinationLabel.paintedHeight + Theme.paddingLarge
