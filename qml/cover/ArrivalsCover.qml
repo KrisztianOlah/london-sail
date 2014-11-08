@@ -31,7 +31,6 @@ import "../gui"
 Item {
     property bool active: false
     property ArrivalsModel arrivalsModel: arrivalsData.getArrivalsModel()
-    anchors.fill: parent
 
     ListView {
         id: view
