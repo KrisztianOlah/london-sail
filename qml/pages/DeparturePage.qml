@@ -55,6 +55,7 @@ Page {
         size: BusyIndicatorSize.Large
         anchors.centerIn: parent
     }
+
     BusyIndicator {
         id: busyIndicator_2
         running: view.count && arrivalsData.isDownloadingListOfStops()
@@ -69,7 +70,7 @@ Page {
 
     Connections {
         target: arrivalsData
-        onDownloadSatateChanged: {
+        onDownloadStateChanged: {
             busyIndicator.running = !view.count && arrivalsData.isDownloadingListOfStops()
             busyIndicator_2.running = view.count && arrivalsData.isDownloadingListOfStops()
         }
@@ -104,7 +105,7 @@ Page {
 //        }
 
         spacing: 10
-        model: arrivalsData.getStopsQueryModel()
+        model: stopsModel
         delegate: StopInfoWidget {
             id: infoWidget
             name: nameData
@@ -130,7 +131,8 @@ Page {
             }
         }
         ViewPlaceholder {
-            text: "Pull down to enter for Bus Stop's code."
+            text: "Enter Bus Stop's name or code."
+            enabled: !view.count && !busyIndicator.running
         }
     }
 

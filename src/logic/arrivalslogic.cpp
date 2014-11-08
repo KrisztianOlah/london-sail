@@ -116,7 +116,7 @@ void ArrivalsLogic::getBusArrivalsByCode(const QString& code) {
 
     QUrl url(request);
     downloadingArrivals = true;
-    downloadStateChanged();
+    emit downloadStateChanged();
     reply_arrivals = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_arrivals, SIGNAL(finished()), this, SLOT(onArrivalsDataReceived()) );
@@ -130,7 +130,7 @@ void ArrivalsLogic::getBusProgress(const QString& registrationNum) {
     QString request = baseUrl + regPart + directionIDPart + returnList;
     QUrl url(request);
     downloadingJourneyProgress = true;
-    downloadStateChanged();
+    emit downloadStateChanged();
     reply_journeyProgress = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_journeyProgress, SIGNAL(finished()), this, SLOT(onBusProgressReceived()) );
@@ -177,7 +177,7 @@ void ArrivalsLogic::fetchJourneyProgress() {
 //gets called when bus arrivals are downloaded and ready to be processed
 void ArrivalsLogic::onArrivalsDataReceived() {
     downloadingArrivals = false;
-    downloadStateChanged();
+    emit downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_arrivals);
     QList<QJsonDocument>::iterator first = document.begin();
 
@@ -213,7 +213,7 @@ void ArrivalsLogic::onArrivalsDataReceived() {
 //gets called when bus progress data is downloaded and redy to be processed
 void ArrivalsLogic::onBusProgressReceived() {
     downloadingJourneyProgress = false;
-    downloadStateChanged();
+    emit downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_journeyProgress);
     if (document.begin() == document.end() ||
             document.begin()->array().begin() + 2 >= document.begin()->array().end()) {
@@ -243,7 +243,7 @@ void ArrivalsLogic::onBusProgressReceived() {
 //gets called when bus stop data is downloaded and ready to be processed
 void ArrivalsLogic::onBusStopDataReceived() {
     downloadingStop = false;
-    downloadStateChanged();
+    emit downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_busStop);
     //only want the second array as the first one is the version array and there are only 2 arrays
 
@@ -306,7 +306,7 @@ void ArrivalsLogic::onDisplayTimerTicked() {
 //gets called when the list of bus stops are downloaded by getBusStopsByName(name)
 void ArrivalsLogic::onListOfBusStopsReceived() {
     downloadingListOfStops = false;
-    downloadStateChanged();
+    emit downloadStateChanged();
     QList<QJsonDocument> document = makeDocument(reply_stops);
     QString stopPointType;
     //skip version array
@@ -376,7 +376,7 @@ void ArrivalsLogic::getBusStopByCode(const QString& code) {
     QString request = baseUrl + stopcode + returnList;
     QUrl url(request);
     downloadingStop = true;
-    downloadStateChanged();
+    emit downloadStateChanged();
     reply_busStop = networkMngr->get(QNetworkRequest(url));
 
     connect(reply_busStop, SIGNAL(finished()), this, SLOT(onBusStopDataReceived()) );
@@ -400,7 +400,7 @@ void ArrivalsLogic::getBusStopsByName(const QString& name) {
     QString request = baseUrl + stopPointName + returnList;
     QUrl url = request;
     downloadingListOfStops = true;
-    downloadStateChanged();
+    emit downloadStateChanged();
     reply_stops = networkMngr->get(QNetworkRequest(url) );
     connect(reply_stops, SIGNAL(finished()), this, SLOT(onListOfBusStopsReceived()) );
 }
