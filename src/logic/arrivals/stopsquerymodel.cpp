@@ -41,7 +41,7 @@ StopsQueryModel::StopsQueryModel(QObject *parent) : QSqlQueryModel(parent),
 QVariant StopsQueryModel::data(const QModelIndex& index, int role) const {
     if(role <= Qt::UserRole)
                 return QSqlQueryModel::data(index, role);
-    QSqlRecord rec = record(index.row());
+    QSqlRecord rec = record(rowCount() - 1 - index.row());
 
     switch (role) {
     case NameRole:
