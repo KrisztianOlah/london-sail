@@ -25,6 +25,7 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import QtFeedback 5.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 
@@ -80,6 +81,105 @@ Page {
         flickable: view
     }
 
+    HapticsEffect {
+        id: hapticsEffect
+        attackIntensity: 0.0
+        attackTime: 250
+        intensity: 1.0
+        duration: 100
+        fadeTime: 250
+        fadeIntensity: 0.0
+    }
+
+    Component {
+        id: dragDelegate
+        MouseArea {
+            id: dragArea
+            property bool held: false
+
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: Theme.paddingLarge
+                rightMargin: Theme.paddingLarge
+            }
+            height: infoWidget.height
+
+            drag.target: held ? infoWidget : undefined
+            drag.axis: Drag.YAxis
+
+            onPressAndHold: {
+                held = true
+                hapticsEffect.start()
+            }
+            onReleased: held = false
+            onClicked: {
+                //trying to open with an empty string would cause application to terminate
+                if (codeData !== "") {
+                    pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID' : codeData})
+                }
+                else {
+                    //TODO let user know that there was a problem
+                }
+            }
+
+            StopInfoWidget {
+                id: infoWidget
+                name: nameData
+                type: typeData
+                indicator: stopPointIndicatorData
+                towards: towardsData !== "" ? "towards " + towardsData : ""
+                distance: ""
+                code: codeData
+                isDragable: dragArea.held
+
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
+                width: dragArea.width
+
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+
+                states: State {
+                    when: dragArea.held
+
+                    ParentChange { target: infoWidget; parent: root }
+                    AnchorChanges {
+                        target: infoWidget
+                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                    }
+                }
+
+                ListView.onAdd: AddAnimation {
+                            target: infoWidget
+                }
+                ListView.onRemove: RemoveAnimation {
+                            target: infoWidget
+                }
+            }
+
+            DropArea {
+                anchors { fill: parent; margins: 10 }
+
+                onEntered: {
+                    visualModel.items.move(
+                            drag.source.VisualDataModel.itemsIndex,
+                            dragArea.VisualDataModel.itemsIndex)
+                }
+            }
+        }
+    }
+    VisualDataModel {
+        id: visualModel
+        model: stopsModel
+        delegate: dragDelegate
+    }
+
     SilicaListView {
         id: view
         anchors.fill: parent
@@ -105,31 +205,8 @@ Page {
 //        }
 
         spacing: 10
-        model: stopsModel
-        delegate: StopInfoWidget {
-            id: infoWidget
-            name: nameData
-            type: typeData
-            indicator: stopPointIndicatorData
-            towards: towardsData !== "" ? "towards " + towardsData : ""
-            distance: ""
-            code: codeData
-            onClicked: {
-                //trying to open with an empty string would cause application to terminate
-                if (codeData !== "") {
-                    pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID' : codeData})
-                }
-                else {
-                    //TODO let user know that there was a problem
-                }
-            }
-            ListView.onAdd: AddAnimation {
-                        target: infoWidget
-            }
-            ListView.onRemove: RemoveAnimation {
-                        target: infoWidget
-            }
-        }
+        model: visualModel
+
         ViewPlaceholder {
             text: "Enter Bus Stop's name or code."
             enabled: !view.count && !busyIndicator.running

@@ -34,23 +34,13 @@ Rectangle {
     property string towards: ""
     property string code: ""
     property bool isFavorite: arrivalsData.isStopFavorite(code)
-    signal clicked
+    property bool isDragable: false
 
     id: self
     height: nameLabel.paintedHeight + towardLabel.paintedHeight + Theme.paddingMedium * 2
     radius: 10
-    color: Theme.secondaryHighlightColor
-    anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: Theme.paddingLarge
-        rightMargin: Theme.paddingLarge
-    }
-    MouseArea {
-        id: mousearea
-        anchors.fill: parent
-    }
-    Component.onCompleted: mousearea.clicked.connect(clicked)
+    color: isDragable ? Theme.highlightBackgroundColor : Theme.secondaryHighlightColor
+    Behavior on color { ColorAnimation { duration: 100 } }
 
     StopIcon {
         id: icon
@@ -70,7 +60,8 @@ Rectangle {
         font.pixelSize: Theme.fontSizeMedium
         anchors {
             top: parent.top
-            topMargin: (towards === "") ? (parent.height - nameLabel.paintedHeight) / 2 : Theme.paddingMedium //no need to leave space when there is nothing to display
+            //no need to leave space when there is nothing to display
+            topMargin: (towards === "") ? (parent.height - nameLabel.paintedHeight) / 2 : Theme.paddingMedium
             left: icon.right
             leftMargin: Theme.paddingMedium
             right: iconButton.left
