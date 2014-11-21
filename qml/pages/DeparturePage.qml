@@ -110,9 +110,15 @@ Page {
 
             onPressAndHold: {
                 held = true
+                page.backNavigation = false
+                page.forwardNavigation = false
                 hapticsEffect.start()
             }
-            onReleased: held = false
+            onReleased: {
+                held = false
+                page.backNavigation = true
+                page.forwardNavigation = true
+            }
             onClicked: {
                 //trying to open with an empty string would cause application to terminate
                 if (codeData !== "") {
@@ -174,6 +180,7 @@ Page {
             }
         }
     }
+
     VisualDataModel {
         id: visualModel
         model: stopsModel
