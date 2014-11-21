@@ -106,7 +106,7 @@ Page {
             height: infoWidget.height
 
             drag.target: held ? infoWidget : undefined
-            drag.axis: Drag.YAxis
+            drag.axis: page.isPortrait ? Drag.YAxis : Drag.XAxis
 
             onPressAndHold: {
                 held = true
