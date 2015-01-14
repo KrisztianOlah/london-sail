@@ -39,7 +39,9 @@ private:
     QSqlDatabase db;
 private:
     void close();
+    int countRanked() const;
     bool createStopsTable();
+    int getRank(const QString& code) const;
     bool isOpen() const;
     bool isStopsTable() const;
     bool open();
@@ -47,11 +49,10 @@ public:
     bool addStop(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
                  const QString& stopPointIndicator = QString(), bool favorite = false);
     bool clearStopsTable();
-//    bool createFavorite(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
-//                        const QString& stopPointIndicator = QString(), bool favorite = false);
     bool isFavorite(const QString& code) const;
     QSqlError lastError() const; 
     bool makeFavorite(const QString& code);
+    bool swapRanks(const QString& code1, const QString& code2);
     bool unFavorite(const QString& code);
 };
 
