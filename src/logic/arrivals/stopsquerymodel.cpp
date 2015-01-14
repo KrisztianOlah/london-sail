@@ -41,7 +41,8 @@ StopsQueryModel::StopsQueryModel(QObject *parent) : QSqlQueryModel(parent),
 QVariant StopsQueryModel::data(const QModelIndex& index, int role) const {
     if(role <= Qt::UserRole)
                 return QSqlQueryModel::data(index, role);
-    QSqlRecord rec = record(rowCount() - 1 - index.row());
+    QSqlRecord rec = record(index.row());
+//    QSqlRecord rec = record(rowCount() - 1 - index.row());
 
     switch (role) {
     case NameRole:
@@ -75,7 +76,7 @@ QHash<int,QByteArray> StopsQueryModel::roleNames() const {
     return roles;
 }
 
-void StopsQueryModel::showStops() { setQuery("SELECT * FROM stopstable");}
+void StopsQueryModel::showStops() { setQuery("SELECT * FROM stopstable ORDER BY rank");}
 
 //public slots:
 //clears the database from stops from stopstable that are not set as favorite
