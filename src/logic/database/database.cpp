@@ -28,12 +28,7 @@ THE SOFTWARE.
 #include <QSqlQuery>
 #include <QStandardPaths>
 
-/// if (rankFrom = rankTo) {do nothing}
-/// if (rankFrom > rankTo) { inrcement rank of all that are bigger than rankTo but smaller than rankFrom }
-/// if (rankFrom < rankTo) { inrcement rank of all that are bigger than rankFrom but smaller than rankTo }
-/// only add rank to favourites the rest will have none
-/// when a new item is favorited it will get rank of the number of items that have a rank countRanked()
-/// data is to be presented in descending order
+
 Database::Database() : db(QSqlDatabase::addDatabase("QSQLITE"))
 {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data-2.0.sqlite";
@@ -180,48 +175,80 @@ QSqlError Database::lastError() const { return db.lastError(); }
 
 //makes a stop a favorite and ranks it as 1st, returns true on success and false otherwise
 bool Database::makeFavorite(const QString& code) {
+    db.transaction();
     QSqlQuery query, query_incr;
     //incrementing all ranks so that fresh results stay on the top for better usability
-    bool isIncremented = query_incr.exec("UPDATE stopstable SET rank = rank + 1 ");
+    bool query_incr_ok = query_incr.exec("UPDATE stopstable SET rank = rank + 1 ");
     query.prepare("UPDATE stopstable SET favorite=1, rank= 1 WHERE code= :code ");
     query.bindValue(":code", code);
-    bool ret = query.exec();
-    if (!ret || !isIncremented) { qDebug() << "makeFavorite() failed."; }
-    return ret;
+    bool query_ok = query.exec();
+    if (query_incr_ok && query_ok) {
+        db.commit();
+        qDebug() << code << "is now favorite with rank 1";
+        return true;
+    }
+    else{
+        qDebug() << "makeFavorite() failed." << lastError();
+        db.rollback();
+        return false;
+    }
 }
 
-///TODO increment all ranks between the 2 that needs moving
-bool Database::swapRanks(const QString& code1, const QString& code2) {
-    ///getrank 1
-    ///getrank 2
-    /// set smaller to small, the other big, if equal return
-    /// inrcement rank of all that are bigger than small but smaller than big
-    QSqlQuery query;
-    query.prepare("UPDATE stopstable SET rank = "
-                            "(SELECT SUM(rank) FROM stopstable "
-                            "WHERE code IN (code1, code2) ) - rank "
-                  "WHERE code IN (code1, code2) "
-                  "VALUES (?, ?, ?, ?)");
-    query.bindValue(0,code1);
-    query.bindValue(1,code2);
-    query.bindValue(2,code1);
-    query.bindValue(3,code2);
-    bool ret = query.exec();
-    if (!ret) qDebug() << "Swapping failed!";
-    return ret;
+bool Database::move(const QString& code1, const QString& code2) {
+    int rank1 = getRank(code1);
+    int rank2 = getRank(code2);
+    if (!rank1) {
+        qDebug() << code1 << "is not favorite, move is temporary";
+        return true;
+    } //user moved an item that is not a favorite, don't do anything
+    db.transaction();
+    QSqlQuery query_list, query_move;
+    if (!rank2) {//shouldn't be possible
+        qDebug() << "Error: Moving" << code1 << "before an item that is not a favorite!";
+    }
+    else {
+        if (rank1 > rank2) {
+            query_list.prepare("UPDATE stopstable SET rank = rank + 1 WHERE rank < :rank1 AND rank >= :rank2");
+        }
+        else {
+            query_list.prepare("UPDATE stopstable SET rank = rank - 1 WHERE rank > :rank1 AND rank <= :rank2");
+        }
+        query_list.bindValue(":rank1",rank1);
+        query_list.bindValue(":rank2",rank2);
+        query_move.prepare("UPDATE stopstable SET rank = :rank2 WHERE code = :code1");
+        query_move.bindValue(":rank2",rank2);
+        query_move.bindValue(":code1",code1);
+    }
+    bool list_ok = query_list.exec();
+    bool move_ok = query_move.exec();
+    if (list_ok && move_ok) { db.commit(); }
+    else {
+        qDebug() << "Moving failed: " << lastError();
+        db.rollback();
+    }
+
+
+    return list_ok && move_ok;
 }
 
 //makes a stop NOT favorite and decrements the ranks of other items to eliminate gaps,
 //returns true on success and false otherwise
 bool Database::unFavorite(const QString& code) {
-    qDebug() << "unFavorite() called on:" << code << "with rank:" << getRank(code);
+    db.transaction();
     QSqlQuery query, query_dec;
     query_dec.prepare("UPDATE stopstable SET rank= rank - 1 WHERE rank > :current");
     query_dec.bindValue(":current", getRank(code));
     query.prepare("UPDATE stopstable SET favorite=0, rank=NULL WHERE code= :code ");
     query.bindValue(":code", code);
-    bool isDecremented = query_dec.exec();
-    bool isRemovedFromFavs = query.exec();
-    if (!isRemovedFromFavs || !isDecremented) { qDebug() << "unFavorite() failed."; }
-    return isRemovedFromFavs;
+    bool query_dec_ok = query_dec.exec();
+    bool query_ok = query.exec();
+    if (query_dec_ok && query_ok) {
+        db.commit();
+        return true;
+    }
+    else{
+        qDebug() << "unFavorite() failed." << lastError();
+        db.rollback();
+        return false;
+    }
 }

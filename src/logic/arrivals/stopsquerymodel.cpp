@@ -42,7 +42,6 @@ QVariant StopsQueryModel::data(const QModelIndex& index, int role) const {
     if(role <= Qt::UserRole)
                 return QSqlQueryModel::data(index, role);
     QSqlRecord rec = record(index.row());
-//    QSqlRecord rec = record(rowCount() - 1 - index.row());
 
     switch (role) {
     case NameRole:
@@ -59,6 +58,8 @@ QVariant StopsQueryModel::data(const QModelIndex& index, int role) const {
         return rec.value("longitude").toDouble();
     case StopPointIndicatorRole:
         return rec.value("stoppointindicator");
+    case RankRole:
+        return rec.value("rank");
     default:
         return QVariant();
     }
@@ -73,6 +74,7 @@ QHash<int,QByteArray> StopsQueryModel::roleNames() const {
     roles[LatitudeRole] = "LatitudeData";
     roles[LongitudeRole] = "longitudeData";
     roles[StopPointIndicatorRole] = "stopPointIndicatorData";
+    roles[RankRole] = "rankData";
     return roles;
 }
 
@@ -88,4 +90,14 @@ void StopsQueryModel::clearStops() {
         else qDebug() << "cleared stopstable";
         showStops();
     }
+}
+
+QVariant StopsQueryModel::codeAt(int index) const {
+    return record(index).value("code");
+}
+
+bool StopsQueryModel::move(int from, int to) {
+    qDebug() << "Moving index" << from << "to" << to;
+    if (from == to) return true; //no move is required
+    return databaseManager->move(record(from).value("code").toString(), record(to).value("code").toString());
 }

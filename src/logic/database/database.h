@@ -52,7 +52,7 @@ public:
     bool isFavorite(const QString& code) const;
     QSqlError lastError() const; 
     bool makeFavorite(const QString& code);
-    bool swapRanks(const QString& code1, const QString& code2);
+    bool move(const QString& code1, const QString& code2);
     bool unFavorite(const QString& code);
 };
 

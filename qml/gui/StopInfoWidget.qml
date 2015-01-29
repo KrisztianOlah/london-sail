@@ -33,6 +33,7 @@ Rectangle {
     property string indicator: ""//TODO rename
     property string towards: ""
     property string code: ""
+    property string rank: ""
     property bool isFavorite: arrivalsData.isStopFavorite(code)
     property bool isDragable: false
 
@@ -85,7 +86,7 @@ Rectangle {
 
     Label {
         id: distanceLabel
-        text: "distance"
+        text: ""
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
             top: icon.bottom

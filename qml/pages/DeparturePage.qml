@@ -32,7 +32,11 @@ import "../gui"
 //TODO user to be able to set radius
 Page {
     id: page
-    property string code: ""
+//    property string code: ""
+    property string codeBeingDragged: ""
+    property string codeSwappedFor: ""
+    property int currentDragIndex
+    property int currentDelegateIndex
     property StopsModel stopsModel: arrivalsData.getStopsQueryModel()
     allowedOrientations: Orientation.All
     onStatusChanged: {
@@ -109,15 +113,22 @@ Page {
             drag.axis: page.isPortrait ? Drag.YAxis : Drag.XAxis
 
             onPressAndHold: {
-                held = true
-                page.backNavigation = false
-                page.forwardNavigation = false
-                hapticsEffect.start()
+                if (infoWidget.isFavorite) {
+                    held = true
+                    page.backNavigation = false
+                    page.forwardNavigation = false
+                    hapticsEffect.start()
+                    codeBeingDragged = infoWidget.code
+                    console.log("dragging " + infoWidget.name + " " + codeBeingDragged)
+                    page.currentDelegateIndex = dragArea.VisualDataModel.itemsIndex
+                }
             }
             onReleased: {
                 held = false
                 page.backNavigation = true
                 page.forwardNavigation = true
+
+                stopsModel.move(page.currentDelegateIndex,page.currentDragIndex)
             }
             onClicked: {
                 //trying to open with an empty string would cause application to terminate
@@ -137,6 +148,7 @@ Page {
                 towards: towardsData !== "" ? "towards " + towardsData : ""
                 distance: ""
                 code: codeData
+                rank: rankData
                 isDragable: dragArea.held
 
                 Drag.active: dragArea.held
@@ -155,6 +167,7 @@ Page {
                     when: dragArea.held
 
                     ParentChange { target: infoWidget; parent: root }
+
                     AnchorChanges {
                         target: infoWidget
                         anchors { horizontalCenter: undefined; verticalCenter: undefined }
@@ -164,6 +177,7 @@ Page {
                 ListView.onAdd: AddAnimation {
                             target: infoWidget
                 }
+
                 ListView.onRemove: RemoveAnimation {
                             target: infoWidget
                 }
@@ -173,9 +187,12 @@ Page {
                 anchors { fill: parent; margins: 10 }
 
                 onEntered: {
-                    visualModel.items.move(
-                            drag.source.VisualDataModel.itemsIndex,
-                            dragArea.VisualDataModel.itemsIndex)
+                    if (infoWidget.isFavorite) {
+                        page.currentDragIndex = dragArea.VisualDataModel.itemsIndex
+                        visualModel.items.move(
+                                drag.source.VisualDataModel.itemsIndex,
+                                dragArea.VisualDataModel.itemsIndex)
+                    }
                 }
             }
         }

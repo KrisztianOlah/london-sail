@@ -359,10 +359,17 @@ void ArrivalsLogic::clearCurrentStop() {
 //makes stop a favorite or removes it from favorites depending on the second arg
 bool ArrivalsLogic::favorStop(const QString& code, bool b) {
     if (!databaseManager) { return false; }
+    bool ok = false;
     if (b) {
-        return databaseManager->makeFavorite(code);
+        ok = databaseManager->makeFavorite(code);
+        stopsQueryModel->showStops();
+        return ok;
     }
-    else return databaseManager->unFavorite(code);
+    else {
+        ok = databaseManager->unFavorite(code);
+        stopsQueryModel->showStops();
+        return ok;
+    }
 }
 
 ArrivalsProxyModel* ArrivalsLogic::getArrivalsModel() { return arrivalsProxyModel; }
