@@ -86,7 +86,7 @@ Rectangle {
 
     Label {
         id: distanceLabel
-        text: ""
+        text: rank
         font.pixelSize: Theme.fontSizeExtraSmall
         anchors {
             top: icon.bottom

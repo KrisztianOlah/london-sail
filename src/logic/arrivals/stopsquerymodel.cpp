@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <QDebug>
 #include <QHash>
 #include <QSqlRecord>
+#include <QSqlQuery>
 #include "../database/databasemanager.h"
 
 extern DatabaseManager databaseManager;
@@ -99,5 +100,7 @@ QVariant StopsQueryModel::codeAt(int index) const {
 bool StopsQueryModel::move(int from, int to) {
     qDebug() << "Moving index" << from << "to" << to;
     if (from == to) return true; //no move is required
-    return databaseManager->move(record(from).value("code").toString(), record(to).value("code").toString());
+    bool ok = databaseManager->move(record(from).value("code").toString(), record(to).value("code").toString());
+    query().exec();
+    return ok;
 }

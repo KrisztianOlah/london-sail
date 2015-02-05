@@ -45,7 +45,7 @@ private:
 public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     virtual QHash<int,QByteArray> roleNames() const;
-    void showStops();
+    Q_INVOKABLE void showStops();
 public slots:
     void clearStops();
     QVariant codeAt(int index) const;

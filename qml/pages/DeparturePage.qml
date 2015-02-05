@@ -146,7 +146,7 @@ Page {
                 type: typeData
                 indicator: stopPointIndicatorData
                 towards: towardsData !== "" ? "towards " + towardsData : ""
-                distance: ""
+//                distance: ""
                 code: codeData
                 rank: rankData
                 isDragable: dragArea.held
