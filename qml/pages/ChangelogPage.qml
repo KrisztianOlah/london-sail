@@ -57,6 +57,23 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
                 textFormat: Text.RichText
+                text: "<b>0.4.5 - Rearrange Favorites.</b><br>
+*Added Feature: User can now rearrange favorite items on Bus Departure Page.<br>
+*Added new Tube Map: latest tube map as of December 2014.<br>
+*Added Pulley menu to Journey Progress Page: it is now possible to manually refresh the data.<br>
+*Added cover action to refresh Journey Progress Page and Bus Stop Page.<br>
+*Fixed bug: Journey Progress page is more reliable, it doesn't show no data available that often."
+            }
+            Label {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.paddingLarge
+                    right: parent.right
+                    rightMargin: Theme.paddingLarge
+                }
+                wrapMode: Text.WordWrap
+                color: Theme.highlightColor
+                textFormat: Text.RichText
                 text: "<b>0.4.4 - New Tube Map.</b><br>
 *Added new Tube Map: latest tube map as of May 2014. It takes up considerably more space due to higher resolution and better colours.<br>
 *Added Pulley menu to Bus Stop Page: it is now possible to manually refresh the data,
