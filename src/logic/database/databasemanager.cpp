@@ -50,5 +50,7 @@ bool DatabaseManager::isFavorite(const QString& code) { return db.isFavorite(cod
 //makes a stop favorite, returns true on success and false otherwise
 bool DatabaseManager::makeFavorite(const QString& code) { return db.makeFavorite(code); }
 
+bool DatabaseManager::move(const QString& from, const QString& to) { return db.move(from, to); }
+
 //makes a stop to be not favorite, returns true on success and false otherwise
 bool DatabaseManager::unFavorite(const QString& code) { return db.unFavorite(code); }

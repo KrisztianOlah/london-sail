@@ -77,7 +77,6 @@ Page {
                 id: refreshMenuItem
                 text: "Refresh"
                 onClicked: {
-                    arrivalsData.stopArrivalsUpdate()
                     arrivalsData.startArrivalsUpdate()
                 }
             }

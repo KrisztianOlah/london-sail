@@ -152,8 +152,8 @@ Page {
                     leftMargin: -65
                     right: parent.right
                     rightMargin: -65
-                    verticalCenter: lineNameLabel.bottom
-                    verticalCenterOffset: Theme.paddingSmall
+                    verticalCenter: destinationLabel.bottom
+                    verticalCenterOffset: Theme.paddingLarge
                 }
             }
             Connections {

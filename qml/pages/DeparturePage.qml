@@ -25,13 +25,18 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import QtFeedback 5.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 
 //TODO user to be able to set radius
 Page {
     id: page
-    property string code: ""
+//    property string code: ""
+    property string codeBeingDragged: ""
+    property string codeSwappedFor: ""
+    property int currentDragIndex
+    property int currentDelegateIndex
     property StopsModel stopsModel: arrivalsData.getStopsQueryModel()
     allowedOrientations: Orientation.All
     onStatusChanged: {
@@ -55,6 +60,7 @@ Page {
         size: BusyIndicatorSize.Large
         anchors.centerIn: parent
     }
+
     BusyIndicator {
         id: busyIndicator_2
         running: view.count && arrivalsData.isDownloadingListOfStops()
@@ -69,7 +75,7 @@ Page {
 
     Connections {
         target: arrivalsData
-        onDownloadSatateChanged: {
+        onDownloadStateChanged: {
             busyIndicator.running = !view.count && arrivalsData.isDownloadingListOfStops()
             busyIndicator_2.running = view.count && arrivalsData.isDownloadingListOfStops()
         }
@@ -77,6 +83,125 @@ Page {
 
     VerticalScrollDecorator {
         flickable: view
+    }
+
+    HapticsEffect {
+        id: hapticsEffect
+        attackIntensity: 0.0
+        attackTime: 250
+        intensity: 1.0
+        duration: 100
+        fadeTime: 250
+        fadeIntensity: 0.0
+    }
+
+    Component {
+        id: dragDelegate
+        MouseArea {
+            id: dragArea
+            property bool held: false
+
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: Theme.paddingLarge
+                rightMargin: Theme.paddingLarge
+            }
+            height: infoWidget.height
+
+            drag.target: held ? infoWidget : undefined
+            drag.axis: page.isPortrait ? Drag.YAxis : Drag.XAxis
+
+            onPressAndHold: {
+                if (infoWidget.isFavorite) {
+                    held = true
+                    page.backNavigation = false
+                    page.forwardNavigation = false
+                    hapticsEffect.start()
+                    codeBeingDragged = infoWidget.code
+                    console.log("dragging " + infoWidget.name + " " + codeBeingDragged)
+                    page.currentDelegateIndex = dragArea.VisualDataModel.itemsIndex
+                }
+            }
+            onReleased: {
+                held = false
+                page.backNavigation = true
+                page.forwardNavigation = true
+
+                stopsModel.move(page.currentDelegateIndex,page.currentDragIndex)
+            }
+            onClicked: {
+                //trying to open with an empty string would cause application to terminate
+                if (codeData !== "") {
+                    pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID' : codeData})
+                }
+                else {
+                    //TODO let user know that there was a problem
+                }
+            }
+
+            StopInfoWidget {
+                id: infoWidget
+                name: nameData
+                type: typeData
+                indicator: stopPointIndicatorData
+                towards: towardsData !== "" ? "towards " + towardsData : ""
+//                distance: ""
+                code: codeData
+                rank: rankData
+                isDragable: dragArea.held
+
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
+                width: dragArea.width
+
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    verticalCenter: parent.verticalCenter
+                }
+
+                states: State {
+                    when: dragArea.held
+
+                    ParentChange { target: infoWidget; parent: root }
+
+                    AnchorChanges {
+                        target: infoWidget
+                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                    }
+                }
+
+                ListView.onAdd: AddAnimation {
+                            target: infoWidget
+                }
+
+                ListView.onRemove: RemoveAnimation {
+                            target: infoWidget
+                }
+            }
+
+            DropArea {
+                anchors { fill: parent; margins: 10 }
+
+                onEntered: {
+                    if (infoWidget.isFavorite) {
+                        page.currentDragIndex = dragArea.VisualDataModel.itemsIndex
+                        visualModel.items.move(
+                                drag.source.VisualDataModel.itemsIndex,
+                                dragArea.VisualDataModel.itemsIndex)
+                    }
+                }
+            }
+        }
+    }
+
+    VisualDataModel {
+        id: visualModel
+        model: stopsModel
+        delegate: dragDelegate
     }
 
     SilicaListView {
@@ -104,33 +229,11 @@ Page {
 //        }
 
         spacing: 10
-        model: arrivalsData.getStopsQueryModel()
-        delegate: StopInfoWidget {
-            id: infoWidget
-            name: nameData
-            type: typeData
-            indicator: stopPointIndicatorData
-            towards: towardsData !== "" ? "towards " + towardsData : ""
-            distance: ""
-            code: codeData
-            onClicked: {
-                //trying to open with an empty string would cause application to terminate
-                if (codeData !== "") {
-                    pageStack.push(Qt.resolvedUrl("BusStopPage.qml"), {'stopID' : codeData})
-                }
-                else {
-                    //TODO let user know that there was a problem
-                }
-            }
-            ListView.onAdd: AddAnimation {
-                        target: infoWidget
-            }
-            ListView.onRemove: RemoveAnimation {
-                        target: infoWidget
-            }
-        }
+        model: visualModel
+
         ViewPlaceholder {
-            text: "Pull down to enter for Bus Stop's code."
+            text: "Enter Bus Stop's name or code."
+            enabled: !view.count && !busyIndicator.running
         }
     }
 

@@ -44,6 +44,24 @@ CoverBackground {
             centerIn: parent
         }
     }
+    CoverActionList {
+        id: busPageActionList
+        enabled: currentPage === PageCodes.BusStopPage
+        CoverAction {
+            id: busPageAction
+            iconSource: "image://theme/icon-cover-refresh"
+            onTriggered: arrivalsData.startArrivalsUpdate()
+        }
+    }
+
+    CoverActionList {
+        id: journeyProgressList
+        enabled: currentPage === PageCodes.JourneyProgressPage
+        CoverAction {
+            iconSource: "image://theme/icon-cover-refresh"
+            onTriggered: arrivalsData.startJourneyProgressUpdate()
+        }
+    }
 
     Connections {
         target: coverData
@@ -84,10 +102,21 @@ CoverBackground {
         id: arrivalsCover
         visible: false
         active: active && pageStack.currentPage.objectName === "busStopPage"
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: parent.height * 0.7
     }
     JourneyProgressCover {
         id: journeyProgressCover
-        anchors.fill: parent
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: parent.height * 0.8
         visible: false
     }
 
@@ -101,20 +130,6 @@ CoverBackground {
 }
 
 
-//CoverBackground {
 
-
-//    CoverActionList {
-//        id: coverAction
-
-//        CoverAction {
-//            iconSource: "image://theme/icon-cover-next"
-//        }
-
-//        CoverAction {
-//            iconSource: "image://theme/icon-cover-pause"
-//        }
-//    }
-//}
 
 

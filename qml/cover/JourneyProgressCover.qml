@@ -42,8 +42,6 @@ Item {
             self.line = arrivalsData.getCurrentVehicleLine()
         }
     }
-
-    anchors.fill: parent
     Label {
         id: lineLabel
         text: line
@@ -103,6 +101,7 @@ Item {
         text: nextStop
         color: Theme.highlightColor
         wrapMode: Text.WordWrap
+        clip: true
         horizontalAlignment: Text.AlignHCenter
         anchors {
             top: nextLabel.bottom

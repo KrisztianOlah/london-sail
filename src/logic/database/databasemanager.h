@@ -43,6 +43,7 @@ public:
     bool clearStopsTable();
     bool isFavorite(const QString& code);
     bool makeFavorite(const QString& code);
+    bool move(const QString& from, const QString& to);
     bool unFavorite(const QString& code);
 };
 
