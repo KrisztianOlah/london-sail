@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import QtFeedback 5.0
+//import QtFeedback 5.0
 import harbour.london.sail.utilities 1.0
 import "../gui"
 
@@ -85,15 +85,15 @@ Page {
         flickable: view
     }
 
-    HapticsEffect {
-        id: hapticsEffect
-        attackIntensity: 0.0
-        attackTime: 250
-        intensity: 1.0
-        duration: 100
-        fadeTime: 250
-        fadeIntensity: 0.0
-    }
+//    HapticsEffect {
+//        id: hapticsEffect
+//        attackIntensity: 0.0
+//        attackTime: 250
+//        intensity: 1.0
+//        duration: 100
+//        fadeTime: 250
+//        fadeIntensity: 0.0
+//    }
 
     Component {
         id: dragDelegate
@@ -117,7 +117,7 @@ Page {
                     held = true
                     page.backNavigation = false
                     page.forwardNavigation = false
-                    hapticsEffect.start()
+//                    hapticsEffect.start()
                     codeBeingDragged = infoWidget.code
                     console.log("dragging " + infoWidget.name + " " + codeBeingDragged)
                     page.currentDelegateIndex = dragArea.VisualDataModel.itemsIndex
