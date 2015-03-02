@@ -62,7 +62,7 @@ Page {
 *Added new Tube Map: latest tube map as of December 2014.<br>
 *Added Pulley menu to Journey Progress Page: it is now possible to manually refresh the data.<br>
 *Added cover action to refresh Journey Progress Page and Bus Stop Page.<br>
-*Fixed bug: Journey Progress page is more reliable, it doesn't show no data available that often."
+*Fixed bug: Journey Progress page is more reliable, it doesn't show \"data may not be available\" that often."
             }
             Label {
                 anchors {
