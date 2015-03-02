@@ -41,8 +41,11 @@ bool DatabaseManager::addStop(const QString& name,const QString& code,int type, 
     return db.addStop(name, code, type, towards, latitude, longitude, stopPointIndicator, favorite);
 }
 
+bool DatabaseManager::areTubeStationsInDB() { return db.areTubeStationsInDB(); }
 //clears stopstable from unfavorited stops, returns true on success and false otherwise
 bool DatabaseManager::clearStopsTable() { return db.clearStopsTable(); }
+
+bool DatabaseManager::importStations() { return db.importStations(); }
 
 //checks if a stop is favorite
 bool DatabaseManager::isFavorite(const QString& code) { return db.isFavorite(code); }

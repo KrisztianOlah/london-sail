@@ -137,7 +137,7 @@ Page {
             arrivalsData.stopArrivalsUpdate()
             arrivalsData.clearCurrentStop()
             coverData.reportPage(PageCodes.None)
-            arrivalsData.setStopsQueryModel(StopsModel.Bus)
+            arrivalsData.setStopsQueryModel(Stop.Bus)
         }
     }
 }

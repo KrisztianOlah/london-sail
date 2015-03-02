@@ -25,12 +25,15 @@ THE SOFTWARE.
 
 #include "arrivalslogic.h"
 #include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QList>
 #include <QMultiMap>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QStandardPaths>
 #include <QStringListModel>
 #include <QTimer>
 #include <QUrl>
@@ -65,12 +68,13 @@ ArrivalsLogic::ArrivalsLogic(DatabaseManager* dbm, QObject* parent) : QObject(pa
                                                 reply_busStop(0),
                                                 reply_busStopMessage(0),
                                                 reply_journeyProgress(0),
+                                                reply_stations(0),
                                                 reply_stops(0),
                                                 stopsQueryModel(new StopsQueryModel(databaseManager))
 {
     arrivalsProxyModel->setSourceModel(arrivalsModel);
     arrivalsProxyModel->sort(0);
-    stopsQueryModel->showStops();
+    stopsQueryModel->showStops(Stop::Bus);
 
     connect(arrivalsTimer, SIGNAL(timeout()), this, SLOT(fetchArrivalsData()) );
     connect(journeyProgressTimer, SIGNAL(timeout()), this, SLOT(fetchJourneyProgress()) );
@@ -93,6 +97,22 @@ void ArrivalsLogic::clearJourneyProgressData() {
     currentBusDirectionId = "";
     setCurrentVehicleId("");
     if(journeyProgressContainer) { journeyProgressContainer->clear(); }
+}
+
+void ArrivalsLogic::downloadStations() {
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QString("/stations.csv");
+    QFile file(path);
+    if (!file.exists()) {
+        QString link = "https://github.com/KrisztianOlah/london-sail/raw/devel/stations.csv";
+        QUrl url(link);
+        reply_stations = networkMngr->get(QNetworkRequest(url));
+
+        connect(reply_stations,SIGNAL(finished()), this, SLOT(onStationsDownloaded()) );
+    }
+    else {
+        bool ok = databaseManager->importStations();
+        if (!ok) qDebug() << "Import Failed";
+    }
 }
 
 void ArrivalsLogic::fillCurrentStopMessages(const QMap<int,QString>& map) {
@@ -339,7 +359,7 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
         }
     }
     if (stopsQueryModel) {
-        stopsQueryModel->showStops();
+        stopsQueryModel->showStops(Stop::Bus);
     }
 }
 
@@ -347,6 +367,46 @@ void ArrivalsLogic::onListOfBusStopsReceived() {
 void ArrivalsLogic::onProgressDataChanged() {
     qDebug() << "NewStop: " << getNextStop();
     emit nextStopChanged();
+}
+
+void ArrivalsLogic::onStationsDownloaded() {
+    int httpCode = reply_stations->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << "HTTP response" << httpCode;
+
+    if (reply_stations->error() != QNetworkReply::NoError) {
+        qDebug() << "HTTP returned error:" << httpCode;
+    }
+
+    if (httpCode > 300 && httpCode < 400) {
+        QVariant redirectUrl = reply_stations->attribute(QNetworkRequest::RedirectionTargetAttribute);
+        reply_stations->deleteLater();
+        QUrl url = reply_stations->url().resolved(redirectUrl.toUrl());
+        qDebug() << "redirecting to" << url;
+        reply_stations = networkMngr->get(QNetworkRequest(url));
+
+        connect(reply_stations,SIGNAL(finished()),this, SLOT(onStationsDownloaded()) );
+    }
+    else if (httpCode < 300 && httpCode >= 200) {
+        QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+        QDir dir(path);
+        if (!dir.exists()) {
+            dir.mkpath(path);
+        }
+
+        path += QString("/stations.csv");
+        QFile file(path);
+
+        if (!file.open(QIODevice::WriteOnly)) {
+            qDebug() << "Error: Couldn't open stations.csv for writing";
+        }
+        else {
+            file.write(reply_stations->readAll());
+            file.close();
+            bool ok = databaseManager->importStations();
+            if (!ok) qDebug() << "Import Failed";
+        }
+        reply_stations->deleteLater();
+    }
 }
 
 //public slots:
@@ -362,12 +422,12 @@ bool ArrivalsLogic::favorStop(const QString& code, bool b) {
     bool ok = false;
     if (b) {
         ok = databaseManager->makeFavorite(code);
-        stopsQueryModel->showStops();
+        stopsQueryModel->showStops(Stop::Bus);
         return ok;
     }
     else {
         ok = databaseManager->unFavorite(code);
-        stopsQueryModel->showStops();
+        stopsQueryModel->showStops(Stop::Bus);
         return ok;
     }
 }
@@ -460,16 +520,15 @@ void ArrivalsLogic::setCurrentVehicleId(const QString& id) { currentVehicleId = 
 
 void ArrivalsLogic::setCurrentVehicleLine(const QString& line) { currentVehicleLine = line; }
 
-//set stopsQueryModel to show one of the preset queries
+//set stopsQueryModel to show one of the preset queries, type = 0 will return all stops in db
 void ArrivalsLogic::setStopsQueryModel(int type) {
-    //TODO Move switch to queryModel and let model do the work
-    switch (type) {
-    case StopsQueryModel::Bus:
-        stopsQueryModel->showStops();
-        break;
-    case StopsQueryModel::Underground:
-        break;
+    qDebug() << "setStopsQueryModel called with" << type;
+    if (!databaseManager->areTubeStationsInDB()) {
+        qDebug() << "Calling downloadStations()";
+        downloadStations();
     }
+    else qDebug() << "There are already tubestations in db";
+    stopsQueryModel->showStops(type);
 }
 
 //starts timer to periodically download arrivals data

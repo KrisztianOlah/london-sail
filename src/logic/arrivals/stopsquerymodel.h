@@ -38,14 +38,13 @@ class StopsQueryModel : public QSqlQueryModel
 public:
     enum QueryRoles { NameRole = Qt::UserRole + 1,CodeRole,TypeRole,TowardsRole,
                       LatitudeRole,LongitudeRole, StopPointIndicatorRole, RankRole };
-    enum QueryTypes { Bus, Underground };
     explicit StopsQueryModel(QObject* parent = 0);
 private:
     DatabaseManager* databaseManager;
 public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     virtual QHash<int,QByteArray> roleNames() const;
-    Q_INVOKABLE void showStops();
+    Q_INVOKABLE void showStops(int type);
 public slots:
     void clearStops();
     QVariant codeAt(int index) const;
