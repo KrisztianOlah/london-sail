@@ -45,10 +45,13 @@ private:
     bool isOpen() const;
     bool isStopsTable() const;
     bool open();
+    bool upgrade();
 public:
     bool addStop(const QString& name,const QString& code,int type, QString& towards,double latitude, double longitude,
                  const QString& stopPointIndicator = QString(), bool favorite = false);
+    bool areTubeStationsInDB();
     bool clearStopsTable();
+    bool importStations();
     bool isFavorite(const QString& code) const;
     QSqlError lastError() const; 
     bool makeFavorite(const QString& code);

@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "database.h"
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QSqlQuery>
 #include <QStandardPaths>
 
@@ -37,9 +38,11 @@ Database::Database() : db(QSqlDatabase::addDatabase("QSQLITE"))
     if (!dir.exists()) {
         dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
     }
-    ////////TODO Check for old version of database and upgrade/alter it to the new one then rename it to match the new name
-    db.setDatabaseName(path);
-    open();
+    if (upgrade()) {
+        db.setDatabaseName(path);
+        bool ok = open();
+        if (!ok) qDebug() << "Couldn't open db.";
+    }
 }
 
 Database::~Database() {
@@ -66,7 +69,6 @@ int Database::countRanked() const {
     }
 }
 
-//!!!!!!!!!!!!!!!!!!!!!!!NEED TO UPDATE OLD DB //ie copy data from old one or upgrade it somehow
 //creates stopstable and returns true if successful otherwise returns false
 bool Database::createStopsTable() {
     if (!isOpen()) { open();}
@@ -95,7 +97,7 @@ bool Database::createStopsTable() {
     }
 }
 
-//returns the rank of a given item by code or returns ngative upon failiure
+//returns the rank of a given item by code or returns negative upon failure
 int Database::getRank(const QString& code) const {
     QSqlQuery query;
     query.prepare("SELECT rank FROM stopstable WHERE code = :code");
@@ -104,6 +106,7 @@ int Database::getRank(const QString& code) const {
     query.first();
     return query.value(0).toInt();
 }
+
 
 bool Database::isOpen() const { return db.isOpen(); }
 
@@ -117,6 +120,30 @@ bool Database::isStopsTable() const {
 
 bool Database::open() { return db.open(); }
 
+bool Database::upgrade() {
+    QString path_1 = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data-1.0.sqlite";
+    QFile file_1(path_1);
+
+    if (file_1.exists()) {
+        db.setDatabaseName(path_1);
+        bool ok = open();
+        if (!ok) {
+            qDebug() << "Couldn't open db 1.0.";
+            return ok;
+        }
+        QSqlQuery query;
+        ok = query.exec("ALTER TABLE stopstable ADD COLUMN rank INTEGER");
+        if (!ok) {
+            qDebug() << "Upgrade from 1.0 failed." << lastError();
+        }
+        close();
+        QString newName = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/data-2.0.sqlite";
+        bool rename_ok = file_1.rename(newName);
+        if (!rename_ok) qDebug() << "Rename failed";
+        return ok && rename_ok;
+    }
+    return true;
+}
 
 //public:
 //adds a new stop to stopstable and returns true if successful otherwise returns false
@@ -137,7 +164,11 @@ bool Database::addStop(const QString& name,const QString& code,int type, QString
         query.bindValue(":stoppointindicator", stopPointIndicator);
         query.bindValue(":favorite", favorite);
         bool ret = query.exec();
-        if (!ret) { qDebug() << "***Adding " << name << " failed ***"; }
+        qDebug() << name << code << type << towards << latitude << longitude;
+        if (!ret) {
+            qDebug() << "***Adding " << name << " failed ***";
+            qDebug() << lastError();
+        }
         return ret;
     }
     else {
@@ -146,11 +177,75 @@ bool Database::addStop(const QString& name,const QString& code,int type, QString
     }
 }
 
+//returns true if there are tubestations in stopstable
+bool Database::areTubeStationsInDB() {
+    if (createStopsTable()) {
+        QSqlQuery query;
+        bool ok = query.exec("SELECT * FROM stopstable WHERE type = 2");
+        if (!ok) {
+            qDebug() << lastError();
+            return true; //raise error
+        }
+        query.last();
+        if (query.at() < 0) { return false; }
+        else return true;
+    }
+    else return true; //raise error
+}
+
 //deletes every entry in stopstable that is not set to favorite by user and returns true if successful otherwise returns fasle
 bool Database::clearStopsTable() {
     QSqlQuery query;
     bool ok = query.exec("DELETE FROM stopstable WHERE favorite=0");
     return ok;
+}
+
+bool Database::importStations() {
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/stations.csv";
+    QFile file(path);
+    if (file.exists()) {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "Error: stations.csv is not readable";
+        }
+        db.transaction();
+        while (!file.atEnd()) {
+            ///TODO Check for validity of file
+            QByteArray line =  file.readLine();
+            QList<QByteArray> lineList = line.split(';');
+            if (createStopsTable() && lineList.size() >= 6 ) {
+                QSqlQuery query;
+                query.prepare("INSERT INTO stopstable (name, code, type, latitude, longitude, favorite) "
+                              "VALUES (:name, :code, :type, :latitude, :longitude, :favorite)"
+                              );
+
+                if (lineList.at(0) == "name") continue; //skip first line
+                query.bindValue(":name",lineList.at(0));
+                QString code = lineList.at(1);
+                if (code == "") {
+                    //Null
+                    query.bindValue(":code",QVariant(QVariant::String));
+                }
+                else { query.bindValue(":code",code); }
+                query.bindValue(":type",lineList.at(2).toInt());
+                query.bindValue(":latitude",lineList.at(4));
+                query.bindValue(":longitude",lineList.at(5));
+                query.bindValue(":favorite", 0);
+                if (!query.exec()) {
+                    qDebug() << "Error: query failed, rolling back transaction" << lastError();
+                    db.rollback();
+                    return false;
+                }
+            }
+            else { qDebug() << "lineList.size()" << lineList.size(); }
+        }
+        db.commit();
+        qDebug() << "Stations imported";
+        return true;
+    }
+    else {
+        qDebug() << "Error: There is no CSV file located";
+        return false;
+    }
 }
 
 //checks if a given bus stop or pier(by their code) is favorite

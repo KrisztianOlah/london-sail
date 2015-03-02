@@ -39,7 +39,8 @@ class Stop : public QObject
 
 public:
     explicit Stop(QObject*  parent = 0);
-    enum Type { None, Bus, Underground, River, Overground, Dlr};
+    //Enum values are used in database therefore new values can only be inserted/appended after Dlr
+    enum Type { None, Bus, Underground, River, Overground, Dlr };
 private:
     DatabaseManager* databaseManager;
     QString id;

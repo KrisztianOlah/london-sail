@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <QSqlRecord>
 #include <QSqlQuery>
 #include "../database/databasemanager.h"
+#include "stop.h"
 
 extern DatabaseManager databaseManager;
 
@@ -79,7 +80,17 @@ QHash<int,QByteArray> StopsQueryModel::roleNames() const {
     return roles;
 }
 
-void StopsQueryModel::showStops() { setQuery("SELECT * FROM stopstable ORDER BY rank");}
+void StopsQueryModel::showStops(int type) {
+    qDebug() << "Showstops with type" << type;
+    setQuery("SELECT * FROM stopstable WHERE type = 1 ORDER BY rank");
+    if (type) {
+//        QString query = QString("SELECT * FROM stopstable WHERE type = ") + QString::number(type) + QString(" OR favorite = 1 ORDER BY rank");
+//        qDebug() << query;
+//        setQuery(query);
+    }
+    else { setQuery("SELECT * FROM stopstable ORDER BY rank"); }
+
+}
 
 //public slots:
 //clears the database from stops from stopstable that are not set as favorite
@@ -89,7 +100,7 @@ void StopsQueryModel::clearStops() {
         bool ok = databaseManager->clearStopsTable();
         if (!ok) { qDebug() << "clearing stopstable failed"; }
         else qDebug() << "cleared stopstable";
-        showStops();
+        showStops(Stop::Bus);
     }
 }
 

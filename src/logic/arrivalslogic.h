@@ -77,6 +77,7 @@ private:
     QNetworkReply* reply_busStop;
     QNetworkReply* reply_busStopMessage;
     QNetworkReply* reply_journeyProgress;
+    QNetworkReply* reply_stations;
     QNetworkReply* reply_stops;
     StopsQueryModel* stopsQueryModel;
 signals:
@@ -88,6 +89,7 @@ signals:
 private:
     void clearArrivalsData();
     void clearJourneyProgressData();
+    void downloadStations();
     void fillCurrentStopMessages(const QMap<int,QString>&);
     void getBusArrivalsByCode(const QString& code);
     void getBusProgress(const QString&);
@@ -102,6 +104,7 @@ private slots:
     void onDisplayTimerTicked();
     void onListOfBusStopsReceived();
     void onProgressDataChanged();
+    void onStationsDownloaded();
 public slots:
     void clearCurrentStop();
     bool favorStop(const QString& code, bool);

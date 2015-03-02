@@ -216,17 +216,19 @@ Page {
         }
 
         footer: TflNotice {}
-//        PullDownMenu {
-//            id: pulley
-//            MenuItem {
-//                text: "Underground"
-//            }
-//            MenuItem {
-//                text: "Here"
-//                enabled: false
-//                visible: false
-//            }
-//        }
+
+        PullDownMenu {
+            id: pulley
+            MenuItem {
+                text: "Underground"
+                onClicked: arrivalsData.setStopsQueryModel(0)
+            }
+            MenuItem {
+                text: "Here"
+                enabled: false
+                visible: false
+            }
+        }
 
         spacing: 10
         model: visualModel
