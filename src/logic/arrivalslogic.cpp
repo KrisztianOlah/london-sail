@@ -113,8 +113,6 @@ void ArrivalsLogic::downloadStations() {
         bool ok = databaseManager->importStations();
         if (!ok) qDebug() << "Import Failed";
     }
-
-    //////////////////////////////////////////////////////
 }
 
 void ArrivalsLogic::fillCurrentStopMessages(const QMap<int,QString>& map) {
@@ -409,7 +407,6 @@ void ArrivalsLogic::onStationsDownloaded() {
         }
         reply_stations->deleteLater();
     }
-    ////////////////////////////////////////////////////
 }
 
 //public slots:
@@ -525,6 +522,7 @@ void ArrivalsLogic::setCurrentVehicleLine(const QString& line) { currentVehicleL
 
 //set stopsQueryModel to show one of the preset queries, type = 0 will return all stops in db
 void ArrivalsLogic::setStopsQueryModel(int type) {
+    qDebug() << "setStopsQueryModel called with" << type;
     if (!databaseManager->areTubeStationsInDB()) {
         qDebug() << "Calling downloadStations()";
         downloadStations();

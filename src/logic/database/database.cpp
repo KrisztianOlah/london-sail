@@ -201,6 +201,7 @@ bool Database::clearStopsTable() {
 }
 
 bool Database::importStations() {
+    if (areTubeStationsInDB()) { return true; } //only need to import if we haven't got the data in our database
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/stations.csv";
     QFile file(path);
     if (file.exists()) {
