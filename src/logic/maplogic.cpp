@@ -40,7 +40,7 @@ THE SOFTWARE.
 
 //https://www.tfl.gov.uk/cdn/static/cms/documents/bus-route-maps/
 MapLogic::MapLogic(QObject *parent) : QObject(parent),
-                                      baseUrl("https://www.tfl.gov.uk/maps_/bus-route-maps?Query="),
+                                      baseUrl("http://www.tfl.gov.uk/maps_/bus-spider-maps?Query="),
                                       downloading(false),
                                       networkMngr(static_cast<QNetworkAccessManager*>(parent)),
                                       mapDownloader(new BusMapDownloader(networkMngr)),
