@@ -55,7 +55,7 @@ Page {
                 color: Theme.highlightColor
                 anchors {
                     left: parent.left
-                    leftMargin: Theme.paddingLarge
+                    leftMargin: Theme.paddingLarge * 2
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
@@ -71,8 +71,11 @@ Page {
                     right: parent.right
                     rightMargin: Theme.paddingLarge
                 }
-                text: "  London Sail is aimed at Londoners to help them with their daily commute.
-  This is an early release without having many of the planned features implemented, more features are to come as and when ready."
+                text: "London Sail is aimed at Londoners to help them with their daily commute.
+
+Please note that the Bus Maps feature requires a pdf reader (such as Documents app  by Jolla) installed in order to open the maps.
+
+More features to come..."
             }
 
             Label {
@@ -98,7 +101,9 @@ Page {
                     rightMargin: Theme.paddingLarge
                 }
                 text: "Data kindly provided by <html><a href='http://www.tfl.gov.uk/'>TfL</a></html>.
-                       The London Underground map is the property of Transport for London."
+                       The London Underground map is the property of Transport for London.
+
+This software is not in any way affiliated with TfL."
                 linkColor: Theme.primaryColor
                 onLinkActivated: Qt.openUrlExternally(link)
             }
